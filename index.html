@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>NFL Playoffs 2025 Season Bracket</title>
     <style>
         :root {
@@ -14,6 +14,7 @@
             --dim-alpha: 0.3;
         }
 
+        /* NEW LAYOUT: Fixed header, scrollable body */
         body {
             font-family: 'Segoe UI', system-ui, sans-serif;
             background-color: #111;
@@ -23,43 +24,74 @@
                 linear-gradient(to bottom, #1e2b1e, #000);
             color: white;
             margin: 0;
-            padding: 20px;
-            text-align: center;
+            padding: 0;
+            height: 100vh; /* Full viewport height */
+            display: flex;
+            flex-direction: column;
+            overflow: hidden; /* Prevent body scroll */
             user-select: none;
-            overflow-x: hidden;
         }
 
-        h1 { font-size: 2.2em; letter-spacing: 2px; margin: 10px 0 5px 0; text-shadow: 0 4px 10px rgba(0,0,0,0.8); text-transform: uppercase;}
-        .subtitle { color: #aaa; margin-bottom: 30px; font-size: 1em; font-weight: 400; }
-        .sb-details { color: var(--gold-shine); font-weight: bold; }
+        /* Fixed Header Container */
+        .header-container {
+            flex: 0 0 auto;
+            padding: 10px 20px 0 20px;
+            background: rgba(17, 17, 17, 0.9);
+            backdrop-filter: blur(5px);
+            z-index: 50;
+            text-align: center;
+            border-bottom: 1px solid #333;
+        }
+
+        h1 { 
+            font-size: 1.8em; 
+            letter-spacing: 2px; 
+            margin: 5px 0; 
+            text-shadow: 0 4px 10px rgba(0,0,0,0.8); 
+            text-transform: uppercase;
+        }
+        
+        .subtitle { 
+            color: #aaa; 
+            margin-bottom: 10px; 
+            font-size: 0.9em; 
+            font-weight: 400; 
+        }
 
         .sb-details-bar {
             color: var(--gold-shine);
             font-weight: bold;
-            font-size: 1.1em;
-            margin-bottom: 30px;
-            margin-top: 5px;
+            font-size: 0.9em;
+            margin-bottom: 10px;
             text-transform: uppercase;
             text-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
             background: linear-gradient(90deg, transparent 0%, rgba(255, 215, 0, 0.1) 50%, transparent 100%);
-            padding: 10px 0;
+            padding: 8px 0;
             border-top: 1px solid rgba(255, 215, 0, 0.2);
             border-bottom: 1px solid rgba(255, 215, 0, 0.2);
             letter-spacing: 1px;
         }
 
+        /* Scrollable Bracket Area */
         .bracket-wrapper {
+            flex: 1 1 auto;
             display: flex;
-            justify-content: center;
-            align-items: center;
+            align-items: center; /* Center vertically if space allows */
             gap: 20px;
-            overflow-x: auto;
+            overflow: auto; /* Handle both X and Y scroll here */
             padding: 20px;
-            min-width: 1400px;
-            /* Smooth scrolling for JS navigation */
             scroll-behavior: smooth;
-            /* Snap scrolling for better mobile feel */
             scroll-snap-type: x mandatory;
+            /* Ensure content determines width */
+            width: 100%; 
+        }
+
+        /* Force min-width so scrolling works, but allow centering */
+        .bracket-content-sizer {
+            display: flex;
+            gap: 20px;
+            min-width: 1400px; /* Ensure bracket doesn't collapse */
+            margin: 0 auto;
         }
 
         .column {
@@ -69,6 +101,7 @@
             gap: 40px;
             min-width: 240px;
             scroll-snap-align: center;
+            scroll-snap-stop: always;
         }
 
         .col-divisional { gap: 150px; }
@@ -135,14 +168,12 @@
             filter: grayscale(0%) !important;
         }
         
-        /* UPDATED: Removed pointer-events: none so you can grab "losers" to fix mistakes */
         .eliminated { 
             opacity: var(--dim-alpha) !important; 
             filter: grayscale(100%) !important; 
             border-left: 4px solid #333 !important;
         }
         
-        /* NEW: Strictly for teams that actually lost IRL */
         .real-loser {
             pointer-events: none;
             opacity: 0.2 !important;
@@ -175,7 +206,6 @@
         .confetti-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; overflow: hidden; }
         .confetti-piece { position: absolute; width: 10px; height: 20px; background: #ffd700; top: -20px; opacity: 0; }
         
-        /* NEW: Styles for mobile drag clone */
         .drag-clone {
             position: fixed;
             pointer-events: none;
@@ -185,20 +215,20 @@
             transform: scale(1.05);
         }
 
-        /* NEW: Mobile Navigation Controls */
+        /* NEW: Enhanced Mobile Navigation Controls */
         .mobile-nav {
-            display: none; /* Hidden by default on desktop */
+            display: none;
             position: fixed;
-            bottom: 20px;
+            bottom: 30px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(20, 20, 20, 0.95);
-            border: 1px solid #444;
+            background: rgba(30, 30, 30, 0.9);
+            border: 1px solid #555;
             border-radius: 50px;
             padding: 8px 12px;
             z-index: 10000;
-            gap: 8px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.9);
+            gap: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.9);
             white-space: nowrap;
             backdrop-filter: blur(10px);
         }
@@ -207,49 +237,84 @@
             background: #333;
             color: #ddd;
             border: 1px solid #555;
-            border-radius: 20px;
-            padding: 8px 14px;
-            font-size: 0.8em;
+            border-radius: 25px;
+            /* BIGGER BUTTONS */
+            padding: 12px 24px;
+            font-size: 1.1em;
             font-weight: bold;
             cursor: pointer;
             transition: 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
+            min-width: 50px;
         }
 
         .mobile-btn:active {
             background: var(--gold-shine);
             color: black;
             border-color: var(--gold-shine);
+            transform: scale(0.95);
         }
         
         .mobile-btn-primary {
             background: #444;
             color: white;
-            border-color: #666;
+            border-color: #777;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
         }
 
+        /* MOBILE SPECIFIC OPTIMIZATIONS */
         @media (max-width: 1024px) {
             .mobile-nav { display: flex; }
-            body { padding-bottom: 100px; } /* Space for nav */
-            .bracket-wrapper { 
-                justify-content: flex-start; /* Allow scroll from start */
-                padding-left: 20px; 
-                padding-right: 20px;
+            .bracket-wrapper {
+                align-items: flex-start; /* Align top so we don't have vertical gaps */
+                padding-top: 10px;
+            }
+            
+            .header-container {
+                padding-top: 5px;
+            }
+            
+            /* COMPRESS LAYOUT TO FIT PHONE SCREENS */
+            .column {
+                gap: 15px; /* Reduce gap between matchups */
+                justify-content: flex-start;
+                padding-bottom: 100px; /* Space for nav bar */
+            }
+            
+            .matchup {
+                padding: 8px; /* Tighter padding */
+                margin-bottom: 5px;
+            }
+            
+            .col-divisional, .col-conference {
+                gap: 30px; /* Reduce huge gaps on mobile */
+                justify-content: center;
+            }
+
+            .round-header {
+                margin-bottom: 5px;
+            }
+            
+            /* Ensure text fits */
+            .team-slot {
+                padding: 4px;
             }
         }
     </style>
 </head>
 <body>
 
-    <h1>NFL Playoffs 2025 Season</h1>
-    <p class="subtitle" style="margin-bottom: 15px;">Build your NFL bracket.</p>
-    <div class="sb-details-bar">
-        Super Bowl LX • Feb 8, 3:30 PM PT • Levi's Stadium, Santa Clara, CA
+    <div class="header-container">
+        <h1>NFL Playoffs 2025 Season</h1>
+        <p class="subtitle">Build your NFL bracket.</p>
+        <div class="sb-details-bar">
+            Super Bowl LX • Feb 8, 3:30 PM PT • Levi's Stadium, Santa Clara, CA
+        </div>
     </div>
 
-    <!-- NEW: Mobile Navigation Bar -->
+    <!-- Mobile Navigation Bar -->
     <div class="mobile-nav">
         <button class="mobile-btn" onclick="scrollToId('afc-wc-col')">AFC</button>
         <button class="mobile-btn" onclick="scrollBracket(-1)">&lt;</button>
@@ -259,187 +324,175 @@
     </div>
 
     <div class="bracket-wrapper" id="bracket-container">
+        <!-- Wrapper Div to ensure width -->
+        <div class="bracket-content-sizer">
+            <!-- ================= AFC SIDE ================= -->
+            <div class="column" id="afc-wc-col">
+                <div class="round-header">AFC Wild Card</div>
+                
+                <!-- Bills vs Jags (FINAL) -->
+                <div class="matchup">
+                    <div class="game-meta"><span>FINAL</span><span>CBS</span></div>
+                    <div class="team-slot winner" draggable="true" data-conf="AFC" data-team="Bills" data-seed="6" data-color="#00338D" data-score="27" id="afc-wc1-w">
+                        <div class="logo-box" style="background:#00338D;">BUF</div>
+                        <div class="team-info"><span class="name">Bills</span><span class="seed">#6</span></div>
+                        <span class="score">27</span>
+                    </div>
+                    <div class="team-slot eliminated real-loser" id="afc-wc1-l">
+                        <div class="logo-box" style="background:#006778;">JAX</div>
+                        <div class="team-info"><span class="name">Jaguars</span><span class="seed">#3</span></div>
+                        <span class="score">24</span>
+                    </div>
+                    <a class="highlight-btn" href="https://www.youtube.com/watch?v=OZrEboMLou4" target="_blank">Watch Highlights</a>
+                </div>
 
-        <!-- ================= AFC SIDE ================= -->
-        <div class="column" id="afc-wc-col">
-            <div class="round-header">AFC Wild Card</div>
-            
-            <!-- Bills vs Jags (FINAL) -->
-            <div class="matchup">
-                <div class="game-meta"><span>FINAL</span><span>CBS</span></div>
-                <!-- Bills Won: Draggable -->
-                <div class="team-slot winner" draggable="true" data-conf="AFC" data-team="Bills" data-seed="6" data-color="#00338D" data-score="27" id="afc-wc1-w">
-                    <div class="logo-box" style="background:#00338D;">BUF</div>
-                    <div class="team-info"><span class="name">Bills</span><span class="seed">#6</span></div>
-                    <span class="score">27</span>
+                <!-- Texans vs Steelers (Upcoming) -->
+                <div class="matchup">
+                    <div class="game-meta"><span>MON 5:15 PM PT</span><span>ABC</span></div>
+                    <div class="team-slot" draggable="true" data-conf="AFC" data-team="Texans" data-seed="5" data-color="#03202f" id="afc-wc2-a">
+                        <div class="logo-box" style="background:#03202f;">HOU</div>
+                        <div class="team-info"><span class="name">Texans</span><span class="seed">#5</span></div>
+                    </div>
+                    <div class="team-slot" draggable="true" data-conf="AFC" data-team="Steelers" data-seed="4" data-color="#FFB612; color:black" id="afc-wc2-b">
+                        <div class="logo-box" style="background:#FFB612; color:black;">PIT</div>
+                        <div class="team-info"><span class="name">Steelers</span><span class="seed">#4</span></div>
+                    </div>
                 </div>
-                <!-- Jags Lost: REAL LOSER -->
-                <div class="team-slot eliminated real-loser" id="afc-wc1-l">
-                    <div class="logo-box" style="background:#006778;">JAX</div>
-                    <div class="team-info"><span class="name">Jaguars</span><span class="seed">#3</span></div>
-                    <span class="score">24</span>
-                </div>
-                <a class="highlight-btn" href="https://www.youtube.com/watch?v=OZrEboMLou4" target="_blank">Watch Highlights</a>
-            </div>
 
-            <!-- Texans vs Steelers (Upcoming) -->
-            <div class="matchup">
-                <div class="game-meta"><span>MON 5:15 PM PT</span><span>ABC</span></div>
-                <div class="team-slot" draggable="true" data-conf="AFC" data-team="Texans" data-seed="5" data-color="#03202f" id="afc-wc2-a">
-                    <div class="logo-box" style="background:#03202f;">HOU</div>
-                    <div class="team-info"><span class="name">Texans</span><span class="seed">#5</span></div>
+                <!-- Chargers vs Pats (Upcoming) -->
+                <div class="matchup">
+                    <div class="game-meta"><span>SUN 5:15 PM PT</span><span>NBC</span></div>
+                    <div class="team-slot" draggable="true" data-conf="AFC" data-team="Chargers" data-seed="7" data-color="#0080C6" id="afc-wc3-a">
+                        <div class="logo-box" style="background:#0080C6;">LAC</div>
+                        <div class="team-info"><span class="name">Chargers</span><span class="seed">#7</span></div>
+                    </div>
+                    <div class="team-slot" draggable="true" data-conf="AFC" data-team="Patriots" data-seed="2" data-color="#002244" id="afc-wc3-b">
+                        <div class="logo-box" style="background:#002244;">NE</div>
+                        <div class="team-info"><span class="name">Patriots</span><span class="seed">#2</span></div>
+                    </div>
                 </div>
-                <div class="team-slot" draggable="true" data-conf="AFC" data-team="Steelers" data-seed="4" data-color="#FFB612; color:black" id="afc-wc2-b">
-                    <div class="logo-box" style="background:#FFB612; color:black;">PIT</div>
-                    <div class="team-info"><span class="name">Steelers</span><span class="seed">#4</span></div>
-                </div>
-            </div>
-
-            <!-- Chargers vs Pats (Upcoming) -->
-            <div class="matchup">
-                <div class="game-meta"><span>SUN 5:15 PM PT</span><span>NBC</span></div>
-                <div class="team-slot" draggable="true" data-conf="AFC" data-team="Chargers" data-seed="7" data-color="#0080C6" id="afc-wc3-a">
-                    <div class="logo-box" style="background:#0080C6;">LAC</div>
-                    <div class="team-info"><span class="name">Chargers</span><span class="seed">#7</span></div>
-                </div>
-                <div class="team-slot" draggable="true" data-conf="AFC" data-team="Patriots" data-seed="2" data-color="#002244" id="afc-wc3-b">
-                    <div class="logo-box" style="background:#002244;">NE</div>
-                    <div class="team-info"><span class="name">Patriots</span><span class="seed">#2</span></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="column col-divisional" id="afc-divisional-col">
-            <div class="round-header">AFC Divisional</div>
-            <div class="matchup">
-                <div class="game-meta"><span>Jan 17/18</span><span>CBS</span></div>
-                <!-- Broncos #1 -->
-                <div class="team-slot" draggable="true" data-conf="AFC" data-team="Broncos" data-seed="1" data-color="#FB4F14" id="afc-div1-home">
-                    <div class="logo-box" style="background:#FB4F14;">DEN</div>
-                    <div class="team-info"><span class="name">Broncos</span><span class="seed">#1</span></div>
-                </div>
-                <!-- #1 Opponent Slot -->
-                <div class="team-slot empty-slot" data-target-conf="AFC" data-role="seed1-opponent" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-            </div>
-             <div class="matchup">
-                <div class="game-meta"><span>Jan 17/18</span><span>TBD</span></div>
-                <!-- Other Game Slot -->
-                <div class="team-slot empty-slot" data-target-conf="AFC" data-role="other-game" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-                <!-- Other Game Slot -->
-                <div class="team-slot empty-slot" data-target-conf="AFC" data-role="other-game" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-            </div>
-        </div>
-
-        <div class="column col-conference" id="afc-conf-col">
-            <div class="round-header">AFC Championship</div>
-            <div class="matchup">
-                <div class="game-meta"><span>Jan 25 - 12:00 PM PT</span><span>CBS</span></div>
-                <div class="team-slot empty-slot" data-target-conf="AFC" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-                <div class="team-slot empty-slot" data-target-conf="AFC" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-            </div>
-        </div>
-
-        <!-- ================= CENTER STAGE ================= -->
-        <div class="column sb-column" id="sb-col">
-            <div class="round-header">SUPER BOWL LX</div>
-            
-            <div class="sb-logo-container">
-                <img src="https://upload.wikimedia.org/wikipedia/en/thumb/b/b0/Super_Bowl_LX_Logo.svg/330px-Super_Bowl_LX_Logo.svg.png" alt="SB LX" class="sb-img">
-            </div>
-            
-            <div class="matchup" style="width: 280px; text-align: center;">
-                <div class="game-meta" style="justify-content: center;"><span>FEB 8 - 3:30 PM PT</span></div>
-                <div class="team-slot empty-slot" data-target-conf="any" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-                <div style="font-size:0.8em; color:#666; margin: 5px;">VS</div>
-                <div class="team-slot empty-slot" data-target-conf="any" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
             </div>
 
-            <div class="round-header" style="margin-top: 40px; color: var(--gold-shine);">SUPER BOWL CHAMPION</div>
-            <div id="sb-champion-slot" class="team-slot empty-slot ultimate-slot" data-target-conf="any" ondrop="drop(event)" ondragover="allowDrop(event)" style="width: 280px;"></div>
-        </div>
+            <div class="column col-divisional" id="afc-divisional-col">
+                <div class="round-header">AFC Divisional</div>
+                <div class="matchup">
+                    <div class="game-meta"><span>Jan 17/18</span><span>CBS</span></div>
+                    <div class="team-slot" draggable="true" data-conf="AFC" data-team="Broncos" data-seed="1" data-color="#FB4F14" id="afc-div1-home">
+                        <div class="logo-box" style="background:#FB4F14;">DEN</div>
+                        <div class="team-info"><span class="name">Broncos</span><span class="seed">#1</span></div>
+                    </div>
+                    <div class="team-slot empty-slot" data-target-conf="AFC" data-role="seed1-opponent" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                </div>
+                <div class="matchup">
+                    <div class="game-meta"><span>Jan 17/18</span><span>TBD</span></div>
+                    <div class="team-slot empty-slot" data-target-conf="AFC" data-role="other-game" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                    <div class="team-slot empty-slot" data-target-conf="AFC" data-role="other-game" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                </div>
+            </div>
 
-        <!-- ================= NFC SIDE ================= -->
+            <div class="column col-conference" id="afc-conf-col">
+                <div class="round-header">AFC Championship</div>
+                <div class="matchup">
+                    <div class="game-meta"><span>Jan 25 - 12:00 PM PT</span><span>CBS</span></div>
+                    <div class="team-slot empty-slot" data-target-conf="AFC" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                    <div class="team-slot empty-slot" data-target-conf="AFC" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                </div>
+            </div>
 
-        <div class="column col-conference" id="nfc-conf-col">
-            <div class="round-header">NFC Championship</div>
-            <div class="matchup">
-                <div class="game-meta"><span>Jan 25 - 3:30 PM PT</span><span>FOX</span></div>
-                <div class="team-slot empty-slot" data-target-conf="NFC" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-                <div class="team-slot empty-slot" data-target-conf="NFC" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-            </div>
-        </div>
+            <!-- ================= CENTER STAGE ================= -->
+            <div class="column sb-column" id="sb-col">
+                <div class="round-header">SUPER BOWL LX</div>
+                
+                <div class="sb-logo-container">
+                    <img src="https://upload.wikimedia.org/wikipedia/en/thumb/b/b0/Super_Bowl_LX_Logo.svg/330px-Super_Bowl_LX_Logo.svg.png" alt="SB LX" class="sb-img">
+                </div>
+                
+                <div class="matchup" style="width: 280px; text-align: center;">
+                    <div class="game-meta" style="justify-content: center;"><span>FEB 8 - 3:30 PM PT</span></div>
+                    <div class="team-slot empty-slot" data-target-conf="any" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                    <div style="font-size:0.8em; color:#666; margin: 5px;">VS</div>
+                    <div class="team-slot empty-slot" data-target-conf="any" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                </div>
 
-        <div class="column col-divisional" id="nfc-divisional-col">
-            <div class="round-header">NFC Divisional</div>
-             <div class="matchup">
-                <div class="game-meta"><span>Jan 17/18</span><span>FOX</span></div>
-                <!-- Seahawks #1 -->
-                <div class="team-slot" draggable="true" data-conf="NFC" data-team="Seahawks" data-seed="1" data-color="#002244" id="nfc-div1-home">
-                    <div class="logo-box" style="background:#002244;">SEA</div>
-                    <div class="team-info"><span class="name">Seahawks</span><span class="seed">#1</span></div>
-                </div>
-                <!-- #1 Opponent Slot -->
-                <div class="team-slot empty-slot" data-target-conf="NFC" data-role="seed1-opponent" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                <div class="round-header" style="margin-top: 40px; color: var(--gold-shine);">SUPER BOWL CHAMPION</div>
+                <div id="sb-champion-slot" class="team-slot empty-slot ultimate-slot" data-target-conf="any" ondrop="drop(event)" ondragover="allowDrop(event)" style="width: 280px;"></div>
             </div>
-            <div class="matchup">
-                <div class="game-meta"><span>Jan 17/18</span><span>TBD</span></div>
-                <!-- Other Game Slot -->
-                <div class="team-slot empty-slot" data-target-conf="NFC" data-role="other-game" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-                <!-- Other Game Slot -->
-                <div class="team-slot empty-slot" data-target-conf="NFC" data-role="other-game" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-            </div>
-        </div>
 
-        <div class="column" id="nfc-wc-col">
-            <div class="round-header">NFC Wild Card</div>
-             <div class="matchup">
-                <div class="game-meta"><span class="live-text">IN PROGRESS</span><span>FOX</span></div>
-                <div class="team-slot" draggable="true" data-conf="NFC" data-team="49ers" data-seed="6" data-color="#AA0000" id="nfc-wc1-a" data-score="?">
-                    <div class="logo-box" style="background:#AA0000;">SF</div>
-                    <div class="team-info"><span class="name">49ers</span><span class="seed">#6</span></div>
-                    <span class="score">?</span>
-                </div>
-                <div class="team-slot" draggable="true" data-conf="NFC" data-team="Eagles" data-seed="3" data-color="#004C54" id="nfc-wc1-b" data-score="?">
-                    <div class="logo-box" style="background:#004C54;">PHI</div>
-                    <div class="team-info"><span class="name">Eagles</span><span class="seed">#3</span></div>
-                    <span class="score">?</span>
+            <!-- ================= NFC SIDE ================= -->
+
+            <div class="column col-conference" id="nfc-conf-col">
+                <div class="round-header">NFC Championship</div>
+                <div class="matchup">
+                    <div class="game-meta"><span>Jan 25 - 3:30 PM PT</span><span>FOX</span></div>
+                    <div class="team-slot empty-slot" data-target-conf="NFC" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                    <div class="team-slot empty-slot" data-target-conf="NFC" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
                 </div>
             </div>
-            
-            <!-- Rams vs Panthers (FINAL) -->
-            <div class="matchup">
-                <div class="game-meta"><span>FINAL</span></div>
-                <!-- Rams Won: Draggable -->
-                <div class="team-slot winner" draggable="true" data-conf="NFC" data-team="Rams" data-seed="5" data-color="#003594" data-score="34" id="nfc-wc2-w">
-                    <div class="logo-box" style="background:#003594;">LAR</div>
-                    <div class="team-info"><span class="name">Rams</span><span class="seed">#5</span></div>
-                    <span class="score">34</span>
+
+            <div class="column col-divisional" id="nfc-divisional-col">
+                <div class="round-header">NFC Divisional</div>
+                <div class="matchup">
+                    <div class="game-meta"><span>Jan 17/18</span><span>FOX</span></div>
+                    <div class="team-slot" draggable="true" data-conf="NFC" data-team="Seahawks" data-seed="1" data-color="#002244" id="nfc-div1-home">
+                        <div class="logo-box" style="background:#002244;">SEA</div>
+                        <div class="team-info"><span class="name">Seahawks</span><span class="seed">#1</span></div>
+                    </div>
+                    <div class="team-slot empty-slot" data-target-conf="NFC" data-role="seed1-opponent" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
                 </div>
-                <!-- Panthers Lost: REAL LOSER -->
-                <div class="team-slot eliminated real-loser" id="nfc-wc2-l">
-                    <div class="logo-box" style="background:#0085CA;">CAR</div>
-                    <div class="team-info"><span class="name">Panthers</span><span class="seed">#4</span></div>
-                    <span class="score">31</span>
+                <div class="matchup">
+                    <div class="game-meta"><span>Jan 17/18</span><span>TBD</span></div>
+                    <div class="team-slot empty-slot" data-target-conf="NFC" data-role="other-game" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                    <div class="team-slot empty-slot" data-target-conf="NFC" data-role="other-game" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
                 </div>
-                <a class="highlight-btn" href="https://www.youtube.com/watch?v=Rh9xD2eoJcY" target="_blank">Watch Highlights</a>
             </div>
-            
-            <!-- Bears vs Packers (FINAL) -->
-             <div class="matchup">
-                <div class="game-meta"><span>FINAL</span></div>
-                <!-- Packers Lost: REAL LOSER -->
-                <div class="team-slot eliminated real-loser" id="nfc-wc3-l">
-                    <div class="logo-box" style="background:#203731;">GB</div>
-                    <div class="team-info"><span class="name">Packers</span><span class="seed">#7</span></div>
-                    <span class="score">27</span>
+
+            <div class="column" id="nfc-wc-col">
+                <div class="round-header">NFC Wild Card</div>
+                <div class="matchup">
+                    <div class="game-meta"><span class="live-text">IN PROGRESS</span><span>FOX</span></div>
+                    <div class="team-slot" draggable="true" data-conf="NFC" data-team="49ers" data-seed="6" data-color="#AA0000" id="nfc-wc1-a" data-score="?">
+                        <div class="logo-box" style="background:#AA0000;">SF</div>
+                        <div class="team-info"><span class="name">49ers</span><span class="seed">#6</span></div>
+                        <span class="score">?</span>
+                    </div>
+                    <div class="team-slot" draggable="true" data-conf="NFC" data-team="Eagles" data-seed="3" data-color="#004C54" id="nfc-wc1-b" data-score="?">
+                        <div class="logo-box" style="background:#004C54;">PHI</div>
+                        <div class="team-info"><span class="name">Eagles</span><span class="seed">#3</span></div>
+                        <span class="score">?</span>
+                    </div>
                 </div>
-                <!-- Bears Won: Draggable -->
-                <div class="team-slot winner" draggable="true" data-conf="NFC" data-team="Bears" data-seed="2" data-color="#C83803" data-score="31" id="nfc-wc3-w">
-                    <div class="logo-box" style="background:#C83803;">CHI</div>
-                    <div class="team-info"><span class="name">Bears</span><span class="seed">#2</span></div>
-                    <span class="score">31</span>
+                
+                <!-- Rams vs Panthers (FINAL) -->
+                <div class="matchup">
+                    <div class="game-meta"><span>FINAL</span></div>
+                    <div class="team-slot winner" draggable="true" data-conf="NFC" data-team="Rams" data-seed="5" data-color="#003594" data-score="34" id="nfc-wc2-w">
+                        <div class="logo-box" style="background:#003594;">LAR</div>
+                        <div class="team-info"><span class="name">Rams</span><span class="seed">#5</span></div>
+                        <span class="score">34</span>
+                    </div>
+                    <div class="team-slot eliminated real-loser" id="nfc-wc2-l">
+                        <div class="logo-box" style="background:#0085CA;">CAR</div>
+                        <div class="team-info"><span class="name">Panthers</span><span class="seed">#4</span></div>
+                        <span class="score">31</span>
+                    </div>
+                    <a class="highlight-btn" href="https://www.youtube.com/watch?v=Rh9xD2eoJcY" target="_blank">Watch Highlights</a>
                 </div>
-                <a class="highlight-btn" href="https://www.youtube.com/watch?v=tnX85oZOV40" target="_blank">Watch Highlights</a>
+                
+                <!-- Bears vs Packers (FINAL) -->
+                <div class="matchup">
+                    <div class="game-meta"><span>FINAL</span></div>
+                    <div class="team-slot eliminated real-loser" id="nfc-wc3-l">
+                        <div class="logo-box" style="background:#203731;">GB</div>
+                        <div class="team-info"><span class="name">Packers</span><span class="seed">#7</span></div>
+                        <span class="score">27</span>
+                    </div>
+                    <div class="team-slot winner" draggable="true" data-conf="NFC" data-team="Bears" data-seed="2" data-color="#C83803" data-score="31" id="nfc-wc3-w">
+                        <div class="logo-box" style="background:#C83803;">CHI</div>
+                        <div class="team-info"><span class="name">Bears</span><span class="seed">#2</span></div>
+                        <span class="score">31</span>
+                    </div>
+                    <a class="highlight-btn" href="https://www.youtube.com/watch?v=tnX85oZOV40" target="_blank">Watch Highlights</a>
+                </div>
             </div>
         </div>
     </div>
@@ -448,36 +501,33 @@
 
     <script>
         let draggedItem = null;
-        let wasDropped = false; // Track if the drop was successful on a valid target
+        let wasDropped = false; 
         
-        // Touch Drag Variables
         let dragClone = null;
         let touchOffsetX = 0;
         let touchOffsetY = 0;
 
-        // --- NAVIGATION FUNCTIONS ---
         function scrollToId(id) {
             const el = document.getElementById(id);
             if (el) {
-                el.scrollIntoView({ behavior: 'smooth', inline: 'center' });
+                // Ensure the bracket container scrolls, not the body
+                el.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
             }
         }
 
         function scrollBracket(direction) {
             const container = document.getElementById('bracket-container');
-            const amount = 300; // Approx one column width + gap
+            const amount = 300; 
             container.scrollBy({ left: amount * direction, behavior: 'smooth' });
         }
 
         function setupDraggableItems() {
             document.querySelectorAll('[draggable="true"]').forEach(item => {
-                // Mouse Events
                 item.removeEventListener('dragstart', handleDragStart);
                 item.removeEventListener('dragend', handleDragEnd);
                 item.addEventListener('dragstart', handleDragStart);
                 item.addEventListener('dragend', handleDragEnd);
                 
-                // Touch Events (Mobile)
                 item.removeEventListener('touchstart', handleTouchStart);
                 item.removeEventListener('touchmove', handleTouchMove);
                 item.removeEventListener('touchend', handleTouchEnd);
@@ -487,10 +537,9 @@
             });
         }
 
-        // --- MOUSE HANDLERS ---
         function handleDragStart(e) {
             draggedItem = this;
-            wasDropped = false; // Reset status
+            wasDropped = false; 
             e.dataTransfer.effectAllowed = 'copy';
             setTimeout(() => this.style.opacity = '0.5', 0);
         }
@@ -499,8 +548,6 @@
             this.style.opacity = '1';
             document.querySelectorAll('.drop-target-active').forEach(el => el.classList.remove('drop-target-active'));
 
-            // NEW: If mouse released outside a valid drop zone, delete the team
-            // (Only applies to fillable bracket slots, not the source teams)
             if (!wasDropped && draggedItem) {
                 if (draggedItem.hasAttribute('ondrop') && !draggedItem.classList.contains('empty-slot')) {
                     clearSlot(draggedItem);
@@ -510,7 +557,6 @@
             draggedItem = null;
         }
 
-        // --- TOUCH HANDLERS (MOBILE) ---
         function handleTouchStart(e) {
             const slot = e.target.closest('.team-slot');
             if (!slot || slot.getAttribute('draggable') !== 'true') return;
@@ -580,11 +626,8 @@
             }
 
             if (targetSlot) {
-                // Attempt to drop on the found slot
                 processDrop(targetSlot);
             } else {
-                // NEW: Dropped on background/nothing -> Delete
-                // (Only applies to fillable bracket slots, not the source teams)
                 if (draggedItem.hasAttribute('ondrop') && !draggedItem.classList.contains('empty-slot')) {
                     clearSlot(draggedItem);
                     updateBracketVisuals();
@@ -628,7 +671,7 @@
 
         function drop(e) {
             e.preventDefault();
-            wasDropped = true; // Signal that a drop occurred on a valid target
+            wasDropped = true; 
             const targetSlot = e.target.closest('.team-slot');
             processDrop(targetSlot);
         }
@@ -641,10 +684,10 @@
             const itemConf = draggedItem.getAttribute('data-conf');
             const targetConf = targetSlot.getAttribute('data-target-conf');
 
-            // 1. Basic Conference Check
+            // 1. Basic Conference Check (Updated: No Alert)
             if (targetConf !== itemConf && targetConf !== 'any') {
                  if (targetSlot.id !== 'sb-champion-slot') {
-                    alert("Wrong Conference!");
+                    // Silently fail or shake animation (omitted for brevity)
                     return;
                  }
             }
@@ -692,7 +735,6 @@
             const placedTeams = [];
             column.querySelectorAll('.team-slot').forEach(slot => {
                 const sTeam = slot.getAttribute('data-team');
-                // We exclude the item we are currently dragging (in case it was already in the column)
                 if (sTeam && sTeam !== 'Broncos' && sTeam !== 'Seahawks' && sTeam !== item.getAttribute('data-team')) {
                     placedTeams.push({
                         name: slot.querySelector('.name').innerText,
@@ -702,7 +744,6 @@
                 }
             });
 
-            // Case A: Dropping into "Other Game".
             if (role === 'other-game') {
                 const opponent1 = placedTeams.find(t => t.role === 'seed1-opponent');
                 if (opponent1) {
@@ -713,7 +754,6 @@
                 }
             }
 
-            // Case B: Dropping into "#1 Opponent".
             if (role === 'seed1-opponent') {
                 const otherTeam = placedTeams.find(t => t.role === 'other-game');
                 if (otherTeam) {
@@ -768,7 +808,6 @@
             
             allSlots.forEach(slot => {
                 const id = slot.id || '';
-                // Only clear styles from slots that are NOT the real hardcoded losers
                 if (!slot.classList.contains('real-loser')) {
                      slot.classList.remove('winner', 'eliminated');
                 }
