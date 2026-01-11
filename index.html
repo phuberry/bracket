@@ -67,6 +67,18 @@
             font-size: 0.7em; color: #aaa; margin-bottom: 8px; display: flex; justify-content: space-between; border-bottom: 1px solid #444; padding-bottom: 4px;
         }
 
+        .live-text {
+            color: #ff4444;
+            font-weight: bold;
+            animation: pulseLive 2s infinite;
+        }
+
+        @keyframes pulseLive {
+            0% { opacity: 1; }
+            50% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+
         .highlight-btn {
             background: #333; color: #aaa; border: 1px solid #555; border-radius: 4px; padding: 2px 6px; font-size: 0.8em; cursor: pointer; text-decoration: none; display: inline-block; margin-top: 5px; transition: 0.2s;
         }
@@ -213,7 +225,7 @@
         <div class="column col-divisional" id="afc-divisional-col">
             <div class="round-header">AFC Divisional</div>
             <div class="matchup">
-                <div class="game-meta"><span>Jan 17/18</span><span>#1 Seed Host</span></div>
+                <div class="game-meta"><span>Jan 17/18</span><span>CBS</span></div>
                 <!-- Broncos #1 -->
                 <div class="team-slot" draggable="true" data-conf="AFC" data-team="Broncos" data-seed="1" data-color="#FB4F14" id="afc-div1-home">
                     <div class="logo-box" style="background:#FB4F14;">DEN</div>
@@ -273,7 +285,7 @@
         <div class="column col-divisional" id="nfc-divisional-col">
             <div class="round-header">NFC Divisional</div>
              <div class="matchup">
-                <div class="game-meta"><span>Jan 17/18</span><span>#1 Seed Host</span></div>
+                <div class="game-meta"><span>Jan 17/18</span><span>FOX</span></div>
                 <!-- Seahawks #1 -->
                 <div class="team-slot" draggable="true" data-conf="NFC" data-team="Seahawks" data-seed="1" data-color="#002244" id="nfc-div1-home">
                     <div class="logo-box" style="background:#002244;">SEA</div>
@@ -294,14 +306,16 @@
         <div class="column">
             <div class="round-header">NFC Wild Card</div>
              <div class="matchup">
-                <div class="game-meta"><span>SUN 1:30 PM PT</span><span>FOX</span></div>
-                <div class="team-slot" draggable="true" data-conf="NFC" data-team="49ers" data-seed="6" data-color="#AA0000" id="nfc-wc1-a">
+                <div class="game-meta"><span class="live-text">Q3 9:15</span><span>FOX</span></div>
+                <div class="team-slot" draggable="true" data-conf="NFC" data-team="49ers" data-seed="6" data-color="#AA0000" id="nfc-wc1-a" data-score="24">
                     <div class="logo-box" style="background:#AA0000;">SF</div>
                     <div class="team-info"><span class="name">49ers</span><span class="seed">#6</span></div>
+                    <span class="score">24</span>
                 </div>
-                <div class="team-slot" draggable="true" data-conf="NFC" data-team="Eagles" data-seed="3" data-color="#004C54" id="nfc-wc1-b">
+                <div class="team-slot" draggable="true" data-conf="NFC" data-team="Eagles" data-seed="3" data-color="#004C54" id="nfc-wc1-b" data-score="21">
                     <div class="logo-box" style="background:#004C54;">PHI</div>
                     <div class="team-info"><span class="name">Eagles</span><span class="seed">#3</span></div>
+                    <span class="score">21</span>
                 </div>
             </div>
             
