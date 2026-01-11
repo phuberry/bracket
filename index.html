@@ -33,6 +33,21 @@
         .subtitle { color: #aaa; margin-bottom: 30px; font-size: 1em; font-weight: 400; }
         .sb-details { color: var(--gold-shine); font-weight: bold; }
 
+        .sb-details-bar {
+            color: var(--gold-shine);
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 30px;
+            margin-top: 5px;
+            text-transform: uppercase;
+            text-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+            background: linear-gradient(90deg, transparent 0%, rgba(255, 215, 0, 0.1) 50%, transparent 100%);
+            padding: 10px 0;
+            border-top: 1px solid rgba(255, 215, 0, 0.2);
+            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+            letter-spacing: 1px;
+        }
+
         .bracket-wrapper {
             display: flex;
             justify-content: center;
@@ -41,6 +56,10 @@
             overflow-x: auto;
             padding: 20px;
             min-width: 1400px;
+            /* Smooth scrolling for JS navigation */
+            scroll-behavior: smooth;
+            /* Snap scrolling for better mobile feel */
+            scroll-snap-type: x mandatory;
         }
 
         .column {
@@ -49,6 +68,7 @@
             justify-content: space-around;
             gap: 40px;
             min-width: 240px;
+            scroll-snap-align: center;
         }
 
         .col-divisional { gap: 150px; }
@@ -164,17 +184,84 @@
             box-shadow: 0 10px 20px rgba(0,0,0,0.5);
             transform: scale(1.05);
         }
+
+        /* NEW: Mobile Navigation Controls */
+        .mobile-nav {
+            display: none; /* Hidden by default on desktop */
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(20, 20, 20, 0.95);
+            border: 1px solid #444;
+            border-radius: 50px;
+            padding: 8px 12px;
+            z-index: 10000;
+            gap: 8px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.9);
+            white-space: nowrap;
+            backdrop-filter: blur(10px);
+        }
+
+        .mobile-btn {
+            background: #333;
+            color: #ddd;
+            border: 1px solid #555;
+            border-radius: 20px;
+            padding: 8px 14px;
+            font-size: 0.8em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mobile-btn:active {
+            background: var(--gold-shine);
+            color: black;
+            border-color: var(--gold-shine);
+        }
+        
+        .mobile-btn-primary {
+            background: #444;
+            color: white;
+            border-color: #666;
+        }
+
+        @media (max-width: 1024px) {
+            .mobile-nav { display: flex; }
+            body { padding-bottom: 100px; } /* Space for nav */
+            .bracket-wrapper { 
+                justify-content: flex-start; /* Allow scroll from start */
+                padding-left: 20px; 
+                padding-right: 20px;
+            }
+        }
     </style>
 </head>
 <body>
 
     <h1>NFL Playoffs 2025 Season</h1>
-    <p class="subtitle">Build your own bracket. Super Bowl LX: <span class="sb-details">Feb 8, Levi's Stadium, Santa Clara, CA</span></p>
+    <p class="subtitle" style="margin-bottom: 15px;">Build your NFL bracket.</p>
+    <div class="sb-details-bar">
+        Super Bowl LX • Feb 8, 3:30 PM PT • Levi's Stadium, Santa Clara, CA
+    </div>
 
-    <div class="bracket-wrapper">
+    <!-- NEW: Mobile Navigation Bar -->
+    <div class="mobile-nav">
+        <button class="mobile-btn" onclick="scrollToId('afc-wc-col')">AFC</button>
+        <button class="mobile-btn" onclick="scrollBracket(-1)">&lt;</button>
+        <button class="mobile-btn mobile-btn-primary" onclick="scrollToId('sb-col')">SB</button>
+        <button class="mobile-btn" onclick="scrollBracket(1)">&gt;</button>
+        <button class="mobile-btn" onclick="scrollToId('nfc-wc-col')">NFC</button>
+    </div>
+
+    <div class="bracket-wrapper" id="bracket-container">
 
         <!-- ================= AFC SIDE ================= -->
-        <div class="column">
+        <div class="column" id="afc-wc-col">
             <div class="round-header">AFC Wild Card</div>
             
             <!-- Bills vs Jags (FINAL) -->
@@ -253,7 +340,7 @@
         </div>
 
         <!-- ================= CENTER STAGE ================= -->
-        <div class="column sb-column">
+        <div class="column sb-column" id="sb-col">
             <div class="round-header">SUPER BOWL LX</div>
             
             <div class="sb-logo-container">
@@ -303,7 +390,7 @@
             </div>
         </div>
 
-        <div class="column">
+        <div class="column" id="nfc-wc-col">
             <div class="round-header">NFC Wild Card</div>
              <div class="matchup">
                 <div class="game-meta"><span class="live-text">IN PROGRESS</span><span>FOX</span></div>
@@ -361,11 +448,26 @@
 
     <script>
         let draggedItem = null;
+        let wasDropped = false; // Track if the drop was successful on a valid target
         
         // Touch Drag Variables
         let dragClone = null;
         let touchOffsetX = 0;
         let touchOffsetY = 0;
+
+        // --- NAVIGATION FUNCTIONS ---
+        function scrollToId(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', inline: 'center' });
+            }
+        }
+
+        function scrollBracket(direction) {
+            const container = document.getElementById('bracket-container');
+            const amount = 300; // Approx one column width + gap
+            container.scrollBy({ left: amount * direction, behavior: 'smooth' });
+        }
 
         function setupDraggableItems() {
             document.querySelectorAll('[draggable="true"]').forEach(item => {
@@ -388,14 +490,24 @@
         // --- MOUSE HANDLERS ---
         function handleDragStart(e) {
             draggedItem = this;
+            wasDropped = false; // Reset status
             e.dataTransfer.effectAllowed = 'copy';
             setTimeout(() => this.style.opacity = '0.5', 0);
         }
 
         function handleDragEnd(e) {
             this.style.opacity = '1';
-            draggedItem = null;
             document.querySelectorAll('.drop-target-active').forEach(el => el.classList.remove('drop-target-active'));
+
+            // NEW: If mouse released outside a valid drop zone, delete the team
+            // (Only applies to fillable bracket slots, not the source teams)
+            if (!wasDropped && draggedItem) {
+                if (draggedItem.hasAttribute('ondrop') && !draggedItem.classList.contains('empty-slot')) {
+                    clearSlot(draggedItem);
+                    updateBracketVisuals();
+                }
+            }
+            draggedItem = null;
         }
 
         // --- TOUCH HANDLERS (MOBILE) ---
@@ -403,11 +515,9 @@
             const slot = e.target.closest('.team-slot');
             if (!slot || slot.getAttribute('draggable') !== 'true') return;
 
-            // Prevent default to stop scrolling while dragging
             e.preventDefault();
             draggedItem = slot;
 
-            // Create a visual clone because touchmove doesn't move the element automatically
             const rect = slot.getBoundingClientRect();
             const touch = e.touches[0];
             
@@ -418,7 +528,6 @@
             dragClone.classList.add('drag-clone');
             dragClone.style.width = rect.width + 'px';
             
-            // Initial Position
             updateClonePosition(touch.clientX, touch.clientY);
             
             document.body.appendChild(dragClone);
@@ -427,12 +536,11 @@
 
         function handleTouchMove(e) {
             if (!draggedItem || !dragClone) return;
-            e.preventDefault(); // Stop scrolling
+            e.preventDefault();
             
             const touch = e.touches[0];
             updateClonePosition(touch.clientX, touch.clientY);
 
-            // Hide clone momentarily to see what's underneath it for elementFromPoint
             dragClone.style.display = 'none';
             const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
             dragClone.style.display = 'block';
@@ -441,10 +549,8 @@
 
             const targetSlot = elementBelow.closest('.team-slot');
             
-            // Clear previous highlights
             document.querySelectorAll('.drop-target-active').forEach(el => el.classList.remove('drop-target-active'));
 
-            // Check if valid target
             if (targetSlot && targetSlot !== draggedItem) {
                 let targetConf = targetSlot.getAttribute('data-target-conf');
                 let itemConf = draggedItem.getAttribute('data-conf');
@@ -460,20 +566,28 @@
 
             const touch = e.changedTouches[0];
             
-            // Temporarily hide clone to find target
             if (dragClone) dragClone.style.display = 'none';
             const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
             
-            // Clean up visual aids
             if (dragClone) dragClone.remove();
             dragClone = null;
             draggedItem.style.opacity = '1';
             document.querySelectorAll('.drop-target-active').forEach(el => el.classList.remove('drop-target-active'));
 
+            let targetSlot = null;
             if (elementBelow) {
-                const targetSlot = elementBelow.closest('.team-slot');
-                if (targetSlot) {
-                    processDrop(targetSlot);
+                targetSlot = elementBelow.closest('.team-slot');
+            }
+
+            if (targetSlot) {
+                // Attempt to drop on the found slot
+                processDrop(targetSlot);
+            } else {
+                // NEW: Dropped on background/nothing -> Delete
+                // (Only applies to fillable bracket slots, not the source teams)
+                if (draggedItem.hasAttribute('ondrop') && !draggedItem.classList.contains('empty-slot')) {
+                    clearSlot(draggedItem);
+                    updateBracketVisuals();
                 }
             }
             
@@ -489,7 +603,6 @@
 
         setupDraggableItems();
 
-        // NEW: Double click to delete a team from a slot
         document.addEventListener('dblclick', function(e) {
             const slot = e.target.closest('.team-slot');
             if (slot && slot.hasAttribute('ondrop') && !slot.classList.contains('empty-slot')) {
@@ -513,14 +626,13 @@
             }
         }
 
-        // Standard Mouse Drop
         function drop(e) {
             e.preventDefault();
+            wasDropped = true; // Signal that a drop occurred on a valid target
             const targetSlot = e.target.closest('.team-slot');
             processDrop(targetSlot);
         }
 
-        // Shared Logic for Mouse and Touch Drops
         function processDrop(targetSlot) {
             if (!targetSlot || !draggedItem) return;
             
