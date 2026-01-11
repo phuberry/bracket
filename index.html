@@ -294,23 +294,27 @@
 
             .bracket-wrapper {
                 align-items: stretch; 
-                padding: 0 10px;
+                padding: 0 5px; /* Reduce padding */
                 height: 100%;
+                gap: 5px; /* Reduce gap between columns */
             }
             
             .bracket-content-sizer {
                 height: 100%;
                 align-items: center;
+                min-width: auto; /* Allow sizing based on content/viewport */
+                gap: 5px;
             }
             
             /* COMPRESS LAYOUT TO FIT PHONE SCREENS WITHOUT SCROLLING */
+            /* UPDATED: Fit ~2 columns on screen */
             .column {
                 gap: 1vh; /* Use Viewport Height for gaps */
                 justify-content: center; /* Center content vertically */
                 padding-bottom: 70px; /* Space for nav bar */
                 height: 100%;
-                min-width: 90vw; /* Take up most of screen width */
-                scroll-snap-align: center;
+                min-width: 45vw; /* Changed from 90vw to 45vw to show ~2 columns */
+                scroll-snap-align: start; /* Align to start so users can see pairs */
             }
             
             .col-divisional, .col-conference {
@@ -336,11 +340,11 @@
             }
             
             .logo-box {
-                width: 22px; height: 22px; font-size: 0.55em; margin-right: 6px;
+                width: 18px; height: 18px; font-size: 0.55em; margin-right: 6px; /* Smaller logo */
             }
-            .name { font-size: 0.85em; }
+            .name { font-size: 0.75em; } /* Smaller text */
             .seed { font-size: 0.65em; }
-            .score { font-size: 0.9em; }
+            .score { font-size: 0.8em; }
             
             .game-meta { 
                 font-size: 0.65em; 
