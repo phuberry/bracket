@@ -133,7 +133,19 @@
         }
 
         .highlight-btn {
-            background: #333; color: #aaa; border: 1px solid #555; border-radius: 4px; padding: 2px 6px; font-size: 0.8em; cursor: pointer; text-decoration: none; display: inline-block; margin-top: 5px; transition: 0.2s;
+            background: #333; 
+            color: #aaa; 
+            border: 1px solid #555; 
+            border-radius: 4px; 
+            padding: 4px 8px; 
+            font-size: 0.8em; 
+            cursor: pointer; 
+            text-decoration: none; 
+            /* CENTERED BUTTON STYLES */
+            display: block; 
+            width: fit-content;
+            margin: 8px auto 0 auto;
+            transition: 0.2s;
         }
         .highlight-btn:hover { background: #555; color: white; border-color: #777; }
 
@@ -219,15 +231,15 @@
         .mobile-nav {
             display: none;
             position: fixed;
-            bottom: 30px;
+            bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
             background: rgba(30, 30, 30, 0.9);
             border: 1px solid #555;
             border-radius: 50px;
-            padding: 8px 12px;
+            padding: 6px 10px;
             z-index: 10000;
-            gap: 12px;
+            gap: 10px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.9);
             white-space: nowrap;
             backdrop-filter: blur(10px);
@@ -239,7 +251,7 @@
             border: 1px solid #555;
             border-radius: 25px;
             /* BIGGER BUTTONS */
-            padding: 12px 24px;
+            padding: 10px 20px;
             font-size: 1.1em;
             font-weight: bold;
             cursor: pointer;
@@ -267,40 +279,83 @@
         /* MOBILE SPECIFIC OPTIMIZATIONS */
         @media (max-width: 1024px) {
             .mobile-nav { display: flex; }
-            .bracket-wrapper {
-                align-items: flex-start; /* Align top so we don't have vertical gaps */
-                padding-top: 10px;
-            }
             
+            /* COMPACT HEADER */
             .header-container {
-                padding-top: 5px;
+                padding: 5px 10px 0 10px;
+            }
+            h1 { font-size: 1.3em; margin: 2px 0; }
+            .subtitle { font-size: 0.75em; margin-bottom: 4px; display: none; } /* Hide generic subtitle to save space */
+            .sb-details-bar { 
+                font-size: 0.65em; 
+                padding: 4px 0; 
+                margin-bottom: 4px; 
+            }
+
+            .bracket-wrapper {
+                align-items: stretch; 
+                padding: 0 10px;
+                height: 100%;
             }
             
-            /* COMPRESS LAYOUT TO FIT PHONE SCREENS */
+            .bracket-content-sizer {
+                height: 100%;
+                align-items: center;
+            }
+            
+            /* COMPRESS LAYOUT TO FIT PHONE SCREENS WITHOUT SCROLLING */
             .column {
-                gap: 15px; /* Reduce gap between matchups */
-                justify-content: flex-start;
-                padding-bottom: 100px; /* Space for nav bar */
-            }
-            
-            .matchup {
-                padding: 8px; /* Tighter padding */
-                margin-bottom: 5px;
+                gap: 1vh; /* Use Viewport Height for gaps */
+                justify-content: center; /* Center content vertically */
+                padding-bottom: 70px; /* Space for nav bar */
+                height: 100%;
+                min-width: 90vw; /* Take up most of screen width */
+                scroll-snap-align: center;
             }
             
             .col-divisional, .col-conference {
-                gap: 30px; /* Reduce huge gaps on mobile */
-                justify-content: center;
+                gap: 2vh; 
+            }
+
+            .matchup {
+                padding: 6px; /* Tighter padding */
+                margin-bottom: 2px;
+                border-radius: 6px;
             }
 
             .round-header {
                 margin-bottom: 5px;
+                font-size: 0.75em;
             }
             
-            /* Ensure text fits */
+            /* Tighten Slots */
             .team-slot {
-                padding: 4px;
+                padding: 4px 6px;
+                min-height: 32px;
+                margin: 2px 0;
             }
+            
+            .logo-box {
+                width: 22px; height: 22px; font-size: 0.55em; margin-right: 6px;
+            }
+            .name { font-size: 0.85em; }
+            .seed { font-size: 0.65em; }
+            .score { font-size: 0.9em; }
+            
+            .game-meta { 
+                font-size: 0.65em; 
+                margin-bottom: 2px; 
+                padding-bottom: 2px;
+            }
+            
+            /* Make highlights button smaller or hide text */
+            .highlight-btn {
+                font-size: 0.7em;
+                padding: 2px 8px;
+            }
+            
+            .sb-img { height: 60px; }
+            .ultimate-slot { height: 50px; }
         }
     </style>
 </head>
@@ -694,6 +749,25 @@
 
             const draggedColumn = draggedItem.closest('.column');
             const targetColumn = targetSlot.closest('.column');
+
+            // NEW: STRICT PREVIOUS ROUND CHECK
+            const targetColId = targetColumn.id;
+            let prevRoundCols = [];
+
+            // Define dependencies
+            if (targetColId === 'afc-conf-col') prevRoundCols = ['afc-divisional-col'];
+            else if (targetColId === 'nfc-conf-col') prevRoundCols = ['nfc-divisional-col'];
+            else if (targetColId === 'sb-col') prevRoundCols = ['afc-conf-col', 'nfc-conf-col'];
+
+            // Check if any previous column still has empty slots
+            for (let id of prevRoundCols) {
+                const col = document.getElementById(id);
+                // Check if the column has any empty slots that are meant to be filled
+                if (col && col.querySelectorAll('.empty-slot').length > 0) {
+                    alert("Fill out the previous round first!");
+                    return; // Block drop
+                }
+            }
 
             // 2. #1 Seed Lock Check
             if (draggedColumn === targetColumn && draggedColumn.className.includes('col-divisional')) {
