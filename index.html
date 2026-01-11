@@ -73,6 +73,10 @@
             letter-spacing: 1px;
         }
 
+        /* Helpers for responsive text breaks */
+        .mobile-break { display: none; }
+        .desktop-sep { display: inline; }
+
         /* Scrollable Bracket Area */
         .bracket-wrapper {
             flex: 1 1 auto;
@@ -292,18 +296,31 @@
                 visibility: visible;
                 line-height: 1.2;
             }
-            .subtitle { font-size: 0.75em; margin-bottom: 4px; display: none; } /* Hide generic subtitle */
+            
+            /* SUBTITLE VISIBLE ON MOBILE AGAIN */
+            .subtitle { 
+                font-size: 0.75em; 
+                margin-bottom: 2px; 
+                display: block; 
+            } 
+            
             .sb-details-bar { 
                 font-size: 0.65em; 
                 padding: 4px 0; 
-                margin: 4px 0;
+                margin: 2px 0 4px 0;
+                line-height: 1.4;
             }
+            
+            .mobile-break { display: block; }
+            .desktop-sep { display: none; }
 
             .bracket-wrapper {
                 align-items: stretch; 
                 padding: 0 5px; 
                 height: 100%;
                 gap: 5px; 
+                /* NO VERTICAL SCROLLING ON MOBILE */
+                overflow-y: hidden;
             }
             
             .bracket-content-sizer {
@@ -311,27 +328,30 @@
                 align-items: flex-start; /* Start from top */
                 min-width: auto; 
                 gap: 5px;
+                /* EXTRA SPACE ON RIGHT FOR SCROLLING ACCESS */
+                padding-right: 25px;
             }
             
             /* COMPRESS LAYOUT TO FIT PHONE SCREENS WITHOUT SCROLLING */
             /* UPDATED: Fit ~2 columns on screen */
             .column {
-                gap: 2vh; /* Slight gap between games */
-                justify-content: flex-start; /* START AT TOP to remove header gap */
-                padding-top: 10px; /* Small buffer from header */
-                padding-bottom: 70px; /* Space for nav bar */
+                gap: 0; /* Remove gap, use space-evenly */
+                justify-content: space-evenly; /* DISTRIBUTE VERTICALLY TO FILL SCREEN */
+                padding-top: 0;
+                padding-bottom: 60px; /* Space for nav bar */
                 height: 100%;
                 min-width: 45vw; /* Show ~2 columns */
-                scroll-snap-align: start; 
+                /* CENTER SNAP for SB alignment */
+                scroll-snap-align: center; 
             }
             
             .col-divisional, .col-conference {
-                gap: 4vh; /* More space for rounds with fewer games */
+                gap: 0; /* Let space-evenly handle it */
             }
 
             .matchup {
                 padding: 6px; 
-                margin-bottom: 2px;
+                margin-bottom: 0; /* Remove margin, use flex spacing */
                 border-radius: 6px;
             }
 
@@ -377,7 +397,7 @@
         <h1>NFL Playoffs 2025 Season</h1>
         <p class="subtitle">Build your NFL bracket.</p>
         <div class="sb-details-bar">
-            Super Bowl LX • Feb 8, 3:30 PM PT • Levi's Stadium, Santa Clara, CA
+            Super Bowl LX • Feb 8, 3:30 PM PT<span class="desktop-sep"> • </span><br class="mobile-break">Levi's Stadium, Santa Clara, CA
         </div>
     </div>
 
