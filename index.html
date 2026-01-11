@@ -287,28 +287,30 @@
             /* COMPACT HEADER */
             .header-container {
                 /* Safe Area padding + minimized spacing */
-                padding: max(5px, env(safe-area-inset-top)) 10px 0 10px;
+                padding: max(2px, env(safe-area-inset-top)) 10px 0 10px;
             }
             h1 { 
-                font-size: 1.2em; /* Smaller title */
+                font-size: 1.1em; /* Smaller title */
                 margin: 0; 
                 display: block; 
                 visibility: visible;
-                line-height: 1.2;
+                line-height: 1.1;
             }
             
             /* SUBTITLE VISIBLE ON MOBILE AGAIN */
             .subtitle { 
-                font-size: 0.75em; 
+                font-size: 0.7em; 
                 margin-bottom: 2px; 
                 display: block; 
             } 
             
             .sb-details-bar { 
-                font-size: 0.65em; 
-                padding: 4px 0; 
-                margin: 2px 0 4px 0;
-                line-height: 1.4;
+                font-size: 0.6em; 
+                padding: 3px 0; 
+                margin: 2px 0 2px 0;
+                line-height: 1.2;
+                border-top: 1px solid rgba(255, 215, 0, 0.1);
+                border-bottom: 1px solid rgba(255, 215, 0, 0.1);
             }
             
             .mobile-break { display: block; }
@@ -335,9 +337,9 @@
             /* COMPRESS LAYOUT TO FIT PHONE SCREENS WITHOUT SCROLLING */
             /* UPDATED: Fit ~2 columns on screen */
             .column {
-                gap: 0; /* Remove gap, use space-evenly */
-                justify-content: space-evenly; /* DISTRIBUTE VERTICALLY TO FILL SCREEN */
-                padding-top: 0;
+                gap: 8px; /* TIGHT GAP between games, no space-evenly spreading */
+                justify-content: flex-start; /* PACK TO TOP */
+                padding-top: 5px;
                 padding-bottom: 60px; /* Space for nav bar */
                 height: 100%;
                 min-width: 45vw; /* Show ~2 columns */
@@ -346,48 +348,50 @@
             }
             
             .col-divisional, .col-conference {
-                gap: 0; /* Let space-evenly handle it */
+                gap: 20px; /* Let space-evenly handle it */
             }
 
             .matchup {
-                padding: 6px; 
-                margin-bottom: 0; /* Remove margin, use flex spacing */
+                padding: 4px; /* Very tight padding */
+                margin-bottom: 0;
                 border-radius: 6px;
             }
 
             .round-header {
-                margin-bottom: 5px;
-                font-size: 0.75em;
+                margin-bottom: 3px;
+                font-size: 0.7em;
+                color: #666;
             }
             
             /* Tighten Slots */
             .team-slot {
-                padding: 4px 6px;
-                min-height: 32px;
+                padding: 2px 4px;
+                min-height: 28px;
                 margin: 2px 0;
             }
             
             .logo-box {
-                width: 18px; height: 18px; font-size: 0.55em; margin-right: 6px; 
+                width: 16px; height: 16px; font-size: 0.5em; margin-right: 4px; 
             }
             .name { font-size: 0.75em; } 
             .seed { font-size: 0.65em; }
             .score { font-size: 0.8em; }
             
             .game-meta { 
-                font-size: 0.65em; 
+                font-size: 0.6em; 
                 margin-bottom: 2px; 
                 padding-bottom: 2px;
             }
             
             /* Make highlights button smaller */
             .highlight-btn {
-                font-size: 0.7em;
-                padding: 2px 8px;
+                font-size: 0.65em;
+                padding: 2px 6px;
+                margin-top: 2px;
             }
             
-            .sb-img { height: 60px; }
-            .ultimate-slot { height: 50px; }
+            .sb-img { height: 50px; }
+            .ultimate-slot { height: 40px; }
         }
     </style>
 </head>
