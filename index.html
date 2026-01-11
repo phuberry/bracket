@@ -306,16 +306,16 @@
         <div class="column">
             <div class="round-header">NFC Wild Card</div>
              <div class="matchup">
-                <div class="game-meta"><span class="live-text">Q3 9:15</span><span>FOX</span></div>
-                <div class="team-slot" draggable="true" data-conf="NFC" data-team="49ers" data-seed="6" data-color="#AA0000" id="nfc-wc1-a" data-score="24">
+                <div class="game-meta"><span class="live-text">IN PROGRESS</span><span>FOX</span></div>
+                <div class="team-slot" draggable="true" data-conf="NFC" data-team="49ers" data-seed="6" data-color="#AA0000" id="nfc-wc1-a" data-score="?">
                     <div class="logo-box" style="background:#AA0000;">SF</div>
                     <div class="team-info"><span class="name">49ers</span><span class="seed">#6</span></div>
-                    <span class="score">24</span>
+                    <span class="score">?</span>
                 </div>
-                <div class="team-slot" draggable="true" data-conf="NFC" data-team="Eagles" data-seed="3" data-color="#004C54" id="nfc-wc1-b" data-score="21">
+                <div class="team-slot" draggable="true" data-conf="NFC" data-team="Eagles" data-seed="3" data-color="#004C54" id="nfc-wc1-b" data-score="?">
                     <div class="logo-box" style="background:#004C54;">PHI</div>
                     <div class="team-info"><span class="name">Eagles</span><span class="seed">#3</span></div>
-                    <span class="score">21</span>
+                    <span class="score">?</span>
                 </div>
             </div>
             
@@ -595,7 +595,7 @@
                 const opponent1 = placedTeams.find(t => t.role === 'seed1-opponent');
                 if (opponent1) {
                     if (newSeed > opponent1.seed) {
-                        alert(`LOGIC BREAK!\n\nThe ${newTeamName} (#${newSeed}) are a lower seed than the ${opponent1.name} (#${opponent1.seed}).\n\nThe lowest seed MUST play the #1 Seed.`);
+                        alert(`RESEEDING ERROR\n\nThe ${newTeamName} (#${newSeed}) are a lower seed than the ${opponent1.name} (#${opponent1.seed}).\n\nThe lowest seed MUST play the #1 Seed.`);
                         return false;
                     }
                 }
@@ -606,7 +606,7 @@
                 const otherTeam = placedTeams.find(t => t.role === 'other-game');
                 if (otherTeam) {
                     if (newSeed < otherTeam.seed) {
-                        alert(`LOGIC BREAK!\n\nThe ${otherTeam.name} (#${otherTeam.seed}) are a lower seed than the ${newTeamName} (#${newSeed}).\n\nThe lowest seed MUST play the #1 Seed.`);
+                        alert(`RESEEDING ERROR\n\nThe ${otherTeam.name} (#${otherTeam.seed}) are a lower seed than the ${newTeamName} (#${newSeed}).\n\nThe lowest seed MUST play the #1 Seed.`);
                         return false;
                     }
                 }
