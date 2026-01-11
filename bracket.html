@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NFL Playoffs 2025 Season Bracket</title>
+    <style>
+        :root {
+            --nfl-blue: #013369;
+            --gold-shine: #FFD700;
+            --super-gold: #fff27e;
+            --bg-card: rgba(30,30,30,0.95);
+            --bg-slot: #252525;
+            --dim-alpha: 0.3;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background-color: #111;
+            background-image: 
+                radial-gradient(circle at center, transparent 0%, #000 100%),
+                repeating-linear-gradient(0deg, transparent 0px, transparent 1px, rgba(255,255,255,0.03) 2px),
+                linear-gradient(to bottom, #1e2b1e, #000);
+            color: white;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+            user-select: none;
+            overflow-x: hidden;
+        }
+
+        h1 { font-size: 2.2em; letter-spacing: 2px; margin: 10px 0 5px 0; text-shadow: 0 4px 10px rgba(0,0,0,0.8); text-transform: uppercase;}
+        .subtitle { color: #aaa; margin-bottom: 30px; font-size: 1em; font-weight: 400; }
+        .sb-details { color: var(--gold-shine); font-weight: bold; }
+
+        .bracket-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            overflow-x: auto;
+            padding: 20px;
+            min-width: 1400px;
+        }
+
+        .column {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            gap: 40px;
+            min-width: 240px;
+        }
+
+        .col-divisional { gap: 150px; }
+        .col-conference { gap: 300px; }
+        .sb-column { justify-content: center; align-items: center; }
+
+        .round-header {
+            text-transform: uppercase; color: #888; font-size: 0.8em; font-weight: bold; margin-bottom: 10px; text-align: center;
+        }
+
+        .matchup {
+            background: var(--bg-card); border: 1px solid #444; border-radius: 8px; padding: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); position: relative;
+        }
+
+        .game-meta {
+            font-size: 0.7em; color: #aaa; margin-bottom: 8px; display: flex; justify-content: space-between; border-bottom: 1px solid #444; padding-bottom: 4px;
+        }
+
+        .highlight-btn {
+            background: #333; color: #aaa; border: 1px solid #555; border-radius: 4px; padding: 2px 6px; font-size: 0.8em; cursor: pointer; text-decoration: none; display: inline-block; margin-top: 5px; transition: 0.2s;
+        }
+        .highlight-btn:hover { background: #555; color: white; border-color: #777; }
+
+        .team-slot {
+            display: flex; align-items: center; padding: 6px; margin: 4px 0; background: var(--bg-slot); border-radius: 4px; border: 2px solid transparent; cursor: grab; transition: all 0.2s;
+            border-left: 4px solid #444;
+            position: relative;
+        }
+        .team-slot:active { cursor: grabbing; }
+        
+        .drop-target-active {
+            border-color: var(--gold-shine); background: #333; box-shadow: 0 0 10px var(--gold-shine);
+        }
+
+        .empty-slot {
+            background: #1a1a1a; border: 1px dashed #555; color: #555; justify-content: center; height: 35px; flex-direction: column; font-size: 0.7em; border-left: 1px dashed #555;
+        }
+
+        .logo-box {
+            width: 28px; height: 28px; border-radius: 50%; margin-right: 10px; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 0.6em; color: white; text-shadow: 1px 1px 2px black;
+        }
+
+        .team-info { flex-grow: 1; text-align: left; }
+        .name { font-weight: bold; font-size: 0.9em; display: block;}
+        .seed { font-size: 0.7em; color: #999; }
+        .score { font-weight: bold; font-size: 1.1em; }
+
+        .winner { 
+            border-left: 4px solid var(--gold-shine) !important; 
+            background: linear-gradient(90deg, #252525, #2f2f20) !important; 
+            opacity: 1 !important;
+            filter: grayscale(0%) !important;
+        }
+        
+        /* UPDATED: Removed pointer-events: none so you can grab "losers" to fix mistakes */
+        .eliminated { 
+            opacity: var(--dim-alpha) !important; 
+            filter: grayscale(100%) !important; 
+            border-left: 4px solid #333 !important;
+        }
+        
+        /* NEW: Strictly for teams that actually lost IRL */
+        .real-loser {
+            pointer-events: none;
+            opacity: 0.2 !important;
+        }
+        
+        .sb-logo-container {
+            display: flex; justify-content: center; align-items: center; margin-bottom: 20px;
+        }
+        .sb-img {
+            height: 100px;
+            width: auto;
+            filter: drop-shadow(0 5px 15px rgba(0,0,0,0.8));
+        }
+
+        .ultimate-slot { height: 60px; font-size: 1.2em; border-width: 3px; }
+
+        .ultimate-champion {
+            background: linear-gradient(90deg, #4f4f20, #8f7f10) !important;
+            border-left: 4px solid var(--super-gold) !important;
+            border-color: var(--super-gold) !important;
+            box-shadow: 0 0 30px var(--super-gold), inset 0 0 20px var(--gold-shine) !important;
+            animation: championPulse 1.5s infinite alternate;
+        }
+
+        @keyframes championPulse {
+            0% { box-shadow: 0 0 20px var(--super-gold); }
+            100% { box-shadow: 0 0 50px var(--super-gold), 0 0 100px var(--gold-shine); filter: brightness(1.2); }
+        }
+
+        .confetti-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; overflow: hidden; }
+        .confetti-piece { position: absolute; width: 10px; height: 20px; background: #ffd700; top: -20px; opacity: 0; }
+        
+        /* NEW: Styles for mobile drag clone */
+        .drag-clone {
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.9;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+<body>
+
+    <h1>NFL Playoffs 2025 Season</h1>
+    <p class="subtitle">Build your own bracket. Super Bowl LX: <span class="sb-details">Feb 8, Levi's Stadium, Santa Clara, CA</span></p>
+
+    <div class="bracket-wrapper">
+
+        <!-- ================= AFC SIDE ================= -->
+        <div class="column">
+            <div class="round-header">AFC Wild Card</div>
+            
+            <!-- Bills vs Jags (FINAL) -->
+            <div class="matchup">
+                <div class="game-meta"><span>FINAL</span><span>CBS</span></div>
+                <!-- Bills Won: Draggable -->
+                <div class="team-slot winner" draggable="true" data-conf="AFC" data-team="Bills" data-seed="6" data-color="#00338D" data-score="27" id="afc-wc1-w">
+                    <div class="logo-box" style="background:#00338D;">BUF</div>
+                    <div class="team-info"><span class="name">Bills</span><span class="seed">#6</span></div>
+                    <span class="score">27</span>
+                </div>
+                <!-- Jags Lost: REAL LOSER -->
+                <div class="team-slot eliminated real-loser" id="afc-wc1-l">
+                    <div class="logo-box" style="background:#006778;">JAX</div>
+                    <div class="team-info"><span class="name">Jaguars</span><span class="seed">#3</span></div>
+                    <span class="score">24</span>
+                </div>
+                <a class="highlight-btn" href="https://www.youtube.com/watch?v=OZrEboMLou4" target="_blank">Watch Highlights</a>
+            </div>
+
+            <!-- Texans vs Steelers (Upcoming) -->
+            <div class="matchup">
+                <div class="game-meta"><span>MON 5:15 PM PT</span><span>ABC</span></div>
+                <div class="team-slot" draggable="true" data-conf="AFC" data-team="Texans" data-seed="5" data-color="#03202f" id="afc-wc2-a">
+                    <div class="logo-box" style="background:#03202f;">HOU</div>
+                    <div class="team-info"><span class="name">Texans</span><span class="seed">#5</span></div>
+                </div>
+                <div class="team-slot" draggable="true" data-conf="AFC" data-team="Steelers" data-seed="4" data-color="#FFB612; color:black" id="afc-wc2-b">
+                    <div class="logo-box" style="background:#FFB612; color:black;">PIT</div>
+                    <div class="team-info"><span class="name">Steelers</span><span class="seed">#4</span></div>
+                </div>
+            </div>
+
+            <!-- Chargers vs Pats (Upcoming) -->
+            <div class="matchup">
+                <div class="game-meta"><span>SUN 5:15 PM PT</span><span>NBC</span></div>
+                <div class="team-slot" draggable="true" data-conf="AFC" data-team="Chargers" data-seed="7" data-color="#0080C6" id="afc-wc3-a">
+                    <div class="logo-box" style="background:#0080C6;">LAC</div>
+                    <div class="team-info"><span class="name">Chargers</span><span class="seed">#7</span></div>
+                </div>
+                <div class="team-slot" draggable="true" data-conf="AFC" data-team="Patriots" data-seed="2" data-color="#002244" id="afc-wc3-b">
+                    <div class="logo-box" style="background:#002244;">NE</div>
+                    <div class="team-info"><span class="name">Patriots</span><span class="seed">#2</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="column col-divisional" id="afc-divisional-col">
+            <div class="round-header">AFC Divisional</div>
+            <div class="matchup">
+                <div class="game-meta"><span>Jan 17/18</span><span>#1 Seed Host</span></div>
+                <!-- Broncos #1 -->
+                <div class="team-slot" draggable="true" data-conf="AFC" data-team="Broncos" data-seed="1" data-color="#FB4F14" id="afc-div1-home">
+                    <div class="logo-box" style="background:#FB4F14;">DEN</div>
+                    <div class="team-info"><span class="name">Broncos</span><span class="seed">#1</span></div>
+                </div>
+                <!-- #1 Opponent Slot -->
+                <div class="team-slot empty-slot" data-target-conf="AFC" data-role="seed1-opponent" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+            </div>
+             <div class="matchup">
+                <div class="game-meta"><span>Jan 17/18</span><span>TBD</span></div>
+                <!-- Other Game Slot -->
+                <div class="team-slot empty-slot" data-target-conf="AFC" data-role="other-game" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                <!-- Other Game Slot -->
+                <div class="team-slot empty-slot" data-target-conf="AFC" data-role="other-game" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+            </div>
+        </div>
+
+        <div class="column col-conference" id="afc-conf-col">
+            <div class="round-header">AFC Championship</div>
+            <div class="matchup">
+                <div class="game-meta"><span>Jan 25 - 12:00 PM PT</span><span>CBS</span></div>
+                <div class="team-slot empty-slot" data-target-conf="AFC" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                <div class="team-slot empty-slot" data-target-conf="AFC" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+            </div>
+        </div>
+
+        <!-- ================= CENTER STAGE ================= -->
+        <div class="column sb-column">
+            <div class="round-header">SUPER BOWL LX</div>
+            
+            <div class="sb-logo-container">
+                <img src="https://upload.wikimedia.org/wikipedia/en/thumb/b/b0/Super_Bowl_LX_Logo.svg/330px-Super_Bowl_LX_Logo.svg.png" alt="SB LX" class="sb-img">
+            </div>
+            
+            <div class="matchup" style="width: 280px; text-align: center;">
+                <div class="game-meta" style="justify-content: center;"><span>FEB 8 - 3:30 PM PT</span></div>
+                <div class="team-slot empty-slot" data-target-conf="any" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                <div style="font-size:0.8em; color:#666; margin: 5px;">VS</div>
+                <div class="team-slot empty-slot" data-target-conf="any" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+            </div>
+
+            <div class="round-header" style="margin-top: 40px; color: var(--gold-shine);">SUPER BOWL CHAMPION</div>
+            <div id="sb-champion-slot" class="team-slot empty-slot ultimate-slot" data-target-conf="any" ondrop="drop(event)" ondragover="allowDrop(event)" style="width: 280px;"></div>
+        </div>
+
+        <!-- ================= NFC SIDE ================= -->
+
+        <div class="column col-conference" id="nfc-conf-col">
+            <div class="round-header">NFC Championship</div>
+            <div class="matchup">
+                <div class="game-meta"><span>Jan 25 - 3:30 PM PT</span><span>FOX</span></div>
+                <div class="team-slot empty-slot" data-target-conf="NFC" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                <div class="team-slot empty-slot" data-target-conf="NFC" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+            </div>
+        </div>
+
+        <div class="column col-divisional" id="nfc-divisional-col">
+            <div class="round-header">NFC Divisional</div>
+             <div class="matchup">
+                <div class="game-meta"><span>Jan 17/18</span><span>#1 Seed Host</span></div>
+                <!-- Seahawks #1 -->
+                <div class="team-slot" draggable="true" data-conf="NFC" data-team="Seahawks" data-seed="1" data-color="#002244" id="nfc-div1-home">
+                    <div class="logo-box" style="background:#002244;">SEA</div>
+                    <div class="team-info"><span class="name">Seahawks</span><span class="seed">#1</span></div>
+                </div>
+                <!-- #1 Opponent Slot -->
+                <div class="team-slot empty-slot" data-target-conf="NFC" data-role="seed1-opponent" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+            </div>
+            <div class="matchup">
+                <div class="game-meta"><span>Jan 17/18</span><span>TBD</span></div>
+                <!-- Other Game Slot -->
+                <div class="team-slot empty-slot" data-target-conf="NFC" data-role="other-game" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                <!-- Other Game Slot -->
+                <div class="team-slot empty-slot" data-target-conf="NFC" data-role="other-game" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+            </div>
+        </div>
+
+        <div class="column">
+            <div class="round-header">NFC Wild Card</div>
+             <div class="matchup">
+                <div class="game-meta"><span>SUN 1:30 PM PT</span><span>FOX</span></div>
+                <div class="team-slot" draggable="true" data-conf="NFC" data-team="49ers" data-seed="6" data-color="#AA0000" id="nfc-wc1-a">
+                    <div class="logo-box" style="background:#AA0000;">SF</div>
+                    <div class="team-info"><span class="name">49ers</span><span class="seed">#6</span></div>
+                </div>
+                <div class="team-slot" draggable="true" data-conf="NFC" data-team="Eagles" data-seed="3" data-color="#004C54" id="nfc-wc1-b">
+                    <div class="logo-box" style="background:#004C54;">PHI</div>
+                    <div class="team-info"><span class="name">Eagles</span><span class="seed">#3</span></div>
+                </div>
+            </div>
+            
+            <!-- Rams vs Panthers (FINAL) -->
+            <div class="matchup">
+                <div class="game-meta"><span>FINAL</span></div>
+                <!-- Rams Won: Draggable -->
+                <div class="team-slot winner" draggable="true" data-conf="NFC" data-team="Rams" data-seed="5" data-color="#003594" data-score="34" id="nfc-wc2-w">
+                    <div class="logo-box" style="background:#003594;">LAR</div>
+                    <div class="team-info"><span class="name">Rams</span><span class="seed">#5</span></div>
+                    <span class="score">34</span>
+                </div>
+                <!-- Panthers Lost: REAL LOSER -->
+                <div class="team-slot eliminated real-loser" id="nfc-wc2-l">
+                    <div class="logo-box" style="background:#0085CA;">CAR</div>
+                    <div class="team-info"><span class="name">Panthers</span><span class="seed">#4</span></div>
+                    <span class="score">31</span>
+                </div>
+                <a class="highlight-btn" href="https://www.youtube.com/watch?v=Rh9xD2eoJcY" target="_blank">Watch Highlights</a>
+            </div>
+            
+            <!-- Bears vs Packers (FINAL) -->
+             <div class="matchup">
+                <div class="game-meta"><span>FINAL</span></div>
+                <!-- Packers Lost: REAL LOSER -->
+                <div class="team-slot eliminated real-loser" id="nfc-wc3-l">
+                    <div class="logo-box" style="background:#203731;">GB</div>
+                    <div class="team-info"><span class="name">Packers</span><span class="seed">#7</span></div>
+                    <span class="score">27</span>
+                </div>
+                <!-- Bears Won: Draggable -->
+                <div class="team-slot winner" draggable="true" data-conf="NFC" data-team="Bears" data-seed="2" data-color="#C83803" data-score="31" id="nfc-wc3-w">
+                    <div class="logo-box" style="background:#C83803;">CHI</div>
+                    <div class="team-info"><span class="name">Bears</span><span class="seed">#2</span></div>
+                    <span class="score">31</span>
+                </div>
+                <a class="highlight-btn" href="https://www.youtube.com/watch?v=tnX85oZOV40" target="_blank">Watch Highlights</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="confetti-container" id="confetti-box"></div>
+
+    <script>
+        let draggedItem = null;
+        
+        // Touch Drag Variables
+        let dragClone = null;
+        let touchOffsetX = 0;
+        let touchOffsetY = 0;
+
+        function setupDraggableItems() {
+            document.querySelectorAll('[draggable="true"]').forEach(item => {
+                // Mouse Events
+                item.removeEventListener('dragstart', handleDragStart);
+                item.removeEventListener('dragend', handleDragEnd);
+                item.addEventListener('dragstart', handleDragStart);
+                item.addEventListener('dragend', handleDragEnd);
+                
+                // Touch Events (Mobile)
+                item.removeEventListener('touchstart', handleTouchStart);
+                item.removeEventListener('touchmove', handleTouchMove);
+                item.removeEventListener('touchend', handleTouchEnd);
+                item.addEventListener('touchstart', handleTouchStart, { passive: false });
+                item.addEventListener('touchmove', handleTouchMove, { passive: false });
+                item.addEventListener('touchend', handleTouchEnd);
+            });
+        }
+
+        // --- MOUSE HANDLERS ---
+        function handleDragStart(e) {
+            draggedItem = this;
+            e.dataTransfer.effectAllowed = 'copy';
+            setTimeout(() => this.style.opacity = '0.5', 0);
+        }
+
+        function handleDragEnd(e) {
+            this.style.opacity = '1';
+            draggedItem = null;
+            document.querySelectorAll('.drop-target-active').forEach(el => el.classList.remove('drop-target-active'));
+        }
+
+        // --- TOUCH HANDLERS (MOBILE) ---
+        function handleTouchStart(e) {
+            const slot = e.target.closest('.team-slot');
+            if (!slot || slot.getAttribute('draggable') !== 'true') return;
+
+            // Prevent default to stop scrolling while dragging
+            e.preventDefault();
+            draggedItem = slot;
+
+            // Create a visual clone because touchmove doesn't move the element automatically
+            const rect = slot.getBoundingClientRect();
+            const touch = e.touches[0];
+            
+            touchOffsetX = touch.clientX - rect.left;
+            touchOffsetY = touch.clientY - rect.top;
+
+            dragClone = slot.cloneNode(true);
+            dragClone.classList.add('drag-clone');
+            dragClone.style.width = rect.width + 'px';
+            
+            // Initial Position
+            updateClonePosition(touch.clientX, touch.clientY);
+            
+            document.body.appendChild(dragClone);
+            slot.style.opacity = '0.5';
+        }
+
+        function handleTouchMove(e) {
+            if (!draggedItem || !dragClone) return;
+            e.preventDefault(); // Stop scrolling
+            
+            const touch = e.touches[0];
+            updateClonePosition(touch.clientX, touch.clientY);
+
+            // Hide clone momentarily to see what's underneath it for elementFromPoint
+            dragClone.style.display = 'none';
+            const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+            dragClone.style.display = 'block';
+
+            if (!elementBelow) return;
+
+            const targetSlot = elementBelow.closest('.team-slot');
+            
+            // Clear previous highlights
+            document.querySelectorAll('.drop-target-active').forEach(el => el.classList.remove('drop-target-active'));
+
+            // Check if valid target
+            if (targetSlot && targetSlot !== draggedItem) {
+                let targetConf = targetSlot.getAttribute('data-target-conf');
+                let itemConf = draggedItem.getAttribute('data-conf');
+
+                if (targetConf === itemConf || targetConf === 'any') {
+                    targetSlot.classList.add('drop-target-active');
+                }
+            }
+        }
+
+        function handleTouchEnd(e) {
+            if (!draggedItem) return;
+
+            const touch = e.changedTouches[0];
+            
+            // Temporarily hide clone to find target
+            if (dragClone) dragClone.style.display = 'none';
+            const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+            
+            // Clean up visual aids
+            if (dragClone) dragClone.remove();
+            dragClone = null;
+            draggedItem.style.opacity = '1';
+            document.querySelectorAll('.drop-target-active').forEach(el => el.classList.remove('drop-target-active'));
+
+            if (elementBelow) {
+                const targetSlot = elementBelow.closest('.team-slot');
+                if (targetSlot) {
+                    processDrop(targetSlot);
+                }
+            }
+            
+            draggedItem = null;
+        }
+
+        function updateClonePosition(x, y) {
+            if (dragClone) {
+                dragClone.style.left = (x - touchOffsetX) + 'px';
+                dragClone.style.top = (y - touchOffsetY) + 'px';
+            }
+        }
+
+        setupDraggableItems();
+
+        // NEW: Double click to delete a team from a slot
+        document.addEventListener('dblclick', function(e) {
+            const slot = e.target.closest('.team-slot');
+            if (slot && slot.hasAttribute('ondrop') && !slot.classList.contains('empty-slot')) {
+                clearSlot(slot);
+                updateBracketVisuals();
+            }
+        });
+
+        function allowDrop(e) {
+            e.preventDefault();
+            if (!draggedItem) return;
+            
+            let targetSlot = e.target.closest('.team-slot');
+            if (!targetSlot) return;
+
+            let targetConf = targetSlot.getAttribute('data-target-conf');
+            let itemConf = draggedItem.getAttribute('data-conf');
+
+            if (targetConf === itemConf || targetConf === 'any') {
+                targetSlot.classList.add('drop-target-active');
+            }
+        }
+
+        // Standard Mouse Drop
+        function drop(e) {
+            e.preventDefault();
+            const targetSlot = e.target.closest('.team-slot');
+            processDrop(targetSlot);
+        }
+
+        // Shared Logic for Mouse and Touch Drops
+        function processDrop(targetSlot) {
+            if (!targetSlot || !draggedItem) return;
+            
+            targetSlot.classList.remove('drop-target-active');
+
+            const itemConf = draggedItem.getAttribute('data-conf');
+            const targetConf = targetSlot.getAttribute('data-target-conf');
+
+            // 1. Basic Conference Check
+            if (targetConf !== itemConf && targetConf !== 'any') {
+                 if (targetSlot.id !== 'sb-champion-slot') {
+                    alert("Wrong Conference!");
+                    return;
+                 }
+            }
+
+            const draggedColumn = draggedItem.closest('.column');
+            const targetColumn = targetSlot.closest('.column');
+
+            // 2. #1 Seed Lock Check
+            if (draggedColumn === targetColumn && draggedColumn.className.includes('col-divisional')) {
+                const seed = draggedItem.getAttribute('data-seed');
+                if (seed === '1') {
+                     return; 
+                }
+            }
+
+            // 3. SMART RESEEDING CHECK (Divisional Round Only)
+            const role = targetSlot.getAttribute('data-role');
+            if (role === 'seed1-opponent' || role === 'other-game') {
+                if (validateDivisionalDrop(targetSlot, draggedItem, targetColumn) === false) {
+                    return; // Block drop
+                }
+            }
+            
+            // 4. DUPLICATE CHECK & CLEANUP
+            const existingInstance = Array.from(targetColumn.querySelectorAll('.team-slot')).find(
+                slot => slot.getAttribute('data-team') === draggedItem.getAttribute('data-team')
+            );
+            
+            if (existingInstance && existingInstance !== targetSlot) {
+                clearSlot(existingInstance);
+            }
+
+            // 5. EXECUTE DROP
+            fillSlot(targetSlot, draggedItem);
+            
+            // 6. UPDATE HIGHLIGHTS (Previous Round)
+            updateBracketVisuals();
+        }
+
+        function validateDivisionalDrop(targetSlot, item, column) {
+            const role = targetSlot.getAttribute('data-role');
+            const newSeed = parseInt(item.getAttribute('data-seed'));
+            const newTeamName = item.querySelector('.name').innerText;
+
+            const placedTeams = [];
+            column.querySelectorAll('.team-slot').forEach(slot => {
+                const sTeam = slot.getAttribute('data-team');
+                // We exclude the item we are currently dragging (in case it was already in the column)
+                if (sTeam && sTeam !== 'Broncos' && sTeam !== 'Seahawks' && sTeam !== item.getAttribute('data-team')) {
+                    placedTeams.push({
+                        name: slot.querySelector('.name').innerText,
+                        seed: parseInt(slot.getAttribute('data-seed')),
+                        role: slot.getAttribute('data-role')
+                    });
+                }
+            });
+
+            // Case A: Dropping into "Other Game".
+            if (role === 'other-game') {
+                const opponent1 = placedTeams.find(t => t.role === 'seed1-opponent');
+                if (opponent1) {
+                    if (newSeed > opponent1.seed) {
+                        alert(`LOGIC BREAK!\n\nThe ${newTeamName} (#${newSeed}) are a lower seed than the ${opponent1.name} (#${opponent1.seed}).\n\nThe lowest seed MUST play the #1 Seed.`);
+                        return false;
+                    }
+                }
+            }
+
+            // Case B: Dropping into "#1 Opponent".
+            if (role === 'seed1-opponent') {
+                const otherTeam = placedTeams.find(t => t.role === 'other-game');
+                if (otherTeam) {
+                    if (newSeed < otherTeam.seed) {
+                        alert(`LOGIC BREAK!\n\nThe ${otherTeam.name} (#${otherTeam.seed}) are a lower seed than the ${newTeamName} (#${newSeed}).\n\nThe lowest seed MUST play the #1 Seed.`);
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+        
+        function fillSlot(slot, item) {
+            const teamName = item.querySelector('.name').innerText;
+            const teamSeed = item.querySelector('.seed').innerText;
+            const teamColor = item.getAttribute('data-color');
+            const logoText = item.querySelector('.logo-box').innerText;
+            const teamDataName = item.getAttribute('data-team');
+            const conf = item.getAttribute('data-conf');
+
+            slot.innerHTML = `
+                <div class="logo-box" style="background:${teamColor};">${logoText}</div>
+                <div class="team-info"><span class="name">${teamName}</span><span class="seed">${teamSeed}</span></div>
+            `;
+            
+            slot.classList.remove('empty-slot');
+            slot.setAttribute('draggable', 'true');
+            slot.setAttribute('data-conf', conf);
+            slot.setAttribute('data-color', teamColor);
+            slot.setAttribute('data-team', teamDataName);
+            slot.setAttribute('data-seed', item.getAttribute('data-seed'));
+            
+            if (slot.id === 'sb-champion-slot') {
+                slot.classList.add('ultimate-champion');
+                throwConfetti();
+            } else {
+                setupDraggableItems();
+            }
+        }
+
+        function clearSlot(slot) {
+            slot.innerHTML = '';
+            slot.className = 'team-slot empty-slot';
+            slot.removeAttribute('draggable');
+            slot.removeAttribute('data-team');
+            slot.removeAttribute('data-seed');
+            slot.removeAttribute('data-color');
+        }
+
+        function updateBracketVisuals() {
+            const allSlots = document.querySelectorAll('.team-slot[data-team]');
+            
+            allSlots.forEach(slot => {
+                const id = slot.id || '';
+                // Only clear styles from slots that are NOT the real hardcoded losers
+                if (!slot.classList.contains('real-loser')) {
+                     slot.classList.remove('winner', 'eliminated');
+                }
+            });
+
+            allSlots.forEach(slot => {
+                const team = slot.getAttribute('data-team');
+                const col = slot.closest('.column');
+                if(!team || !col) return;
+                
+                let nextRoundClass = '';
+                if(col.className === 'column') nextRoundClass = 'col-divisional';
+                else if(col.className.includes('col-divisional')) nextRoundClass = 'col-conference';
+                else if(col.className.includes('col-conference')) nextRoundClass = 'sb-column';
+                
+                if (nextRoundClass) {
+                    const nextSlots = document.querySelectorAll('.' + nextRoundClass + ' .team-slot[data-team="' + team + '"]');
+                    if (nextSlots.length > 0) {
+                        slot.classList.add('winner');
+                        const matchup = slot.closest('.matchup');
+                        if (matchup) {
+                            matchup.querySelectorAll('.team-slot').forEach(opp => {
+                                if (opp !== slot) opp.classList.add('eliminated');
+                            });
+                        }
+                    }
+                }
+            });
+        }
+
+        function throwConfetti() {
+            const box = document.getElementById('confetti-box');
+            const colors = ['#FFD700', '#ff0000', '#0000ff', '#ffffff'];
+            for (let i = 0; i < 150; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti-piece');
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                const duration = Math.random() * 3 + 2 + 's';
+                const delay = Math.random() * 2 + 's';
+                confetti.style.animation = `fall ${duration} linear ${delay} forwards`;
+                box.appendChild(confetti);
+            }
+        }
+
+        const styleSheet = document.createElement("style");
+        styleSheet.type = "text/css";
+        styleSheet.innerText = `
+            @keyframes fall {
+                0% { top: -20px; opacity: 1; transform: rotate(0deg); }
+                100% { top: 100vh; opacity: 0; transform: rotate(720deg); }
+            }
+        `;
+        document.head.appendChild(styleSheet);
+    </script>
+
+</body>
+</html>
