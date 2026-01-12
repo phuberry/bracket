@@ -532,7 +532,7 @@
             }
             .name { font-size: 0.75em; } 
             .seed { font-size: 0.65em; }
-            .score { font-size: 0.8em; }
+            .score { font-weight: bold; font-size: 0.8em; }
             
             .game-meta { 
                 font-size: 0.6em; 
@@ -757,7 +757,7 @@
                     <div class="game-meta"><span>FINAL</span><span></span></div>
                     <div class="team-slot eliminated real-loser" id="nfc-wc3-l">
                         <div class="logo-box" style="background:#203731;">GB</div>
-                        <div class="team-info"><span class="name">Packers</span><span class="seed">#7</span></div>
+                        <div class="team-info"><span class="name">Packers</span><span class="seed Fabric">#7</span></div>
                         <span class="score">27</span>
                     </div>
                     <div class="team-slot winner manual-winner" data-conf="NFC" data-team="Bears" data-seed="2" data-color="#C83803" data-score="31" id="nfc-wc3-w">
@@ -1200,6 +1200,12 @@
         }
 
         function clearSlot(slot) {
+            // Protection for hardcoded divisional participants (49ers and Rams)
+            // so they aren't deleted when dragged out to advance
+            if (slot.id === 'nfc-div1-visitor' || slot.id === 'nfc-div2-visitor') {
+                return;
+            }
+
             if (slot.id === 'sb-champion-slot') {
                 document.getElementById('save-bracket-btn').style.display = 'none';
                 document.body.classList.remove('bracket-complete');
