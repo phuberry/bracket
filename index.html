@@ -16,7 +16,6 @@
             --dim-alpha: 0.3;
         }
 
-        /* NEW LAYOUT: Fixed header, scrollable body */
         body {
             font-family: 'Segoe UI', system-ui, sans-serif;
             background-color: #111;
@@ -27,17 +26,15 @@
             color: white;
             margin: 0;
             padding: 0;
-            height: 100vh; /* Full viewport height */
+            height: 100vh;
             display: flex;
             flex-direction: column;
-            overflow: hidden; /* Prevent body scroll */
+            overflow: hidden;
             user-select: none;
         }
 
-        /* Fixed Header Container */
         .header-container {
             flex: 0 0 auto;
-            /* Default Desktop Padding */
             padding: 10px 20px 0 20px;
             background: rgba(17, 17, 17, 0.9);
             backdrop-filter: blur(5px);
@@ -75,28 +72,25 @@
             letter-spacing: 1px;
         }
 
-        /* Helpers for responsive text breaks */
         .mobile-break { display: none; }
         .desktop-sep { display: inline; }
 
-        /* Scrollable Bracket Area */
         .bracket-wrapper {
             flex: 1 1 auto;
             display: flex;
-            align-items: center; /* Center vertically if space allows */
+            align-items: center;
             gap: 20px;
-            overflow: auto; /* Handle both X and Y scroll here */
+            overflow: auto;
             padding: 20px;
             scroll-behavior: smooth;
             scroll-snap-type: x mandatory;
             width: 100%; 
         }
 
-        /* Force min-width so scrolling works, but allow centering */
         .bracket-content-sizer {
             display: flex;
             gap: 20px;
-            min-width: 1400px; /* Ensure bracket doesn't collapse */
+            min-width: 1400px;
             margin: 0 auto;
         }
 
@@ -108,22 +102,19 @@
             min-width: 240px;
             scroll-snap-align: center;
             scroll-snap-stop: always;
-            /* ALIGNMENT FIX: RELATIVE POSITIONING FOR DESKTOP */
             position: relative;
-            padding-top: 40px; /* Space for the absolute header */
+            padding-top: 40px;
         }
 
-        /* ALIGNMENT FIX: Pin the round names to the top */
         .column > .round-header:first-child {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            margin-top: 10px; /* Minor adjustment from very top */
+            margin-top: 10px;
             z-index: 10;
         }
 
-        /* Ensure columns still have gaps for visuals, though space-around handles most */
         .col-divisional { gap: 150px; }
         .col-conference { gap: 300px; }
         .sb-column { justify-content: center; align-items: center; }
@@ -161,7 +152,6 @@
             font-size: 0.8em; 
             cursor: pointer; 
             text-decoration: none; 
-            /* CENTERED BUTTON STYLES */
             display: block; 
             width: fit-content;
             margin: 8px auto 0 auto;
@@ -169,7 +159,6 @@
         }
         .highlight-btn:hover { background: #555; color: white; border-color: #777; }
 
-        /* DISABLED STATE FOR AWAITING HIGHLIGHTS */
         .highlight-btn.disabled {
             background: #222;
             color: #555;
@@ -203,44 +192,7 @@
         .seed { font-size: 0.7em; color: #999; }
         .score { font-weight: bold; font-size: 1.1em; }
 
-        /* PREDICTION SCORE INPUT */
-        .prediction-input {
-            width: 40px;
-            background: rgba(0,0,0,0.8);
-            border: 1px solid var(--gold-shine);
-            color: var(--gold-shine);
-            font-weight: bold;
-            text-align: center;
-            border-radius: 4px;
-            padding: 4px;
-            font-size: 1em;
-            margin-left: 5px;
-            /* MOBILE FIX: Position above the draggable layer via Z-Index and visual positioning */
-            position: absolute;
-            right: 5px;
-            top: -10px; /* Visual "Above" */
-            z-index: 1000; /* High Z-Index to ensure tappable */
-            box-shadow: 0 2px 5px rgba(0,0,0,0.8);
-        }
-        .prediction-input:focus {
-            outline: none;
-            background: rgba(50, 50, 50, 1);
-            border-color: #fff;
-        }
-        /* Hide spin buttons */
-        .prediction-input::-webkit-outer-spin-button,
-        .prediction-input::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-
-        /* HIDE PREDICTION INPUTS WHEN BRACKET IS COMPLETE */
-        body.bracket-complete .prediction-input {
-            display: none !important;
-        }
-
         .winner { 
-            /* MODIFIED: Removed !important to allow JS to set specific team color */
             border-left: 4px solid var(--gold-shine); 
             background: linear-gradient(90deg, #252525, #2f2f20); 
             opacity: 1 !important;
@@ -294,10 +246,9 @@
             transform: scale(1.05);
         }
 
-        /* NEW: Save Bracket Button */
         .save-btn {
             position: fixed;
-            bottom: 90px; /* Above nav bar */
+            bottom: 90px;
             left: 50%;
             transform: translateX(-50%);
             background: var(--gold-shine);
@@ -310,7 +261,7 @@
             letter-spacing: 1px;
             box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
             z-index: 10001;
-            display: none; /* Hidden until complete */
+            display: none; 
             cursor: pointer;
             transition: all 0.2s;
             animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -318,7 +269,6 @@
         
         .save-btn:active { transform: translateX(-50%) scale(0.95); }
 
-        /* HIDE SAVE BUTTON ON DESKTOP */
         @media (min-width: 1025px) {
             .save-btn { display: none !important; }
         }
@@ -328,7 +278,6 @@
             to { bottom: 90px; opacity: 1; }
         }
         
-        /* Modal for saving image on mobile */
         #save-modal {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -362,15 +311,13 @@
             border-radius: 5px;
         }
 
-        /* Styles for screenshot mode */
         .taking-screenshot .mobile-nav, 
         .taking-screenshot .highlight-btn, 
         .taking-screenshot .save-btn,
-        .taking-screenshot .header-container { /* Hide original header */
+        .taking-screenshot .header-container {
             display: none !important; 
         }
 
-        /* TEMP CUSTOM HEADER FOR SCREENSHOT */
         #temp-custom-header {
             position: absolute;
             top: 0;
@@ -390,7 +337,6 @@
             font-family: 'Segoe UI', system-ui, sans-serif;
         }
 
-        /* NEW: Enhanced Mobile Navigation Controls */
         .mobile-nav {
             display: none;
             position: fixed;
@@ -413,7 +359,6 @@
             color: #ddd;
             border: 1px solid #555;
             border-radius: 25px;
-            /* BIGGER BUTTONS */
             padding: 10px 20px;
             font-size: 1.1em;
             font-weight: bold;
@@ -439,133 +384,28 @@
             box-shadow: 0 0 10px rgba(0,0,0,0.3);
         }
 
-        /* MOBILE SPECIFIC OPTIMIZATIONS */
         @media (max-width: 1024px) {
             .mobile-nav { display: flex; }
-            
-            /* COMPACT HEADER */
-            .header-container {
-                /* Safe Area padding + minimized spacing */
-                padding: max(2px, env(safe-area-inset-top)) 10px 0 10px;
-            }
-            h1 { 
-                font-size: 1.1em; /* Smaller title */
-                margin: 0; 
-                display: block; 
-                visibility: visible;
-                line-height: 1.1;
-            }
-            
-            /* SUBTITLE VISIBLE ON MOBILE AGAIN */
-            .subtitle { 
-                font-size: 0.7em; 
-                margin-bottom: 2px; 
-                display: block; 
-            } 
-            
-            .sb-details-bar { 
-                font-size: 0.6em; 
-                padding: 3px 0; 
-                margin: 2px 0 2px 0;
-                line-height: 1.2;
-                border-top: 1px solid rgba(255, 215, 0, 0.1);
-                border-bottom: 1px solid rgba(255, 215, 0, 0.1);
-            }
-            
+            .header-container { padding: max(2px, env(safe-area-inset-top)) 10px 0 10px; }
+            h1 { font-size: 1.1em; margin: 0; display: block; visibility: visible; line-height: 1.1; }
+            .subtitle { font-size: 0.7em; margin-bottom: 2px; display: block; } 
+            .sb-details-bar { font-size: 0.6em; padding: 3px 0; margin: 2px 0 2px 0; line-height: 1.2; }
             .mobile-break { display: block; }
             .desktop-sep { display: none; }
-
-            .bracket-wrapper {
-                align-items: stretch; 
-                padding: 0 5px; 
-                height: 100%;
-                gap: 5px; 
-                /* NO VERTICAL SCROLLING ON MOBILE */
-                overflow-y: hidden;
-            }
-            
-            .bracket-content-sizer {
-                height: 100%;
-                align-items: flex-start; /* Start from top */
-                min-width: auto; 
-                gap: 5px;
-                /* EXTRA SPACE ON RIGHT FOR SCROLLING ACCESS */
-                padding-right: 25px;
-            }
-            
-            /* COMPRESS LAYOUT TO FIT PHONE SCREENS WITHOUT SCROLLING */
-            /* UPDATED: Fit ~2 columns on screen */
-            .column {
-                gap: 8px; /* TIGHT GAP between games, no space-evenly spreading */
-                justify-content: flex-start; /* PACK TO TOP */
-                padding-top: 5px;
-                padding-bottom: 60px; /* Space for nav bar */
-                height: 100%;
-                min-width: 45vw; /* Show ~2 columns */
-                /* CENTER SNAP for SB alignment */
-                scroll-snap-align: center; 
-                /* RESET DESKTOP ALIGNMENT FIX */
-                position: static;
-            }
-            
-            /* RESET HEADER ALIGNMENT FOR MOBILE */
-            .column > .round-header:first-child {
-                position: static;
-                width: auto;
-                margin-top: 0;
-            }
-            
-            .col-divisional, .col-conference {
-                gap: 20px; /* Let space-evenly handle it */
-            }
-
-            .matchup {
-                padding: 4px; /* Very tight padding */
-                margin-bottom: 0;
-                border-radius: 6px;
-            }
-
-            .round-header {
-                margin-bottom: 3px;
-                font-size: 0.7em;
-                color: #666;
-            }
-            
-            /* Tighten Slots */
-            .team-slot {
-                padding: 2px 4px;
-                min-height: 28px;
-                margin: 2px 0;
-            }
-            
-            .logo-box {
-                width: 16px; height: 16px; font-size: 0.5em; margin-right: 4px; 
-            }
+            .bracket-wrapper { align-items: stretch; padding: 0 5px; height: 100%; gap: 5px; overflow-y: hidden; }
+            .bracket-content-sizer { height: 100%; align-items: flex-start; min-width: auto; gap: 5px; padding-right: 25px; }
+            .column { gap: 8px; justify-content: flex-start; padding-top: 5px; padding-bottom: 60px; height: 100%; min-width: 45vw; scroll-snap-align: center; position: static; }
+            .column > .round-header:first-child { position: static; width: auto; margin-top: 0; }
+            .col-divisional, .col-conference { gap: 20px; }
+            .matchup { padding: 4px; border-radius: 6px; }
+            .round-header { margin-bottom: 3px; font-size: 0.7em; color: #666; }
+            .team-slot { padding: 2px 4px; min-height: 28px; margin: 2px 0; }
+            .logo-box { width: 16px; height: 16px; font-size: 0.5em; margin-right: 4px; }
             .name { font-size: 0.75em; } 
             .seed { font-size: 0.65em; }
             .score { font-size: 0.8em; }
-            
-            /* Prediction input mobile sizing */
-            .prediction-input {
-                width: 30px;
-                height: 22px;
-                font-size: 0.8em;
-                margin-left: 2px;
-            }
-            
-            .game-meta { 
-                font-size: 0.6em; 
-                margin-bottom: 2px; 
-                padding-bottom: 2px;
-            }
-            
-            /* Make highlights button smaller */
-            .highlight-btn {
-                font-size: 0.65em;
-                padding: 2px 6px;
-                margin-top: 2px;
-            }
-            
+            .game-meta { font-size: 0.6em; margin-bottom: 2px; padding-bottom: 2px; }
+            .highlight-btn { font-size: 0.65em; padding: 2px 6px; margin-top: 2px; }
             .sb-img { height: 50px; }
             .ultimate-slot { height: 40px; }
         }
@@ -581,7 +421,6 @@
         </div>
     </div>
 
-    <!-- Mobile Navigation Bar -->
     <div class="mobile-nav">
         <button class="mobile-btn" onclick="scrollToId('afc-wc-col')">AFC</button>
         <button class="mobile-btn" onclick="scrollBracket(-1)">&lt;</button>
@@ -590,12 +429,10 @@
         <button class="mobile-btn" onclick="scrollToId('nfc-wc-col')">NFC</button>
     </div>
 
-    <!-- NEW: Save Bracket Button -->
     <button id="save-bracket-btn" class="save-btn" onclick="saveBracket()">
         Save Bracket
     </button>
     
-    <!-- Save Modal -->
     <div id="save-modal">
         <img id="save-modal-img" src="" alt="Bracket">
         <p>Long press the image to save it to your Photos.</p>
@@ -603,16 +440,12 @@
     </div>
 
     <div class="bracket-wrapper" id="bracket-container">
-        <!-- Wrapper Div to ensure width -->
         <div class="bracket-content-sizer">
             <!-- ================= AFC SIDE ================= -->
             <div class="column" id="afc-wc-col">
                 <div class="round-header">AFC Wild Card</div>
-                
-                <!-- Bills vs Jags (FINAL) -->
                 <div class="matchup" data-highlight-url="https://www.youtube.com/watch?v=OZrEboMLou4">
                     <div class="game-meta"><span>FINAL</span><span>CBS</span></div>
-                    <!-- ADDED manual-winner class -->
                     <div class="team-slot winner manual-winner" draggable="true" data-conf="AFC" data-team="Bills" data-seed="6" data-color="#00338D" data-score="27" id="afc-wc1-w">
                         <div class="logo-box" style="background:#00338D;">BUF</div>
                         <div class="team-info"><span class="name">Bills</span><span class="seed">#6</span></div>
@@ -623,12 +456,10 @@
                         <div class="team-info"><span class="name">Jaguars</span><span class="seed">#3</span></div>
                         <span class="score">24</span>
                     </div>
-                    <!-- Highlight Button Added Dynamically or Hardcoded -->
                     <a class="highlight-btn" href="https://www.youtube.com/watch?v=OZrEboMLou4" target="_blank">Watch Highlights</a>
                 </div>
 
-                <!-- Texans vs Steelers (Upcoming) -->
-                <div class="matchup" data-highlight-url="">
+                <div class="matchup">
                     <div class="game-meta"><span>MON 5:15 PM PT</span><span>ABC</span></div>
                     <div class="team-slot" draggable="true" data-conf="AFC" data-team="Texans" data-seed="5" data-color="#03202f" id="afc-wc2-a">
                         <div class="logo-box" style="background:#03202f;">HOU</div>
@@ -640,8 +471,7 @@
                     </div>
                 </div>
 
-                <!-- Chargers vs Pats (Upcoming) -->
-                <div class="matchup" data-highlight-url="">
+                <div class="matchup">
                     <div class="game-meta"><span>SUN 5:15 PM PT</span><span>NBC</span></div>
                     <div class="team-slot" draggable="true" data-conf="AFC" data-team="Chargers" data-seed="7" data-color="#0080C6" id="afc-wc3-a">
                         <div class="logo-box" style="background:#0080C6;">LAC</div>
@@ -656,7 +486,7 @@
 
             <div class="column col-divisional" id="afc-divisional-col">
                 <div class="round-header">AFC Divisional</div>
-                <div class="matchup" data-highlight-url="">
+                <div class="matchup">
                     <div class="game-meta"><span>Jan 17/18</span><span>CBS</span></div>
                     <div class="team-slot" draggable="true" data-conf="AFC" data-team="Broncos" data-seed="1" data-color="#FB4F14" id="afc-div1-home">
                         <div class="logo-box" style="background:#FB4F14;">DEN</div>
@@ -664,7 +494,7 @@
                     </div>
                     <div class="team-slot empty-slot" data-target-conf="AFC" data-role="seed1-opponent" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
                 </div>
-                <div class="matchup" data-highlight-url="">
+                <div class="matchup">
                     <div class="game-meta"><span>Jan 17/18</span><span>TBD</span></div>
                     <div class="team-slot empty-slot" data-target-conf="AFC" data-role="other-game" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
                     <div class="team-slot empty-slot" data-target-conf="AFC" data-role="other-game" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
@@ -673,7 +503,7 @@
 
             <div class="column col-conference" id="afc-conf-col">
                 <div class="round-header">AFC Championship</div>
-                <div class="matchup" data-highlight-url="">
+                <div class="matchup">
                     <div class="game-meta"><span>Jan 25 - 12:00 PM PT</span><span>CBS</span></div>
                     <div class="team-slot empty-slot" data-target-conf="AFC" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
                     <div class="team-slot empty-slot" data-target-conf="AFC" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
@@ -683,27 +513,24 @@
             <!-- ================= CENTER STAGE ================= -->
             <div class="column sb-column" id="sb-col">
                 <div class="round-header">Super Bowl LX</div>
-                
                 <div class="sb-logo-container">
                     <img src="https://upload.wikimedia.org/wikipedia/en/thumb/b/b0/Super_Bowl_LX_Logo.svg/330px-Super_Bowl_LX_Logo.svg.png" alt="SB LX" class="sb-img">
                 </div>
-                
-                <div class="matchup" style="width: 280px; text-align: center;" data-highlight-url="">
+                <div class="matchup" style="width: 280px; text-align: center;">
                     <div class="game-meta" style="justify-content: center;"><span>FEB 8 - 3:30 PM PT</span></div>
-                    <div class="team-slot empty-slot" data-target-conf="any" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                    <!-- Updated: Left is AFC, Right is NFC -->
+                    <div class="team-slot empty-slot" data-target-conf="AFC" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
                     <div style="font-size:0.8em; color:#666; margin: 5px;">VS</div>
-                    <div class="team-slot empty-slot" data-target-conf="any" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                    <div class="team-slot empty-slot" data-target-conf="NFC" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
                 </div>
-
                 <div class="round-header" style="margin-top: 40px; color: var(--gold-shine);">Super Bowl Champion</div>
                 <div id="sb-champion-slot" class="team-slot empty-slot ultimate-slot" data-target-conf="any" ondrop="drop(event)" ondragover="allowDrop(event)" style="width: 280px;"></div>
             </div>
 
             <!-- ================= NFC SIDE ================= -->
-
             <div class="column col-conference" id="nfc-conf-col">
                 <div class="round-header">NFC Championship</div>
-                <div class="matchup" data-highlight-url="">
+                <div class="matchup">
                     <div class="game-meta"><span>Jan 25 - 3:30 PM PT</span><span>FOX</span></div>
                     <div class="team-slot empty-slot" data-target-conf="NFC" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
                     <div class="team-slot empty-slot" data-target-conf="NFC" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
@@ -712,7 +539,7 @@
 
             <div class="column col-divisional" id="nfc-divisional-col">
                 <div class="round-header">NFC Divisional</div>
-                <div class="matchup" data-highlight-url="">
+                <div class="matchup">
                     <div class="game-meta"><span>Jan 17/18</span><span>FOX</span></div>
                     <div class="team-slot" draggable="true" data-conf="NFC" data-team="Seahawks" data-seed="1" data-color="#002244" id="nfc-div1-home">
                         <div class="logo-box" style="background:#002244;">SEA</div>
@@ -723,7 +550,7 @@
                         <div class="team-info"><span class="name">49ers</span><span class="seed">#6</span></div>
                     </div>
                 </div>
-                <div class="matchup" data-highlight-url="">
+                <div class="matchup">
                     <div class="game-meta"><span>Jan 17/18</span><span>TBD</span></div>
                     <div class="team-slot" draggable="true" data-conf="NFC" data-team="Bears" data-seed="2" data-color="#C83803" id="nfc-div2-home">
                         <div class="logo-box" style="background:#C83803;">CHI</div>
@@ -740,7 +567,6 @@
                 <div class="round-header">NFC Wild Card</div>
                 <div class="matchup" data-highlight-url="https://www.youtube.com/watch?v=YPS3tHwvwR8">
                     <div class="game-meta"><span>FINAL</span><span>FOX</span></div>
-                    <!-- ADDED manual-winner class -->
                     <div class="team-slot winner manual-winner" draggable="true" data-conf="NFC" data-team="49ers" data-seed="6" data-color="#AA0000" id="nfc-wc1-a" data-score="24">
                         <div class="logo-box" style="background:#AA0000;">SF</div>
                         <div class="team-info"><span class="name">49ers</span><span class="seed">#6</span></div>
@@ -754,10 +580,8 @@
                     <a class="highlight-btn disabled" href="#" target="_blank">Awaiting Highlights</a>
                 </div>
                 
-                <!-- Rams vs Panthers (FINAL) -->
                 <div class="matchup" data-highlight-url="https://www.youtube.com/watch?v=Rh9xD2eoJcY">
                     <div class="game-meta"><span>FINAL</span></div>
-                    <!-- ADDED manual-winner class -->
                     <div class="team-slot winner manual-winner" draggable="true" data-conf="NFC" data-team="Rams" data-seed="5" data-color="#003594" data-score="34" id="nfc-wc2-w">
                         <div class="logo-box" style="background:#003594;">LAR</div>
                         <div class="team-info"><span class="name">Rams</span><span class="seed">#5</span></div>
@@ -771,7 +595,6 @@
                     <a class="highlight-btn" href="https://www.youtube.com/watch?v=Rh9xD2eoJcY" target="_blank">Watch Highlights</a>
                 </div>
                 
-                <!-- Bears vs Packers (FINAL) -->
                 <div class="matchup" data-highlight-url="https://www.youtube.com/watch?v=tnX85oZOV40">
                     <div class="game-meta"><span>FINAL</span></div>
                     <div class="team-slot eliminated real-loser" id="nfc-wc3-l">
@@ -779,7 +602,6 @@
                         <div class="team-info"><span class="name">Packers</span><span class="seed">#7</span></div>
                         <span class="score">27</span>
                     </div>
-                    <!-- ADDED manual-winner class -->
                     <div class="team-slot winner manual-winner" draggable="true" data-conf="NFC" data-team="Bears" data-seed="2" data-color="#C83803" data-score="31" id="nfc-wc3-w">
                         <div class="logo-box" style="background:#C83803;">CHI</div>
                         <div class="team-info"><span class="name">Bears</span><span class="seed">#2</span></div>
@@ -796,7 +618,6 @@
     <script>
         let draggedItem = null;
         let wasDropped = false; 
-        
         let dragClone = null;
         let touchOffsetX = 0;
         let touchOffsetY = 0;
@@ -804,117 +625,55 @@
         function scrollToId(id) {
             const container = document.getElementById('bracket-container');
             const el = document.getElementById(id);
-            
             if (container && el) {
-                // Determine the scroll position to center the element
                 const containerRect = container.getBoundingClientRect();
                 const elRect = el.getBoundingClientRect();
-                
-                // Current scroll + distance from left edge - center offset
                 const scrollLeft = container.scrollLeft + (elRect.left - containerRect.left) - (container.clientWidth / 2) + (el.offsetWidth / 2);
-                
-                container.scrollTo({
-                    left: scrollLeft,
-                    behavior: 'smooth'
-                });
+                container.scrollTo({ left: scrollLeft, behavior: 'smooth' });
             }
         }
 
         function scrollBracket(direction) {
             const container = document.getElementById('bracket-container');
-            const amount = 300; 
-            container.scrollBy({ left: amount * direction, behavior: 'smooth' });
+            container.scrollBy({ left: 300 * direction, behavior: 'smooth' });
         }
 
-        /* NEW: Save Bracket Function */
         function saveBracket() {
             const name = prompt("Enter your name");
-            if (!name) return; // Exit if cancelled or empty
-
+            if (!name) return;
             const btn = document.getElementById('save-bracket-btn');
             const originalText = btn.innerText;
             btn.innerText = 'Generating...';
-            
-            // Add class to body to hide unwanted elements during screenshot
             document.body.classList.add('taking-screenshot');
-            
-            // Create temporary custom header
             const customHeader = document.createElement('div');
             customHeader.id = 'temp-custom-header';
             customHeader.innerHTML = `<h1>${name}'s NFL Bracket</h1>`;
             document.body.prepend(customHeader);
             
-            // Small timeout to allow DOM to update before capture
             setTimeout(() => {
-                // Capture the entire body to ensure we get the Title/Header + Bracket
-                // We set windowWidth to 1600 to force a "desktop-like" wide render
-                // which looks better for a bracket image than a long skinny mobile one.
-                html2canvas(document.body, {
-                    backgroundColor: '#111', 
-                    scale: 2, 
-                    useCORS: true,
-                    windowWidth: 1600,
-                    ignoreElements: (element) => {
-                        // Double safeguard to ignore buttons
-                        return element.classList.contains('highlight-btn') || 
-                               element.classList.contains('mobile-nav') ||
-                               element.id === 'save-bracket-btn';
-                    }
+                html2canvas(document.body, { backgroundColor: '#111', scale: 2, useCORS: true, windowWidth: 1600,
+                    ignoreElements: (element) => element.classList.contains('highlight-btn') || element.classList.contains('mobile-nav') || element.id === 'save-bracket-btn'
                 }).then(canvas => {
-                    // Mobile Share API Support
                     canvas.toBlob(blob => {
                         if (navigator.canShare && navigator.canShare({ files: [new File([blob], "bracket.png", {type: "image/png"})] })) {
                             const file = new File([blob], `${name.replace(/\s+/g, '_')}_nfl_bracket.png`, {type: "image/png"});
-                            navigator.share({
-                                files: [file],
-                                title: 'My NFL Bracket',
-                                text: 'Check out my NFL Playoff Bracket!'
-                            }).catch((err) => console.log('Sharing failed', err));
+                            navigator.share({ files: [file], title: 'My NFL Bracket', text: 'Check out my NFL Playoff Bracket!' });
+                        } else if (/Android|iPhone|iPad/i.test(navigator.userAgent)) {
+                            const modal = document.getElementById('save-modal');
+                            document.getElementById('save-modal-img').src = canvas.toDataURL();
+                            modal.style.display = 'flex';
                         } else {
-                            // FALLBACK 1: Show Modal on Mobile
-                            if (/Android|iPhone|iPad/i.test(navigator.userAgent)) {
-                                const modal = document.getElementById('save-modal');
-                                const modalImg = document.getElementById('save-modal-img');
-                                modalImg.src = canvas.toDataURL();
-                                modal.style.display = 'flex';
-                            } else {
-                                // FALLBACK 2: Desktop Download
-                                const link = document.createElement('a');
-                                link.download = `${name.replace(/\s+/g, '_')}_nfl_bracket.png`;
-                                link.href = canvas.toDataURL();
-                                link.click();
-                            }
+                            const link = document.createElement('a');
+                            link.download = `${name.replace(/\s+/g, '_')}_nfl_bracket.png`;
+                            link.href = canvas.toDataURL();
+                            link.click();
                         }
                     });
-                    
-                    // Cleanup
-                    document.body.classList.remove('taking-screenshot');
-                    customHeader.remove();
-                    btn.innerText = originalText;
-                }).catch(err => {
-                    console.error("Screenshot failed:", err);
-                    alert("Could not save bracket image.");
                     document.body.classList.remove('taking-screenshot');
                     customHeader.remove();
                     btn.innerText = originalText;
                 });
             }, 100);
-        }
-
-        function setupDraggableItems() {
-            document.querySelectorAll('[draggable="true"]').forEach(item => {
-                item.removeEventListener('dragstart', handleDragStart);
-                item.removeEventListener('dragend', handleDragEnd);
-                item.addEventListener('dragstart', handleDragStart);
-                item.addEventListener('dragend', handleDragEnd);
-                
-                item.removeEventListener('touchstart', handleTouchStart);
-                item.removeEventListener('touchmove', handleTouchMove);
-                item.removeEventListener('touchend', handleTouchEnd);
-                item.addEventListener('touchstart', handleTouchStart, { passive: false });
-                item.addEventListener('touchmove', handleTouchMove, { passive: false });
-                item.addEventListener('touchend', handleTouchEnd);
-            });
         }
 
         function handleDragStart(e) {
@@ -927,105 +686,61 @@
         function handleDragEnd(e) {
             this.style.opacity = '1';
             document.querySelectorAll('.drop-target-active').forEach(el => el.classList.remove('drop-target-active'));
-
-            if (!wasDropped && draggedItem) {
-                if (draggedItem.hasAttribute('ondrop') && !draggedItem.classList.contains('empty-slot')) {
-                    clearSlot(draggedItem);
-                    updateBracketVisuals();
-                }
+            if (!wasDropped && draggedItem && draggedItem.hasAttribute('ondrop') && !draggedItem.classList.contains('empty-slot')) {
+                clearSlot(draggedItem);
+                updateBracketVisuals();
             }
             draggedItem = null;
         }
 
         function handleTouchStart(e) {
-            // FIX for mobile input: If touching the input, let the browser handle focus/input
-            // STOP propagation so we don't start dragging
-            if (e.target.tagName === 'INPUT' || e.target.classList.contains('prediction-input')) {
-                e.stopPropagation();
-                return;
-            }
-
             const slot = e.target.closest('.team-slot');
             if (!slot || slot.getAttribute('draggable') !== 'true') return;
-
-            // Only prevent default if we are legitimately starting a drag
-            // e.preventDefault(); // Removed global preventDefault to be safer, added passive: false below
-            
             draggedItem = slot;
-
             const rect = slot.getBoundingClientRect();
             const touch = e.touches[0];
-            
             touchOffsetX = touch.clientX - rect.left;
             touchOffsetY = touch.clientY - rect.top;
-
             dragClone = slot.cloneNode(true);
             dragClone.classList.add('drag-clone');
             dragClone.style.width = rect.width + 'px';
-            
             updateClonePosition(touch.clientX, touch.clientY);
-            
             document.body.appendChild(dragClone);
             slot.style.opacity = '0.5';
-            
-            // Prevent scrolling while dragging
             e.preventDefault();
         }
 
         function handleTouchMove(e) {
             if (!draggedItem || !dragClone) return;
             e.preventDefault();
-            
             const touch = e.touches[0];
             updateClonePosition(touch.clientX, touch.clientY);
-
             dragClone.style.display = 'none';
             const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
             dragClone.style.display = 'block';
-
             if (!elementBelow) return;
-
             const targetSlot = elementBelow.closest('.team-slot');
-            
             document.querySelectorAll('.drop-target-active').forEach(el => el.classList.remove('drop-target-active'));
-
             if (targetSlot && targetSlot !== draggedItem) {
                 let targetConf = targetSlot.getAttribute('data-target-conf');
                 let itemConf = draggedItem.getAttribute('data-conf');
-
-                if (targetConf === itemConf || targetConf === 'any') {
-                    targetSlot.classList.add('drop-target-active');
-                }
+                if (targetConf === itemConf || targetConf === 'any') targetSlot.classList.add('drop-target-active');
             }
         }
 
         function handleTouchEnd(e) {
             if (!draggedItem) return;
-
             const touch = e.changedTouches[0];
-            
-            if (dragClone) dragClone.style.display = 'none';
-            const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
-            
             if (dragClone) dragClone.remove();
             dragClone = null;
             draggedItem.style.opacity = '1';
-            document.querySelectorAll('.drop-target-active').forEach(el => el.classList.remove('drop-target-active'));
-
-            let targetSlot = null;
-            if (elementBelow) {
-                targetSlot = elementBelow.closest('.team-slot');
+            const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
+            const targetSlot = elementBelow ? elementBelow.closest('.team-slot') : null;
+            if (targetSlot) processDrop(targetSlot);
+            else if (draggedItem.hasAttribute('ondrop') && !draggedItem.classList.contains('empty-slot')) {
+                clearSlot(draggedItem);
+                updateBracketVisuals();
             }
-
-            if (targetSlot) {
-                processDrop(targetSlot);
-            } else {
-                if (draggedItem.hasAttribute('ondrop') && !draggedItem.classList.contains('empty-slot')) {
-                    clearSlot(draggedItem);
-                    updateBracketVisuals();
-                }
-            }
-            
             draggedItem = null;
         }
 
@@ -1036,129 +751,72 @@
             }
         }
 
-        setupDraggableItems();
-
-        document.addEventListener('dblclick', function(e) {
-            const slot = e.target.closest('.team-slot');
-            if (slot && slot.hasAttribute('ondrop') && !slot.classList.contains('empty-slot')) {
-                clearSlot(slot);
-                updateBracketVisuals();
-            }
-        });
+        function setupDraggableItems() {
+            document.querySelectorAll('[draggable="true"]').forEach(item => {
+                item.addEventListener('dragstart', handleDragStart);
+                item.addEventListener('dragend', handleDragEnd);
+                item.addEventListener('touchstart', handleTouchStart, { passive: false });
+                item.addEventListener('touchmove', handleTouchMove, { passive: false });
+                item.addEventListener('touchend', handleTouchEnd);
+            });
+        }
 
         function allowDrop(e) {
             e.preventDefault();
-            if (!draggedItem) return;
-            
-            let targetSlot = e.target.closest('.team-slot');
-            if (!targetSlot) return;
-
-            let targetConf = targetSlot.getAttribute('data-target-conf');
-            let itemConf = draggedItem.getAttribute('data-conf');
-
-            if (targetConf === itemConf || targetConf === 'any') {
-                targetSlot.classList.add('drop-target-active');
+            const targetSlot = e.target.closest('.team-slot');
+            if (targetSlot && draggedItem) {
+                const targetConf = targetSlot.getAttribute('data-target-conf');
+                const itemConf = draggedItem.getAttribute('data-conf');
+                if (targetConf === itemConf || targetConf === 'any') targetSlot.classList.add('drop-target-active');
             }
         }
 
         function drop(e) {
             e.preventDefault();
             wasDropped = true; 
-            const targetSlot = e.target.closest('.team-slot');
-            processDrop(targetSlot);
+            processDrop(e.target.closest('.team-slot'));
         }
 
         function processDrop(targetSlot) {
             if (!targetSlot || !draggedItem) return;
-            
             targetSlot.classList.remove('drop-target-active');
-
             const itemConf = draggedItem.getAttribute('data-conf');
             const targetConf = targetSlot.getAttribute('data-target-conf');
+            if (targetConf !== itemConf && targetConf !== 'any') return;
 
-            // 1. Basic Conference Check (Updated: No Alert)
-            if (targetConf !== itemConf && targetConf !== 'any') {
-                 if (targetSlot.id !== 'sb-champion-slot') {
-                    // Silently fail
-                    return;
-                 }
-            }
-
-            const draggedColumn = draggedItem.closest('.column');
             const targetColumn = targetSlot.closest('.column');
-
-            // NEW: SUPER BOWL PREREQUISITE CHECK
+            
+            // SUPER BOWL CHAMPION LOCK
             if (targetSlot.id === 'sb-champion-slot') {
-                const sbMatchup = targetColumn.querySelector('.matchup');
-                const slots = sbMatchup.querySelectorAll('.team-slot');
-                const filled = Array.from(slots).filter(s => !s.classList.contains('empty-slot'));
-                
-                if (filled.length < 2) {
+                const slots = targetColumn.querySelectorAll('.matchup .team-slot');
+                if (Array.from(slots).filter(s => !s.classList.contains('empty-slot')).length < 2) {
                     alert("Pick both Super Bowl teams first!");
                     return;
                 }
             }
 
-            // NEW: PREVENT LOSER PROGRESSION
-            // Only check if moving to a new column (advancing rounds)
-            if (targetSlot.id !== 'sb-champion-slot' && draggedColumn !== targetColumn) {
-                const sourceMatchup = draggedItem.closest('.matchup');
-                if (sourceMatchup) {
-                    const slots = Array.from(sourceMatchup.querySelectorAll('.team-slot'));
-                    const opponentSlot = slots.find(s => s !== draggedItem);
-                    
-                    if (opponentSlot && !opponentSlot.classList.contains('empty-slot')) {
-                        const opponentName = opponentSlot.getAttribute('data-team');
-                        
-                        if (opponentName) {
-                            const opponentInNextRound = Array.from(targetColumn.querySelectorAll('.team-slot')).find(
-                                s => s.getAttribute('data-team') === opponentName
-                            );
-                            
-                            // MODIFIED CHECK: Allow replacement if dropping directly onto the opponent
-                            if (opponentInNextRound && opponentInNextRound !== targetSlot) {
-                                 alert("That doesn't work! These teams played each other.");
-                                 return;
-                            }
-                        }
-                    }
-                }
-            }
-
-            // NEW: STRICT PREVIOUS ROUND CHECK
+            // CONFERENCE DECOUPLED PREVIOUS ROUND CHECK
             const targetColId = targetColumn.id;
             let prevRoundCols = [];
-
             if (targetColId === 'afc-conf-col') prevRoundCols = ['afc-divisional-col'];
             else if (targetColId === 'nfc-conf-col') prevRoundCols = ['nfc-divisional-col'];
-            else if (targetColId === 'sb-col') prevRoundCols = ['afc-conf-col', 'nfc-conf-col'];
+            else if (targetColId === 'sb-col' && targetSlot.id !== 'sb-champion-slot') {
+                // If dropping into the SB matchup, only check the relevant conference
+                prevRoundCols = (targetConf === 'AFC' || itemConf === 'AFC') ? ['afc-conf-col'] : ['nfc-conf-col'];
+            }
 
             for (let id of prevRoundCols) {
-                const col = document.getElementById(id);
-                if (col && col.querySelectorAll('.empty-slot').length > 0) {
-                    alert("Fill out the previous round first!");
+                if (document.getElementById(id).querySelectorAll('.empty-slot').length > 0) {
+                    alert("Fill out the previous round for this conference first!");
                     return; 
                 }
             }
 
-            // 2. #1 Seed Lock Check
-            if (draggedColumn === targetColumn && draggedColumn.className.includes('col-divisional')) {
-                const seed = draggedItem.getAttribute('data-seed');
-                if (seed === '1') {
-                     return; 
-                }
-            }
-
-            // 3. SMART RESEEDING CHECK
+            // RESEEDING & DUPLICATE CHECKS
+            if (targetColumn.className.includes('col-divisional') && draggedItem.getAttribute('data-seed') === '1') return;
             const role = targetSlot.getAttribute('data-role');
-            if (role === 'seed1-opponent' || role === 'other-game') {
-                if (validateDivisionalDrop(targetSlot, draggedItem, targetColumn) === false) {
-                    return; 
-                }
-            }
-            
-            // --- DATA EXTRACTION (Fixes disappearing bug) ---
-            // Extract data BEFORE clearing anything
+            if ((role === 'seed1-opponent' || role === 'other-game') && !validateDivisionalDrop(targetSlot, draggedItem, targetColumn)) return;
+
             const teamData = {
                 name: draggedItem.querySelector('.name').innerText,
                 seed: draggedItem.querySelector('.seed').innerText,
@@ -1169,262 +827,77 @@
                 seedNum: draggedItem.getAttribute('data-seed')
             };
 
-            // 4. DUPLICATE CHECK
-            const existingInstance = Array.from(targetColumn.querySelectorAll('.team-slot')).find(
-                slot => slot.getAttribute('data-team') === teamData.dataName
-            );
-            
-            let shouldClear = true;
-            if (targetSlot.id === 'sb-champion-slot') {
-                shouldClear = false; 
-            }
-            
-            // 5. EXECUTE MOVE (Order matters: Fill New -> Clear Old)
-            
-            // A. Fill the new slot with extracted data
+            const existing = Array.from(targetColumn.querySelectorAll('.team-slot')).find(s => s.getAttribute('data-team') === teamData.dataName);
             fillSlot(targetSlot, teamData);
-
-            // B. Clear the old instance (if it exists and isn't the target slot)
-            // Note: In a reorder within same column, existingInstance IS draggedItem.
-            // Since we already filled targetSlot, we safely clear existingInstance now.
-            if (shouldClear && existingInstance && existingInstance !== targetSlot) {
-                clearSlot(existingInstance);
-            }
-
-            // 6. UPDATE HIGHLIGHTS
+            if (targetSlot.id !== 'sb-champion-slot' && existing && existing !== targetSlot) clearSlot(existing);
             updateBracketVisuals();
         }
 
         function validateDivisionalDrop(targetSlot, item, column) {
             const role = targetSlot.getAttribute('data-role');
             const newSeed = parseInt(item.getAttribute('data-seed'));
-            const newTeamName = item.querySelector('.name').innerText;
-
-            const placedTeams = [];
-            column.querySelectorAll('.team-slot').forEach(slot => {
-                const sTeam = slot.getAttribute('data-team');
-                // Ensure we don't count the item we are currently moving if it's already there
-                if (sTeam && sTeam !== 'Broncos' && sTeam !== 'Seahawks' && sTeam !== item.getAttribute('data-team')) {
-                    placedTeams.push({
-                        name: slot.querySelector('.name').innerText,
-                        seed: parseInt(slot.getAttribute('data-seed')),
-                        role: slot.getAttribute('data-role')
-                    });
-                }
-            });
+            const placed = Array.from(column.querySelectorAll('.team-slot')).filter(s => {
+                const t = s.getAttribute('data-team');
+                return t && t !== 'Broncos' && t !== 'Seahawks' && t !== item.getAttribute('data-team');
+            }).map(s => ({ seed: parseInt(s.getAttribute('data-seed')), role: s.getAttribute('data-role'), name: s.querySelector('.name').innerText }));
 
             if (role === 'other-game') {
-                const opponent1 = placedTeams.find(t => t.role === 'seed1-opponent');
-                if (opponent1) {
-                    if (newSeed > opponent1.seed) {
-                        alert(`RESEEDING MISTAKE!\n\nThe ${newTeamName} (#${newSeed}) are a lower seed than the ${opponent1.name} (#${opponent1.seed}).\n\nThe lowest seed must play the #1 Seed.`);
-                        return false;
-                    }
-                }
-            }
-
-            if (role === 'seed1-opponent') {
-                const otherTeam = placedTeams.find(t => t.role === 'other-game');
-                if (otherTeam) {
-                    if (newSeed < otherTeam.seed) {
-                        alert(`RESEEDING MISTAKE!\n\nThe ${otherTeam.name} (#${otherTeam.seed}) are a lower seed than the ${newTeamName} (#${newSeed}).\n\nThe lowest seed must play the #1 Seed.`);
-                        return false;
-                    }
-                }
+                const op = placed.find(t => t.role === 'seed1-opponent');
+                if (op && newSeed > op.seed) { alert(`RESEEDING MISTAKE!\n\nThe lowest seed must play the #1 Seed.`); return false; }
+            } else if (role === 'seed1-opponent') {
+                const ot = placed.find(t => t.role === 'other-game');
+                if (ot && newSeed < ot.seed) { alert(`RESEEDING MISTAKE!\n\nThe lowest seed must play the #1 Seed.`); return false; }
             }
             return true;
         }
-        
-        // UPDATED: fillSlot now takes a data object, not a DOM element
+
         function fillSlot(slot, data) {
-            slot.innerHTML = `
-                <div class="logo-box" style="background:${data.color};">${data.logo}</div>
-                <div class="team-info"><span class="name">${data.name}</span><span class="seed">${data.seed}</span></div>
-            `;
-            
-            slot.classList.remove('empty-slot');
+            slot.innerHTML = `<div class="logo-box" style="background:${data.color};">${data.logo}</div><div class="team-info"><span class="name">${data.name}</span><span class="seed">${data.seed}</span></div>`;
+            slot.className = 'team-slot';
             slot.setAttribute('draggable', 'true');
             slot.setAttribute('data-conf', data.conf);
             slot.setAttribute('data-color', data.color);
             slot.setAttribute('data-team', data.dataName);
             slot.setAttribute('data-seed', data.seedNum);
             
-            // NEW LOGIC: Update Header for Prediction
-            const matchup = slot.closest('.matchup');
-            if (matchup) {
-                const metaHeader = matchup.querySelector('.game-meta span:first-child');
-                if (metaHeader) {
-                    const currentText = metaHeader.textContent;
-                    // Don't overwrite if it's Live or Final
-                    if (!currentText.includes('FINAL') && !currentText.includes('Live') && !currentText.includes('Prediction')) {
-                        metaHeader.textContent = 'Prediction: ' + currentText;
-                        metaHeader.style.color = '#FFD700'; // Gold color for predictions
-                    }
-                }
-                // Check if we should add prediction inputs
-                managePredictionInputs(matchup);
-            }
-
             if (slot.id === 'sb-champion-slot') {
                 slot.classList.add('ultimate-champion');
                 throwConfetti();
-                // Show Save Button
                 document.getElementById('save-bracket-btn').style.display = 'flex';
-                // Hide Inputs
-                document.body.classList.add('bracket-complete');
-            } else {
-                setupDraggableItems();
-            }
+            } else setupDraggableItems();
         }
 
         function clearSlot(slot) {
-            // Hide Save Button if champion is removed
-            if (slot.id === 'sb-champion-slot') {
-                document.getElementById('save-bracket-btn').style.display = 'none';
-                // Show Inputs
-                document.body.classList.remove('bracket-complete');
-            }
-
-            // CLEANUP PREDICTION TITLE if matchup is emptied
-            const matchup = slot.closest('.matchup');
-            
+            if (slot.id === 'sb-champion-slot') document.getElementById('save-bracket-btn').style.display = 'none';
             slot.innerHTML = '';
             slot.className = 'team-slot empty-slot';
             slot.removeAttribute('draggable');
             slot.removeAttribute('data-team');
             slot.removeAttribute('data-seed');
             slot.removeAttribute('data-color');
-
-            if (matchup) {
-                // Check if other slot is empty before resetting
-                const otherSlot = Array.from(matchup.querySelectorAll('.team-slot')).find(s => s !== slot);
-                if (otherSlot && otherSlot.classList.contains('empty-slot')) {
-                    const metaHeader = matchup.querySelector('.game-meta span:first-child');
-                    if (metaHeader && metaHeader.textContent.includes('Prediction:')) {
-                        metaHeader.textContent = metaHeader.textContent.replace('Prediction: ', '');
-                        metaHeader.style.color = ''; // Reset color
-                    }
-                }
-                // Check if we should remove prediction inputs
-                managePredictionInputs(matchup);
-            }
-        }
-
-        function managePredictionInputs(matchup) {
-            if (!matchup) return;
-            
-            // check if game is official (Live or Final)
-            const metaHeader = matchup.querySelector('.game-meta span:first-child');
-            if (metaHeader && (metaHeader.textContent.includes('FINAL') || metaHeader.classList.contains('live-text'))) {
-                return; // Don't add inputs to finished/live games
-            }
-
-            const slots = matchup.querySelectorAll('.team-slot');
-            const filledSlots = Array.from(slots).filter(s => !s.classList.contains('empty-slot'));
-            const isSuperBowl = matchup.closest('.sb-column') !== null;
-
-            // CONDITION: Show inputs if...
-            // 1. It is the Super Bowl AND both teams are present (so you can predict before champion pick)
-            // 2. OR, standard round: Both teams present AND a winner has been picked (via updateBracketVisuals/classes)
-            
-            // Let's check for winner. 
-            // Note: managePredictionInputs is called during fillSlot and updateBracketVisuals
-            let hasWinner = false;
-            filledSlots.forEach(s => {
-                if (s.classList.contains('winner')) hasWinner = true;
-            });
-
-            // LOGIC:
-            let showInputs = false;
-            if (filledSlots.length === 2) {
-                if (isSuperBowl) {
-                    showInputs = true;
-                } else if (hasWinner) {
-                    showInputs = true;
-                }
-            }
-
-            if (showInputs) {
-                // Add inputs if they don't exist
-                filledSlots.forEach(slot => {
-                    if (!slot.querySelector('.prediction-input') && !slot.querySelector('.score')) {
-                        const input = document.createElement('input');
-                        input.type = 'tel'; // triggers number pad on mobile
-                        input.className = 'prediction-input';
-                        input.placeholder = '-';
-                        
-                        // Prevent drag start on desktop/mobile when clicking input
-                        input.setAttribute('draggable', 'false'); 
-                        // These events are crucial for allowing interaction without dragging
-                        input.addEventListener('click', (e) => e.stopPropagation()); 
-                        input.addEventListener('mousedown', (e) => e.stopPropagation());
-                        input.addEventListener('touchstart', (e) => e.stopPropagation());
-                        
-                        slot.appendChild(input);
-                    }
-                });
-            } else {
-                // Remove inputs if they exist (revert to just team info)
-                slots.forEach(slot => {
-                    const input = slot.querySelector('.prediction-input');
-                    if (input) input.remove();
-                });
-            }
         }
 
         function updateBracketVisuals() {
-            const allSlots = document.querySelectorAll('.team-slot[data-team]');
-            
-            allSlots.forEach(slot => {
-                const id = slot.id || '';
-                // MODIFIED: Ignore locked winners when resetting classes
-                if (!slot.classList.contains('real-loser') && !slot.classList.contains('manual-winner')) {
-                     slot.classList.remove('winner', 'eliminated');
-                     // NEW: Reset dynamic colors when clearing status
-                     slot.style.borderLeftColor = '';
-                     slot.style.background = '';
-                }
-            });
-
-            allSlots.forEach(slot => {
+            const all = document.querySelectorAll('.team-slot[data-team]');
+            all.forEach(s => { if (!s.classList.contains('real-loser') && !s.classList.contains('manual-winner')) { s.classList.remove('winner', 'eliminated'); s.style.borderLeftColor = ''; s.style.background = ''; }});
+            all.forEach(slot => {
                 const team = slot.getAttribute('data-team');
                 const col = slot.closest('.column');
-                if(!team || !col) return;
+                let next = '';
+                if(col.className === 'column') next = 'col-divisional';
+                else if(col.className.includes('col-divisional')) next = 'col-conference';
+                else if(col.className.includes('col-conference')) next = 'sb-column';
                 
-                let nextRoundClass = '';
-                if(col.className === 'column') nextRoundClass = 'col-divisional';
-                else if(col.className.includes('col-divisional')) nextRoundClass = 'col-conference';
-                else if(col.className.includes('col-conference')) nextRoundClass = 'sb-column';
-                
-                let isNextRound = false;
-                if (nextRoundClass) {
-                    const nextSlots = document.querySelectorAll('.' + nextRoundClass + ' .team-slot[data-team="' + team + '"]');
-                    if (nextSlots.length > 0) isNextRound = true;
+                let isWin = next ? document.querySelectorAll('.' + next + ' .team-slot[data-team="' + team + '"]').length > 0 : false;
+                if (col.classList.contains('sb-column') && slot.id !== 'sb-champion-slot') {
+                    if (document.getElementById('sb-champion-slot').getAttribute('data-team') === team) isWin = true;
                 }
 
-                // MODIFIED: Apply winner styles if explicitly locked as manual winner OR found in next round
-                if (isNextRound || slot.classList.contains('manual-winner')) {
+                if (isWin || slot.classList.contains('manual-winner')) {
                     slot.classList.add('winner');
-                    
-                    // NEW: Apply Team Color Highlight
-                    const teamColor = slot.getAttribute('data-color');
-                    if (teamColor) {
-                        slot.style.borderLeftColor = teamColor;
-                        // Add a subtle gradient of the team color
-                        slot.style.background = `linear-gradient(90deg, #252525, ${teamColor}33)`;
-                    }
-
-                    const matchup = slot.closest('.matchup');
-                    if (matchup) {
-                        // Mark opponent as eliminated
-                        matchup.querySelectorAll('.team-slot').forEach(opp => {
-                            if (opp !== slot) opp.classList.add('eliminated');
-                        });
-                        
-                        // NEW: Since we found a winner, update inputs for this matchup
-                        // (Wait for DOM update)
-                        setTimeout(() => managePredictionInputs(matchup), 0);
-                    }
+                    const color = slot.getAttribute('data-color');
+                    if (color) { slot.style.borderLeftColor = color; slot.style.background = `linear-gradient(90deg, #252525, ${color}33)`; }
+                    slot.closest('.matchup').querySelectorAll('.team-slot').forEach(opp => { if (opp !== slot) opp.classList.add('eliminated'); });
                 }
             });
         }
@@ -1432,162 +905,56 @@
         function throwConfetti() {
             const box = document.getElementById('confetti-box');
             const colors = ['#FFD700', '#ff0000', '#0000ff', '#ffffff'];
-            for (let i = 0; i < 150; i++) {
-                const confetti = document.createElement('div');
-                confetti.classList.add('confetti-piece');
-                confetti.style.left = Math.random() * 100 + 'vw';
-                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
-                const duration = Math.random() * 3 + 2 + 's';
-                const delay = Math.random() * 2 + 's';
-                confetti.style.animation = `fall ${duration} linear ${delay} forwards`;
-                box.appendChild(confetti);
+            for (let i = 0; i < 100; i++) {
+                const c = document.createElement('div');
+                c.className = 'confetti-piece';
+                c.style.left = Math.random() * 100 + 'vw';
+                c.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                c.style.animation = `fall ${Math.random() * 3 + 2}s linear ${Math.random() * 2}s forwards`;
+                box.appendChild(c);
             }
         }
 
-        /* -----------------------------------------------------------
-           NEW: LIVE SCORING INTEGRATION (ESPN API)
-           ----------------------------------------------------------- */
         async function initLiveScoring() {
-            // Using HTTPS to avoid mixed content warnings
-            const API_URL = 'https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard';
-            
+            const API = 'https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard';
             async function fetchAndRender() {
                 try {
-                    const response = await fetch(API_URL);
-                    if (!response.ok) throw new Error('Network response was not ok');
-                    const data = await response.json();
-                    
-                    data.events.forEach(event => {
-                        const competition = event.competitions[0];
-                        const statusDetail = event.status.type.detail; // e.g. "Final", "Q4 2:00"
-                        const isLive = event.status.type.state === 'in';
-                        const isFinal = event.status.type.state === 'post';
-                        
-                        competition.competitors.forEach(comp => {
-                            const teamName = comp.team.name; // e.g. "Bills", "49ers"
-                            const currentScore = comp.score;
-                            
-                            // Find the opponent in the API data to validate the matchup
-                            const apiOpponent = competition.competitors.find(c => c.id !== comp.id)?.team.name;
-
-                            // Find all instances of this team in the bracket
-                            const teamSlots = document.querySelectorAll(`.team-slot[data-team="${teamName}"]`);
-                            
-                            teamSlots.forEach(slot => {
-                                // VALIDATION: Only update if the bracket matchup matches the API matchup
+                    const res = await fetch(API);
+                    const data = await res.json();
+                    data.events.forEach(e => {
+                        const comp = e.competitions[0];
+                        const state = e.status.type.state;
+                        comp.competitors.forEach(c => {
+                            const name = c.team.name;
+                            const score = c.score;
+                            document.querySelectorAll(`.team-slot[data-team="${name}"]`).forEach(slot => {
                                 const matchup = slot.closest('.matchup');
-                                if (!matchup) return;
-
-                                // Find the opponent slot in the DOM
-                                const siblingSlots = Array.from(matchup.querySelectorAll('.team-slot'));
-                                const opponentSlot = siblingSlots.find(s => s !== slot);
-                                const bracketOpponent = opponentSlot ? opponentSlot.getAttribute('data-team') : null;
-
-                                // If the bracket slot doesn't have a valid opponent (e.g. empty/TBD), 
-                                // or if the opponent doesn't match the API event, DO NOT update.
-                                // This prevents scores carrying over to future rounds or headers updating for future games.
-                                if (!bracketOpponent || bracketOpponent !== apiOpponent) {
-                                    return;
-                                }
-
-                                // 1. Update Score
-                                // Only add score span if prediction input is NOT there (or replace it if game went live)
-                                let scoreEl = slot.querySelector('.score');
-                                const predictionInput = slot.querySelector('.prediction-input');
-                                
-                                if (isLive || isFinal) {
-                                    // Remove prediction input if game is now real
-                                    if (predictionInput) predictionInput.remove();
-                                    
-                                    if (!scoreEl) {
-                                        scoreEl = document.createElement('span');
-                                        scoreEl.className = 'score';
-                                        slot.appendChild(scoreEl);
-                                    }
-                                    if (currentScore !== undefined) {
-                                        scoreEl.textContent = currentScore;
-                                        slot.setAttribute('data-score', currentScore);
-                                    }
-                                }
-
-                                // 2. Update Game Clock / Status (only for the specific matchup wrapper)
-                                // We already validated that this matchup corresponds to the API event
-                                const metaSpan = matchup.querySelector('.game-meta span:first-child');
-                                // Only overwrite hardcoded times if the game is actually Live or Final
-                                if (metaSpan && (isLive || isFinal)) {
-                                    // MODIFIED: Force UPPERCASE for consistency (e.g. "FINAL")
-                                    metaSpan.textContent = statusDetail.toUpperCase();
-                                    metaSpan.style.color = ''; // Reset prediction color if game is real
-                                    
-                                    if (isLive) {
-                                        metaSpan.classList.add('live-text');
-                                    } else {
-                                        metaSpan.classList.remove('live-text');
-                                    }
-                                }
-
-                                // 3. Update Highlights Button
-                                // Logic: If Final, show "Watch" if link exists, or "Awaiting" if not.
-                                if (isFinal) {
-                                    let btn = matchup.querySelector('.highlight-btn');
-                                    const highlightUrl = matchup.getAttribute('data-highlight-url');
-
-                                    if (!btn) {
-                                        // Create button if it doesn't exist
-                                        btn = document.createElement('a');
-                                        btn.className = 'highlight-btn';
-                                        btn.target = '_blank';
-                                        matchup.appendChild(btn);
-                                    }
-
-                                    if (highlightUrl && highlightUrl.trim() !== "") {
-                                        // Link exists
-                                        btn.href = highlightUrl;
-                                        btn.textContent = "Watch Highlights";
-                                        btn.classList.remove('disabled');
-                                    } else {
-                                        // Link missing
-                                        btn.removeAttribute('href');
-                                        btn.textContent = "Awaiting Highlights";
-                                        btn.classList.add('disabled');
-                                    }
+                                const apiOpp = comp.competitors.find(x => x.id !== c.id).team.name;
+                                const brOpp = Array.from(matchup.querySelectorAll('.team-slot')).find(s => s !== slot)?.getAttribute('data-team');
+                                if (brOpp !== apiOpp) return;
+                                if (state !== 'pre') {
+                                    let sEl = slot.querySelector('.score');
+                                    if (!sEl) { sEl = document.createElement('span'); sEl.className = 'score'; slot.appendChild(sEl); }
+                                    sEl.textContent = score;
+                                    const meta = matchup.querySelector('.game-meta span:first-child');
+                                    meta.textContent = e.status.type.detail.toUpperCase();
+                                    if (state === 'in') meta.classList.add('live-text');
                                 }
                             });
                         });
                     });
-                    // console.log("Scores updated from ESPN API");
-                } catch (error) {
-                    console.warn("Could not fetch live scores:", error);
-                }
+                } catch (err) {}
             }
-
-            // Initial fetch
-            fetchAndRender();
-            
-            // Poll every 60 seconds
-            setInterval(fetchAndRender, 60000);
+            fetchAndRender(); setInterval(fetchAndRender, 60000);
         }
 
-        // Start the live scoring system
         initLiveScoring();
-        
-        // Initial visual update to color hardcoded winners
         updateBracketVisuals();
+        setupDraggableItems();
         
-        // NEW: Initial check to add prediction inputs to pre-filled games (like Divisional round)
-        document.querySelectorAll('.matchup').forEach(m => managePredictionInputs(m));
-
-        const styleSheet = document.createElement("style");
-        styleSheet.type = "text/css";
-        styleSheet.innerText = `
-            @keyframes fall {
-                0% { top: -20px; opacity: 1; transform: rotate(0deg); }
-                100% { top: 100vh; opacity: 0; transform: rotate(720deg); }
-            }
-        `;
-        document.head.appendChild(styleSheet);
+        const sheet = document.createElement("style");
+        sheet.innerText = `@keyframes fall { 0% { top: -20px; opacity: 1; transform: rotate(0deg); } 100% { top: 100vh; opacity: 0; transform: rotate(720deg); } }`;
+        document.head.appendChild(sheet);
     </script>
-
 </body>
 </html>
