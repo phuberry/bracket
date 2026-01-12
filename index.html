@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>NFL Playoffs 2025 Season Bracket</title>
+    <!-- Add html2canvas library for screenshot functionality -->
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <style>
         :root {
             --nfl-blue: #013369;
@@ -241,6 +243,42 @@
             transform: scale(1.05);
         }
 
+        /* NEW: Save Bracket Button */
+        .save-btn {
+            position: fixed;
+            bottom: 90px; /* Above nav bar */
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--gold-shine);
+            color: black;
+            border: 2px solid #fff;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
+            z-index: 10001;
+            display: none; /* Hidden until complete */
+            cursor: pointer;
+            transition: all 0.2s;
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .save-btn:active { transform: translateX(-50%) scale(0.95); }
+
+        @keyframes popIn {
+            from { bottom: -50px; opacity: 0; }
+            to { bottom: 90px; opacity: 1; }
+        }
+
+        /* Styles for screenshot mode */
+        .taking-screenshot .mobile-nav, 
+        .taking-screenshot .highlight-btn, 
+        .taking-screenshot .save-btn { 
+            display: none !important; 
+        }
+
         /* NEW: Enhanced Mobile Navigation Controls */
         .mobile-nav {
             display: none;
@@ -423,6 +461,11 @@
         <button class="mobile-btn" onclick="scrollBracket(1)">&gt;</button>
         <button class="mobile-btn" onclick="scrollToId('nfc-wc-col')">NFC</button>
     </div>
+
+    <!-- NEW: Save Bracket Button -->
+    <button id="save-bracket-btn" class="save-btn" onclick="saveBracket()">
+        Save Bracket
+    </button>
 
     <div class="bracket-wrapper" id="bracket-container">
         <!-- Wrapper Div to ensure width -->
@@ -632,6 +675,49 @@
             const container = document.getElementById('bracket-container');
             const amount = 300; 
             container.scrollBy({ left: amount * direction, behavior: 'smooth' });
+        }
+
+        /* NEW: Save Bracket Function */
+        function saveBracket() {
+            const btn = document.getElementById('save-bracket-btn');
+            const originalText = btn.innerText;
+            btn.innerText = 'Generating...';
+            
+            // Add class to body to hide unwanted elements during screenshot
+            document.body.classList.add('taking-screenshot');
+            
+            // Small timeout to allow DOM to update before capture
+            setTimeout(() => {
+                // Capture the entire body to ensure we get the Title/Header + Bracket
+                // We set windowWidth to 1600 to force a "desktop-like" wide render
+                // which looks better for a bracket image than a long skinny mobile one.
+                html2canvas(document.body, {
+                    backgroundColor: '#111', 
+                    scale: 2, 
+                    useCORS: true,
+                    windowWidth: 1600,
+                    ignoreElements: (element) => {
+                        // Double safeguard to ignore buttons
+                        return element.classList.contains('highlight-btn') || 
+                               element.classList.contains('mobile-nav') ||
+                               element.id === 'save-bracket-btn';
+                    }
+                }).then(canvas => {
+                    const link = document.createElement('a');
+                    link.download = 'my-nfl-bracket-2025.png';
+                    link.href = canvas.toDataURL();
+                    link.click();
+                    
+                    // Cleanup
+                    document.body.classList.remove('taking-screenshot');
+                    btn.innerText = originalText;
+                }).catch(err => {
+                    console.error("Screenshot failed:", err);
+                    alert("Could not save bracket image.");
+                    document.body.classList.remove('taking-screenshot');
+                    btn.innerText = originalText;
+                });
+            }, 100);
         }
 
         function setupDraggableItems() {
@@ -921,12 +1007,19 @@
             if (slot.id === 'sb-champion-slot') {
                 slot.classList.add('ultimate-champion');
                 throwConfetti();
+                // Show Save Button
+                document.getElementById('save-bracket-btn').style.display = 'flex';
             } else {
                 setupDraggableItems();
             }
         }
 
         function clearSlot(slot) {
+            // Hide Save Button if champion is removed
+            if (slot.id === 'sb-champion-slot') {
+                document.getElementById('save-bracket-btn').style.display = 'none';
+            }
+
             slot.innerHTML = '';
             slot.className = 'team-slot empty-slot';
             slot.removeAttribute('draggable');
