@@ -215,6 +215,11 @@
             margin: 0;
         }
 
+        /* HIDE PREDICTION INPUTS WHEN BRACKET IS COMPLETE */
+        body.bracket-complete .prediction-input {
+            display: none !important;
+        }
+
         .winner { 
             border-left: 4px solid var(--gold-shine) !important; 
             background: linear-gradient(90deg, #252525, #2f2f20) !important; 
@@ -293,6 +298,11 @@
         
         .save-btn:active { transform: translateX(-50%) scale(0.95); }
 
+        /* HIDE SAVE BUTTON ON DESKTOP */
+        @media (min-width: 1025px) {
+            .save-btn { display: none !important; }
+        }
+
         @keyframes popIn {
             from { bottom: -50px; opacity: 0; }
             to { bottom: 90px; opacity: 1; }
@@ -301,8 +311,29 @@
         /* Styles for screenshot mode */
         .taking-screenshot .mobile-nav, 
         .taking-screenshot .highlight-btn, 
-        .taking-screenshot .save-btn { 
+        .taking-screenshot .save-btn,
+        .taking-screenshot .header-container { /* Hide original header */
             display: none !important; 
+        }
+
+        /* TEMP CUSTOM HEADER FOR SCREENSHOT */
+        #temp-custom-header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            padding: 30px 0 10px 0;
+            background: #111;
+            z-index: 9999;
+        }
+        #temp-custom-header h1 {
+            font-size: 3em;
+            color: white;
+            text-transform: uppercase;
+            margin: 0;
+            text-shadow: 0 4px 10px rgba(0,0,0,0.8);
+            font-family: 'Segoe UI', system-ui, sans-serif;
         }
 
         /* NEW: Enhanced Mobile Navigation Controls */
@@ -713,12 +744,21 @@
 
         /* NEW: Save Bracket Function */
         function saveBracket() {
+            const name = prompt("Enter your name");
+            if (!name) return; // Exit if cancelled or empty
+
             const btn = document.getElementById('save-bracket-btn');
             const originalText = btn.innerText;
             btn.innerText = 'Generating...';
             
             // Add class to body to hide unwanted elements during screenshot
             document.body.classList.add('taking-screenshot');
+            
+            // Create temporary custom header
+            const customHeader = document.createElement('div');
+            customHeader.id = 'temp-custom-header';
+            customHeader.innerHTML = `<h1>${name}'s NFL Bracket</h1>`;
+            document.body.prepend(customHeader);
             
             // Small timeout to allow DOM to update before capture
             setTimeout(() => {
@@ -738,17 +778,19 @@
                     }
                 }).then(canvas => {
                     const link = document.createElement('a');
-                    link.download = 'my-nfl-bracket-2025.png';
+                    link.download = `${name.replace(/\s+/g, '_')}_nfl_bracket.png`;
                     link.href = canvas.toDataURL();
                     link.click();
                     
                     // Cleanup
                     document.body.classList.remove('taking-screenshot');
+                    customHeader.remove();
                     btn.innerText = originalText;
                 }).catch(err => {
                     console.error("Screenshot failed:", err);
                     alert("Could not save bracket image.");
                     document.body.classList.remove('taking-screenshot');
+                    customHeader.remove();
                     btn.innerText = originalText;
                 });
             }, 100);
@@ -928,6 +970,47 @@
             const draggedColumn = draggedItem.closest('.column');
             const targetColumn = targetSlot.closest('.column');
 
+            // NEW: SUPER BOWL PREREQUISITE CHECK
+            if (targetSlot.id === 'sb-champion-slot') {
+                const sbMatchup = targetColumn.querySelector('.matchup');
+                const slots = sbMatchup.querySelectorAll('.team-slot');
+                const filled = Array.from(slots).filter(s => !s.classList.contains('empty-slot'));
+                
+                // Allow drop only if the dragged item is already IN the SB matchup (re-seating) OR if the matchup is full
+                // Actually, logic is: You can't pick a champ if the game isn't set.
+                if (filled.length < 2) {
+                    // One exception: If we are dragging FROM the SB matchup to the Champ slot, 
+                    // we might be in a state where we are filling it. 
+                    // But generally, the user should fill VS first.
+                    alert("Fill out the Super Bowl matchup first!");
+                    return;
+                }
+            }
+
+            // NEW: PREVENT LOSER PROGRESSION (Unless dropping into Champion slot which acts as next round)
+            if (targetSlot.id !== 'sb-champion-slot') {
+                const sourceMatchup = draggedItem.closest('.matchup');
+                if (sourceMatchup) {
+                    // Find the opponent in the source matchup
+                    const opponentSlot = Array.from(sourceMatchup.querySelectorAll('.team-slot')).find(s => s !== draggedItem);
+                    
+                    if (opponentSlot && !opponentSlot.classList.contains('empty-slot')) {
+                        const opponentName = opponentSlot.getAttribute('data-team');
+                        
+                        // Check if this opponent is already present in the TARGET column
+                        // (We exclude the targetSlot itself to allow replacing a placeholder)
+                        const opponentInNextRound = Array.from(targetColumn.querySelectorAll('.team-slot')).find(
+                            s => s.getAttribute('data-team') === opponentName && s !== targetSlot
+                        );
+                        
+                        if (opponentInNextRound) {
+                             alert("Illegal Move: You cannot advance both teams from the same matchup!");
+                             return;
+                        }
+                    }
+                }
+            }
+
             // NEW: STRICT PREVIOUS ROUND CHECK
             const targetColId = targetColumn.id;
             let prevRoundCols = [];
@@ -940,7 +1023,6 @@
             // Check if any previous column still has empty slots
             for (let id of prevRoundCols) {
                 const col = document.getElementById(id);
-                // Check if the column has any empty slots that are meant to be filled
                 if (col && col.querySelectorAll('.empty-slot').length > 0) {
                     alert("Fill out the previous round first!");
                     return; // Block drop
@@ -968,7 +1050,13 @@
                 slot => slot.getAttribute('data-team') === draggedItem.getAttribute('data-team')
             );
             
-            if (existingInstance && existingInstance !== targetSlot) {
+            // MODIFIED: If dropping into SB Champion, do NOT remove from SB Matchup (Treat as separate rounds)
+            let shouldClear = true;
+            if (targetSlot.id === 'sb-champion-slot') {
+                shouldClear = false; 
+            }
+            
+            if (shouldClear && existingInstance && existingInstance !== targetSlot) {
                 clearSlot(existingInstance);
             }
 
@@ -1059,6 +1147,8 @@
                 throwConfetti();
                 // Show Save Button
                 document.getElementById('save-bracket-btn').style.display = 'flex';
+                // Hide Inputs
+                document.body.classList.add('bracket-complete');
             } else {
                 setupDraggableItems();
             }
@@ -1068,6 +1158,8 @@
             // Hide Save Button if champion is removed
             if (slot.id === 'sb-champion-slot') {
                 document.getElementById('save-bracket-btn').style.display = 'none';
+                // Show Inputs
+                document.body.classList.remove('bracket-complete');
             }
 
             // CLEANUP PREDICTION TITLE if matchup is emptied
