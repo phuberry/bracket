@@ -592,8 +592,9 @@
                 
                 <!-- Bills vs Jags (FINAL) -->
                 <div class="matchup" data-highlight-url="https://www.youtube.com/watch?v=OZrEboMLou4">
+                    <!-- REMOVED: Channel Name -->
                     <div class="game-meta"><span>FINAL</span><span></span></div>
-                    <div class="team-slot winner manual-winner" data-conf="AFC" data-team="Bills" data-seed="6" data-color="#00338D" data-score="27" id="afc-wc1-w">
+                    <div class="team-slot winner manual-winner" draggable="true" data-conf="AFC" data-team="Bills" data-seed="6" data-color="#00338D" data-score="27" id="afc-wc1-w">
                         <div class="logo-box" style="background:#00338D;">BUF</div>
                         <div class="team-info"><span class="name">Bills</span><span class="seed">#6</span></div>
                         <span class="score">27</span>
@@ -603,7 +604,7 @@
                         <div class="team-info"><span class="name">Jaguars</span><span class="seed">#3</span></div>
                         <span class="score">24</span>
                     </div>
-                    <a class="highlight-btn" href="https://www.youtube.com/watch?v=OZrEboMLou4" target="_blank">Watch Highlights</a>
+                    <a class="highlight-btn" href="https://www.youtube.com/watch?v=OZrEboMLou4" target=\"_blank\">Watch Highlights</a>
                 </div>
 
                 <!-- Texans vs Steelers (Upcoming) -->
@@ -630,7 +631,7 @@
                         <div class="logo-box" style="background:#002244;">NE</div>
                         <div class="team-info"><span class="name">Patriots</span><span class="seed">#2</span></div>
                     </div>
-                    <a class="highlight-btn" href="https://www.youtube.com/watch?v=r4w8LaKWuGM" target="_blank">Watch Highlights</a>
+                    <a class="highlight-btn" href="https://www.youtube.com/watch?v=r4w8LaKWuGM" target=\"_blank\">Watch Highlights</a>
                 </div>
             </div>
 
@@ -643,7 +644,7 @@
                         <div class="team-info"><span class="name">Broncos</span><span class="seed">#1</span></div>
                     </div>
                     <!-- RE-SEEDED: Lowest seed (#6 Bills) plays #1 Broncos -->
-                    <div class="team-slot" draggable="true" data-conf="AFC" data-team="Bills" data-seed="6" data-color="#00338D" id="afc-div1-visitor" data-role="seed1-opponent">
+                    <div class="team-slot" draggable="true" data-conf="AFC" data-team="Bills" data-seed="6" data-color="#00338D" id="afc-div1-visitor" data-role="seed1-opponent" ondrop="drop(event)" ondragover="allowDrop(event)">
                         <div class="logo-box" style="background:#00338D;">BUF</div>
                         <div class="team-info"><span class="name">Bills</span><span class="seed">#6</span></div>
                     </div>
@@ -651,7 +652,7 @@
                 <div class="matchup">
                     <div class="game-meta"><span>Jan 17/18</span><span>TBD</span></div>
                     <!-- #2 Patriots host the winner of 4/5 -->
-                    <div class="team-slot" draggable="true" data-conf="AFC" data-team="Patriots" data-seed="2" data-color="#002244" id="afc-div2-home">
+                    <div class="team-slot" draggable="true" data-conf="AFC" data-team="Patriots" data-seed="2" data-color="#002244" id="afc-div2-home" data-role="other-game" ondrop="drop(event)" ondragover="allowDrop(event)">
                         <div class="logo-box" style="background:#002244;">NE</div>
                         <div class="team-info"><span class="name">Patriots</span><span class="seed">#2</span></div>
                     </div>
@@ -821,7 +822,7 @@
             if (isMobile) {
                 newTab = window.open('about:blank', '_blank');
                 if (newTab) {
-                    newTab.document.write('<html><head><title>NFL Bracket Loading...</title></head><body style="background:#111; color:white; display:flex; align-items:center; justify-content:center; height:100vh; font-family:sans-serif;"><h2>Generating high-res bracket... please wait.</h2></body></html>');
+                    newTab.document.write('<html><head><title>NFL Bracket Loading...</title></head><body style=\"background:#111; color:white; display:flex; align-items:center; justify-content:center; height:100vh; font-family:sans-serif;\"><h2>Generating high-res bracket... please wait.</h2></body></html>');
                 }
             }
 
@@ -1110,6 +1111,13 @@
                 }
             }
 
+            // RESEEDING & DUPLICATE CHECKS
+            if (targetColumn.classList.contains('col-divisional')) {
+                if (!validateDivisionalDrop(targetSlot, draggedItem, targetColumn)) {
+                    return;
+                }
+            }
+
             if (draggedColumn === targetColumn && draggedColumn.className.includes('col-divisional')) {
                 const seed = draggedItem.getAttribute('data-seed');
                 if (seed === '1') {
@@ -1139,13 +1147,44 @@
             fillSlot(targetSlot, teamData);
 
             if (targetSlot.id !== 'sb-champion-slot' && existingInstance && existingInstance !== targetSlot) {
-                clearSlot(existingInstance);
+                // MODIFIED: Use force=true to clear duplicates within the same round, 
+                // even if the slot is protected (to allow re-seeding without ghosting)
+                clearSlot(existingInstance, true);
             }
 
             updateBracketVisuals();
         }
 
         function validateDivisionalDrop(targetSlot, item, column) {
+            const teamName = item.getAttribute('data-team');
+            const targetId = targetSlot.id;
+
+            // Protection for hardcoded seeds and results to ensure re-seeding is followed strictly
+            const fixedMatchups = {
+                'Broncos': 'afc-div1-home',
+                'Bills': 'afc-div1-visitor',
+                'Patriots': 'afc-div2-home',
+                'Seahawks': 'nfc-div1-home',
+                '49ers': 'nfc-div1-visitor',
+                'Bears': 'nfc-div2-home',
+                'Rams': 'nfc-div2-visitor'
+            };
+
+            // If the team is one of our fixed seeds, it MUST go in its designated slot for this round
+            if (fixedMatchups[teamName] && column.classList.contains('col-divisional')) {
+                if (targetId !== fixedMatchups[teamName]) {
+                    // Only alert/reject if they are trying to drop into a DIFFERENT slot in the same round
+                    // If targetId is not one of our hardcoded slots (like Championship round), it passes here
+                    const divIds = ['afc-div1-home', 'afc-div1-visitor', 'afc-div2-home', 'afc-div2-visitor', 
+                                    'nfc-div1-home', 'nfc-div1-visitor', 'nfc-div2-home', 'nfc-div2-visitor'];
+                    
+                    if (divIds.includes(targetId)) {
+                         alert(`RESEEDING ERROR: The ${teamName} must play in their designated divisional matchup.`);
+                         return false;
+                    }
+                }
+            }
+
             const role = targetSlot.getAttribute('data-role');
             const newSeed = parseInt(item.getAttribute('data-seed'));
             const placedTeams = [];
@@ -1207,10 +1246,14 @@
             }
         }
 
-        function clearSlot(slot) {
+        // MODIFIED: Added permanent team check within divisional columns for robust protection
+        function clearSlot(slot, force = false) {
+            const protectedTeams = ['Bills', 'Patriots', '49ers', 'Rams', 'Broncos', 'Seahawks', 'Bears'];
+            const teamName = slot.getAttribute('data-team');
+            const isDivisional = slot.closest('.col-divisional') !== null;
+
             // Protection for hardcoded divisional participants so they aren't deleted when dragged out to advance
-            const protectedIds = ['nfc-div1-visitor', 'nfc-div2-visitor', 'afc-div1-visitor', 'afc-div2-home'];
-            if (protectedIds.includes(slot.id)) {
+            if (!force && isDivisional && protectedTeams.includes(teamName)) {
                 return;
             }
 
