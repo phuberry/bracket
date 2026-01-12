@@ -572,7 +572,8 @@
                 
                 <!-- Bills vs Jags (FINAL) -->
                 <div class="matchup" data-highlight-url="https://www.youtube.com/watch?v=OZrEboMLou4">
-                    <div class="game-meta"><span>FINAL</span><span>CBS</span></div>
+                    <!-- REMOVED: Channel Name -->
+                    <div class="game-meta"><span>FINAL</span><span></span></div>
                     <div class="team-slot winner manual-winner" draggable="true" data-conf="AFC" data-team="Bills" data-seed="6" data-color="#00338D" data-score="27" id="afc-wc1-w">
                         <div class="logo-box" style="background:#00338D;">BUF</div>
                         <div class="team-info"><span class="name">Bills</span><span class="seed">#6</span></div>
@@ -672,7 +673,7 @@
             <div class="column col-divisional" id="nfc-divisional-col">
                 <div class="round-header">NFC Divisional</div>
                 <div class="matchup" data-highlight-url="">
-                    <div class="game-meta"><span>Jan 17/18</span><span>FOX</span></div>
+                    <div class="game-meta"><span>SAT 5:15 PM PT</span><span>FOX</span></div>
                     <div class="team-slot" draggable="true" data-conf="NFC" data-team="Seahawks" data-seed="1" data-color="#002244" id="nfc-div1-home">
                         <div class="logo-box" style="background:#002244;">SEA</div>
                         <div class="team-info"><span class="name">Seahawks</span><span class="seed">#1</span></div>
@@ -683,7 +684,7 @@
                     </div>
                 </div>
                 <div class="matchup" data-highlight-url="">
-                    <div class="game-meta"><span>Jan 17/18</span><span>TBD</span></div>
+                    <div class="game-meta"><span>SUN 3:30 PM PT</span><span>FOX</span></div>
                     <div class="team-slot" draggable="true" data-conf="NFC" data-team="Bears" data-seed="2" data-color="#C83803" id="nfc-div2-home">
                         <div class="logo-box" style="background:#C83803;">CHI</div>
                         <div class="team-info"><span class="name">Bears</span><span class="seed">#2</span></div>
@@ -698,7 +699,8 @@
             <div class="column" id="nfc-wc-col">
                 <div class="round-header">NFC Wild Card</div>
                 <div class="matchup" data-highlight-url="https://www.youtube.com/watch?v=YPS3tHwvwR8">
-                    <div class="game-meta"><span>FINAL</span><span>FOX</span></div>
+                    <!-- REMOVED: Channel Name -->
+                    <div class="game-meta"><span>FINAL</span><span></span></div>
                     <div class="team-slot winner manual-winner" draggable="true" data-conf="NFC" data-team="49ers" data-seed="6" data-color="#AA0000" id="nfc-wc1-a" data-score="24">
                         <div class="logo-box" style="background:#AA0000;">SF</div>
                         <div class="team-info"><span class="name">49ers</span><span class="seed">#6</span></div>
@@ -709,7 +711,6 @@
                         <div class="team-info"><span class="name">Eagles</span><span class="seed">#3</span></div>
                         <span class="score">21</span>
                     </div>
-                    <!-- FIX: Highlights added and button enabled -->
                     <a class="highlight-btn" href="https://www.youtube.com/watch?v=YPS3tHwvwR8" target="_blank">Watch Highlights</a>
                 </div>
                 
@@ -774,7 +775,6 @@
             container.scrollBy({ left: amount * direction, behavior: 'smooth' });
         }
 
-        // FIX: Removed prompt popup and improved filename logic
         function saveBracket() {
             const btn = document.getElementById('save-bracket-btn');
             const originalText = btn.innerText;
@@ -804,7 +804,6 @@
                     }
                 }).then(canvas => {
                     canvas.toBlob(blob => {
-                        // Check for native sharing first (best for mobile)
                         if (navigator.canShare && navigator.canShare({ files: [new File([blob], filename, {type: "image/png"})] })) {
                             const file = new File([blob], filename, {type: "image/png"});
                             navigator.share({
@@ -813,14 +812,12 @@
                                 text: 'Check out my NFL Playoff Bracket!'
                             }).catch((err) => console.log('Sharing cancelled', err));
                         } else {
-                            // FALLBACK: Show modal to save manually
                             if (/Android|iPhone|iPad/i.test(navigator.userAgent)) {
                                 const modal = document.getElementById('save-modal');
                                 const modalImg = document.getElementById('save-modal-img');
                                 modalImg.src = canvas.toDataURL();
                                 modal.style.display = 'flex';
                             } else {
-                                // PC Download
                                 const link = document.createElement('a');
                                 link.download = filename;
                                 link.href = canvas.toDataURL();
@@ -1009,7 +1006,6 @@
             const draggedColumn = draggedItem.closest('.column');
             const targetColumn = targetSlot.closest('.column');
 
-            // SB CHAMPION LOCK (Change 3)
             if (targetSlot.id === 'sb-champion-slot') {
                 const sbMatchup = targetColumn.querySelector('.matchup');
                 const slots = sbMatchup.querySelectorAll('.team-slot');
@@ -1021,7 +1017,6 @@
                 }
             }
 
-            // PREVENT LOSER PROGRESSION
             if (targetSlot.id !== 'sb-champion-slot' && draggedColumn !== targetColumn) {
                 const sourceMatchup = draggedItem.closest('.matchup');
                 if (sourceMatchup) {
@@ -1045,7 +1040,6 @@
                 }
             }
 
-            // DECOUPLED PREVIOUS ROUND CHECK (Change 2)
             const targetColId = targetColumn.id;
             let prevRoundCols = [];
 
@@ -1222,14 +1216,12 @@
                 }
             });
 
-            // FIX: Centralized prediction header labeling logic
             document.querySelectorAll('.matchup').forEach(m => {
                 const metaHeader = m.querySelector('.game-meta span:first-child');
                 if (!metaHeader) return;
                 
                 const hasWinner = Array.from(m.querySelectorAll('.team-slot')).some(s => s.classList.contains('winner'));
                 const currentText = metaHeader.textContent;
-                // Only process if the game is not already real/official
                 const isOfficial = currentText.includes('FINAL') || currentText.includes('LIVE') || metaHeader.classList.contains('live-text');
 
                 if (isOfficial) return;
@@ -1240,7 +1232,6 @@
                         metaHeader.style.color = '#FFD700';
                     }
                 } else {
-                    // Strip the Prediction prefix if the winner was removed
                     if (currentText.includes('Prediction:')) {
                         metaHeader.textContent = currentText.replace('Prediction: ', '');
                         metaHeader.style.color = '';
@@ -1257,9 +1248,6 @@
                 confetti.classList.add('confetti-piece');
                 confetti.style.left = Math.random() * 100 + 'vw';
                 confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
-                const duration = Math.random() * 3 + 2 + 's';
-                const delay = Math.random() * 2 + 's';
                 confetti.style.animation = `fall ${duration} linear ${delay} forwards`;
                 box.appendChild(confetti);
             }
@@ -1289,7 +1277,6 @@
                                 const opponentSlot = Array.from(matchup.querySelectorAll('.team-slot')).find(s => s !== slot);
                                 if (!opponentSlot || opponentSlot.getAttribute('data-team') !== apiOpponent) return;
 
-                                // Official Scores Update
                                 if (state === 'in' || state === 'post') {
                                     let scoreEl = slot.querySelector('.score');
                                     if (!scoreEl) {
@@ -1301,11 +1288,19 @@
                                 }
 
                                 const metaSpan = matchup.querySelector('.game-meta span:first-child');
+                                // FIX: Target the second span for the channel name
+                                const metaChannel = matchup.querySelector('.game-meta span:nth-child(2)');
+
                                 if (metaSpan && (state === 'in' || state === 'post')) {
                                     metaSpan.textContent = statusDetail.toUpperCase();
                                     metaSpan.style.color = '';
-                                    if (state === 'in') metaSpan.classList.add('live-text');
-                                    else metaSpan.classList.remove('live-text');
+                                    if (state === 'in') {
+                                        metaSpan.classList.add('live-text');
+                                    } else {
+                                        metaSpan.classList.remove('live-text');
+                                        // NEW: Remove channel name if game is FINAL
+                                        if (metaChannel) metaChannel.textContent = '';
+                                    }
                                 }
                             });
                         });
