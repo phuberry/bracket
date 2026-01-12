@@ -16,6 +16,7 @@
             --dim-alpha: 0.3;
         }
 
+        /* NEW LAYOUT: Fixed header, scrollable body */
         body {
             font-family: 'Segoe UI', system-ui, sans-serif;
             background-color: #111;
@@ -26,15 +27,17 @@
             color: white;
             margin: 0;
             padding: 0;
-            height: 100vh;
+            height: 100vh; /* Full viewport height */
             display: flex;
             flex-direction: column;
-            overflow: hidden;
+            overflow: hidden; /* Prevent body scroll */
             user-select: none;
         }
 
+        /* Fixed Header Container */
         .header-container {
             flex: 0 0 auto;
+            /* Default Desktop Padding */
             padding: 10px 20px 0 20px;
             background: rgba(17, 17, 17, 0.9);
             backdrop-filter: blur(5px);
@@ -72,25 +75,28 @@
             letter-spacing: 1px;
         }
 
+        /* Helpers for responsive text breaks */
         .mobile-break { display: none; }
         .desktop-sep { display: inline; }
 
+        /* Scrollable Bracket Area */
         .bracket-wrapper {
             flex: 1 1 auto;
             display: flex;
-            align-items: center;
+            align-items: center; /* Center vertically if space allows */
             gap: 20px;
-            overflow: auto;
+            overflow: auto; /* Handle both X and Y scroll here */
             padding: 20px;
             scroll-behavior: smooth;
             scroll-snap-type: x mandatory;
             width: 100%; 
         }
 
+        /* Force min-width so scrolling works, but allow centering */
         .bracket-content-sizer {
             display: flex;
             gap: 20px;
-            min-width: 1400px;
+            min-width: 1400px; /* Ensure bracket doesn't collapse */
             margin: 0 auto;
         }
 
@@ -102,19 +108,22 @@
             min-width: 240px;
             scroll-snap-align: center;
             scroll-snap-stop: always;
+            /* ALIGNMENT FIX: RELATIVE POSITIONING FOR DESKTOP */
             position: relative;
-            padding-top: 40px;
+            padding-top: 40px; /* Space for the absolute header */
         }
 
+        /* ALIGNMENT FIX: Pin the round names to the top */
         .column > .round-header:first-child {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            margin-top: 10px;
+            margin-top: 10px; /* Minor adjustment from very top */
             z-index: 10;
         }
 
+        /* Ensure columns still have gaps for visuals, though space-around handles most */
         .col-divisional { gap: 150px; }
         .col-conference { gap: 300px; }
         .sb-column { justify-content: center; align-items: center; }
@@ -152,6 +161,7 @@
             font-size: 0.8em; 
             cursor: pointer; 
             text-decoration: none; 
+            /* CENTERED BUTTON STYLES */
             display: block; 
             width: fit-content;
             margin: 8px auto 0 auto;
@@ -159,6 +169,7 @@
         }
         .highlight-btn:hover { background: #555; color: white; border-color: #777; }
 
+        /* DISABLED STATE FOR AWAITING HIGHLIGHTS */
         .highlight-btn.disabled {
             background: #222;
             color: #555;
@@ -192,7 +203,13 @@
         .seed { font-size: 0.7em; color: #999; }
         .score { font-weight: bold; font-size: 1.1em; }
 
+        /* HIDE PREDICTION INPUTS WHEN BRACKET IS COMPLETE */
+        body.bracket-complete .prediction-input {
+            display: none !important;
+        }
+
         .winner { 
+            /* MODIFIED: Removed !important to allow JS to set specific team color */
             border-left: 4px solid var(--gold-shine); 
             background: linear-gradient(90deg, #252525, #2f2f20); 
             opacity: 1 !important;
@@ -246,9 +263,10 @@
             transform: scale(1.05);
         }
 
+        /* NEW: Save Bracket Button */
         .save-btn {
             position: fixed;
-            bottom: 90px;
+            bottom: 90px; /* Above nav bar */
             left: 50%;
             transform: translateX(-50%);
             background: var(--gold-shine);
@@ -261,7 +279,7 @@
             letter-spacing: 1px;
             box-shadow: 0 0 20px rgba(255, 215, 0, 0.6);
             z-index: 10001;
-            display: none; 
+            display: none; /* Hidden until complete */
             cursor: pointer;
             transition: all 0.2s;
             animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -269,6 +287,7 @@
         
         .save-btn:active { transform: translateX(-50%) scale(0.95); }
 
+        /* HIDE SAVE BUTTON ON DESKTOP */
         @media (min-width: 1025px) {
             .save-btn { display: none !important; }
         }
@@ -278,6 +297,7 @@
             to { bottom: 90px; opacity: 1; }
         }
         
+        /* Modal for saving image on mobile */
         #save-modal {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -311,13 +331,15 @@
             border-radius: 5px;
         }
 
+        /* Styles for screenshot mode */
         .taking-screenshot .mobile-nav, 
         .taking-screenshot .highlight-btn, 
         .taking-screenshot .save-btn,
-        .taking-screenshot .header-container {
+        .taking-screenshot .header-container { /* Hide original header */
             display: none !important; 
         }
 
+        /* TEMP CUSTOM HEADER FOR SCREENSHOT */
         #temp-custom-header {
             position: absolute;
             top: 0;
@@ -337,6 +359,7 @@
             font-family: 'Segoe UI', system-ui, sans-serif;
         }
 
+        /* NEW: Enhanced Mobile Navigation Controls */
         .mobile-nav {
             display: none;
             position: fixed;
@@ -359,6 +382,7 @@
             color: #ddd;
             border: 1px solid #555;
             border-radius: 25px;
+            /* BIGGER BUTTONS */
             padding: 10px 20px;
             font-size: 1.1em;
             font-weight: bold;
@@ -384,28 +408,125 @@
             box-shadow: 0 0 10px rgba(0,0,0,0.3);
         }
 
+        /* MOBILE SPECIFIC OPTIMIZATIONS */
         @media (max-width: 1024px) {
             .mobile-nav { display: flex; }
-            .header-container { padding: max(2px, env(safe-area-inset-top)) 10px 0 10px; }
-            h1 { font-size: 1.1em; margin: 0; display: block; visibility: visible; line-height: 1.1; }
-            .subtitle { font-size: 0.7em; margin-bottom: 2px; display: block; } 
-            .sb-details-bar { font-size: 0.6em; padding: 3px 0; margin: 2px 0 2px 0; line-height: 1.2; }
+            
+            /* COMPACT HEADER */
+            .header-container {
+                /* Safe Area padding + minimized spacing */
+                padding: max(2px, env(safe-area-inset-top)) 10px 0 10px;
+            }
+            h1 { 
+                font-size: 1.1em; /* Smaller title */
+                margin: 0; 
+                display: block; 
+                visibility: visible;
+                line-height: 1.1;
+            }
+            
+            /* SUBTITLE VISIBLE ON MOBILE AGAIN */
+            .subtitle { 
+                font-size: 0.7em; 
+                margin-bottom: 2px; 
+                display: block; 
+            } 
+            
+            .sb-details-bar { 
+                font-size: 0.6em; 
+                padding: 3px 0; 
+                margin: 2px 0 2px 0;
+                line-height: 1.2;
+                border-top: 1px solid rgba(255, 215, 0, 0.1);
+                border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+            }
+            
             .mobile-break { display: block; }
             .desktop-sep { display: none; }
-            .bracket-wrapper { align-items: stretch; padding: 0 5px; height: 100%; gap: 5px; overflow-y: hidden; }
-            .bracket-content-sizer { height: 100%; align-items: flex-start; min-width: auto; gap: 5px; padding-right: 25px; }
-            .column { gap: 8px; justify-content: flex-start; padding-top: 5px; padding-bottom: 60px; height: 100%; min-width: 45vw; scroll-snap-align: center; position: static; }
-            .column > .round-header:first-child { position: static; width: auto; margin-top: 0; }
-            .col-divisional, .col-conference { gap: 20px; }
-            .matchup { padding: 4px; border-radius: 6px; }
-            .round-header { margin-bottom: 3px; font-size: 0.7em; color: #666; }
-            .team-slot { padding: 2px 4px; min-height: 28px; margin: 2px 0; }
-            .logo-box { width: 16px; height: 16px; font-size: 0.5em; margin-right: 4px; }
+
+            .bracket-wrapper {
+                align-items: stretch; 
+                padding: 0 5px; 
+                height: 100%;
+                gap: 5px; 
+                /* NO VERTICAL SCROLLING ON MOBILE */
+                overflow-y: hidden;
+            }
+            
+            .bracket-content-sizer {
+                height: 100%;
+                align-items: flex-start; /* Start from top */
+                min-width: auto; 
+                gap: 5px;
+                /* EXTRA SPACE ON RIGHT FOR SCROLLING ACCESS */
+                padding-right: 25px;
+            }
+            
+            /* COMPRESS LAYOUT TO FIT PHONE SCREENS WITHOUT SCROLLING */
+            /* UPDATED: Fit ~2 columns on screen */
+            .column {
+                gap: 8px; /* TIGHT GAP between games, no space-evenly spreading */
+                justify-content: flex-start; /* PACK TO TOP */
+                padding-top: 5px;
+                padding-bottom: 60px; /* Space for nav bar */
+                height: 100%;
+                min-width: 45vw; /* Show ~2 columns */
+                /* CENTER SNAP for SB alignment */
+                scroll-snap-align: center; 
+                /* RESET DESKTOP ALIGNMENT FIX */
+                position: static;
+            }
+            
+            /* RESET HEADER ALIGNMENT FOR MOBILE */
+            .column > .round-header:first-child {
+                position: static;
+                width: auto;
+                margin-top: 0;
+            }
+            
+            .col-divisional, .col-conference {
+                gap: 20px; /* Let space-evenly handle it */
+            }
+
+            .matchup {
+                padding: 4px; /* Very tight padding */
+                margin-bottom: 0;
+                border-radius: 6px;
+            }
+
+            .round-header {
+                margin-bottom: 3px;
+                font-size: 0.7em;
+                color: #666;
+            }
+            
+            /* Tighten Slots */
+            .team-slot {
+                padding: 2px 4px;
+                min-height: 28px;
+                margin: 2px 0;
+            }
+            
+            .logo-box {
+                width: 16px; height: 16px; font-size: 0.5em; margin-right: 4px; 
+            }
             .name { font-size: 0.75em; } 
             .seed { font-size: 0.65em; }
             .score { font-size: 0.8em; }
-            .game-meta { font-size: 0.6em; margin-bottom: 2px; padding-bottom: 2px; }
-            .highlight-btn { font-size: 0.65em; padding: 2px 6px; margin-top: 2px; }
+            
+            .game-meta { 
+                font-size: 0.6em; 
+                margin-bottom: 2px; 
+                padding-bottom: 2px;
+            }
+            
+            /* Make highlights button smaller */
+            .highlight-btn {
+                font-size: 0.65em;
+                padding: 2px 6px;
+                margin-top: 2px;
+            }
+            
             .sb-img { height: 50px; }
             .ultimate-slot { height: 40px; }
         }
@@ -421,6 +542,7 @@
         </div>
     </div>
 
+    <!-- Mobile Navigation Bar -->
     <div class="mobile-nav">
         <button class="mobile-btn" onclick="scrollToId('afc-wc-col')">AFC</button>
         <button class="mobile-btn" onclick="scrollBracket(-1)">&lt;</button>
@@ -429,10 +551,12 @@
         <button class="mobile-btn" onclick="scrollToId('nfc-wc-col')">NFC</button>
     </div>
 
+    <!-- NEW: Save Bracket Button -->
     <button id="save-bracket-btn" class="save-btn" onclick="saveBracket()">
         Save Bracket
     </button>
     
+    <!-- Save Modal -->
     <div id="save-modal">
         <img id="save-modal-img" src="" alt="Bracket">
         <p>Long press the image to save it to your Photos.</p>
@@ -440,10 +564,13 @@
     </div>
 
     <div class="bracket-wrapper" id="bracket-container">
+        <!-- Wrapper Div to ensure width -->
         <div class="bracket-content-sizer">
             <!-- ================= AFC SIDE ================= -->
             <div class="column" id="afc-wc-col">
                 <div class="round-header">AFC Wild Card</div>
+                
+                <!-- Bills vs Jags (FINAL) -->
                 <div class="matchup" data-highlight-url="https://www.youtube.com/watch?v=OZrEboMLou4">
                     <div class="game-meta"><span>FINAL</span><span>CBS</span></div>
                     <div class="team-slot winner manual-winner" draggable="true" data-conf="AFC" data-team="Bills" data-seed="6" data-color="#00338D" data-score="27" id="afc-wc1-w">
@@ -459,7 +586,8 @@
                     <a class="highlight-btn" href="https://www.youtube.com/watch?v=OZrEboMLou4" target="_blank">Watch Highlights</a>
                 </div>
 
-                <div class="matchup">
+                <!-- Texans vs Steelers (Upcoming) -->
+                <div class="matchup" data-highlight-url="">
                     <div class="game-meta"><span>MON 5:15 PM PT</span><span>ABC</span></div>
                     <div class="team-slot" draggable="true" data-conf="AFC" data-team="Texans" data-seed="5" data-color="#03202f" id="afc-wc2-a">
                         <div class="logo-box" style="background:#03202f;">HOU</div>
@@ -471,7 +599,8 @@
                     </div>
                 </div>
 
-                <div class="matchup">
+                <!-- Chargers vs Pats (Upcoming) -->
+                <div class="matchup" data-highlight-url="">
                     <div class="game-meta"><span>SUN 5:15 PM PT</span><span>NBC</span></div>
                     <div class="team-slot" draggable="true" data-conf="AFC" data-team="Chargers" data-seed="7" data-color="#0080C6" id="afc-wc3-a">
                         <div class="logo-box" style="background:#0080C6;">LAC</div>
@@ -486,7 +615,7 @@
 
             <div class="column col-divisional" id="afc-divisional-col">
                 <div class="round-header">AFC Divisional</div>
-                <div class="matchup">
+                <div class="matchup" data-highlight-url="">
                     <div class="game-meta"><span>Jan 17/18</span><span>CBS</span></div>
                     <div class="team-slot" draggable="true" data-conf="AFC" data-team="Broncos" data-seed="1" data-color="#FB4F14" id="afc-div1-home">
                         <div class="logo-box" style="background:#FB4F14;">DEN</div>
@@ -494,7 +623,7 @@
                     </div>
                     <div class="team-slot empty-slot" data-target-conf="AFC" data-role="seed1-opponent" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
                 </div>
-                <div class="matchup">
+                <div class="matchup" data-highlight-url="">
                     <div class="game-meta"><span>Jan 17/18</span><span>TBD</span></div>
                     <div class="team-slot empty-slot" data-target-conf="AFC" data-role="other-game" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
                     <div class="team-slot empty-slot" data-target-conf="AFC" data-role="other-game" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
@@ -503,7 +632,7 @@
 
             <div class="column col-conference" id="afc-conf-col">
                 <div class="round-header">AFC Championship</div>
-                <div class="matchup">
+                <div class="matchup" data-highlight-url="">
                     <div class="game-meta"><span>Jan 25 - 12:00 PM PT</span><span>CBS</span></div>
                     <div class="team-slot empty-slot" data-target-conf="AFC" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
                     <div class="team-slot empty-slot" data-target-conf="AFC" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
@@ -513,24 +642,27 @@
             <!-- ================= CENTER STAGE ================= -->
             <div class="column sb-column" id="sb-col">
                 <div class="round-header">Super Bowl LX</div>
+                
                 <div class="sb-logo-container">
                     <img src="https://upload.wikimedia.org/wikipedia/en/thumb/b/b0/Super_Bowl_LX_Logo.svg/330px-Super_Bowl_LX_Logo.svg.png" alt="SB LX" class="sb-img">
                 </div>
-                <div class="matchup" style="width: 280px; text-align: center;">
+                
+                <div class="matchup" style="width: 280px; text-align: center;" data-highlight-url="">
                     <div class="game-meta" style="justify-content: center;"><span>FEB 8 - 3:30 PM PT</span></div>
-                    <!-- Updated: Left is AFC, Right is NFC -->
-                    <div class="team-slot empty-slot" data-target-conf="AFC" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                    <div class="team-slot empty-slot" data-target-conf="any" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
                     <div style="font-size:0.8em; color:#666; margin: 5px;">VS</div>
-                    <div class="team-slot empty-slot" data-target-conf="NFC" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                    <div class="team-slot empty-slot" data-target-conf="any" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
                 </div>
+
                 <div class="round-header" style="margin-top: 40px; color: var(--gold-shine);">Super Bowl Champion</div>
                 <div id="sb-champion-slot" class="team-slot empty-slot ultimate-slot" data-target-conf="any" ondrop="drop(event)" ondragover="allowDrop(event)" style="width: 280px;"></div>
             </div>
 
             <!-- ================= NFC SIDE ================= -->
+
             <div class="column col-conference" id="nfc-conf-col">
                 <div class="round-header">NFC Championship</div>
-                <div class="matchup">
+                <div class="matchup" data-highlight-url="">
                     <div class="game-meta"><span>Jan 25 - 3:30 PM PT</span><span>FOX</span></div>
                     <div class="team-slot empty-slot" data-target-conf="NFC" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
                     <div class="team-slot empty-slot" data-target-conf="NFC" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
@@ -539,7 +671,7 @@
 
             <div class="column col-divisional" id="nfc-divisional-col">
                 <div class="round-header">NFC Divisional</div>
-                <div class="matchup">
+                <div class="matchup" data-highlight-url="">
                     <div class="game-meta"><span>Jan 17/18</span><span>FOX</span></div>
                     <div class="team-slot" draggable="true" data-conf="NFC" data-team="Seahawks" data-seed="1" data-color="#002244" id="nfc-div1-home">
                         <div class="logo-box" style="background:#002244;">SEA</div>
@@ -550,7 +682,7 @@
                         <div class="team-info"><span class="name">49ers</span><span class="seed">#6</span></div>
                     </div>
                 </div>
-                <div class="matchup">
+                <div class="matchup" data-highlight-url="">
                     <div class="game-meta"><span>Jan 17/18</span><span>TBD</span></div>
                     <div class="team-slot" draggable="true" data-conf="NFC" data-team="Bears" data-seed="2" data-color="#C83803" id="nfc-div2-home">
                         <div class="logo-box" style="background:#C83803;">CHI</div>
@@ -618,6 +750,7 @@
     <script>
         let draggedItem = null;
         let wasDropped = false; 
+        
         let dragClone = null;
         let touchOffsetX = 0;
         let touchOffsetY = 0;
@@ -625,6 +758,7 @@
         function scrollToId(id) {
             const container = document.getElementById('bracket-container');
             const el = document.getElementById(id);
+            
             if (container && el) {
                 const containerRect = container.getBoundingClientRect();
                 const elRect = el.getBoundingClientRect();
@@ -635,45 +769,86 @@
 
         function scrollBracket(direction) {
             const container = document.getElementById('bracket-container');
-            container.scrollBy({ left: 300 * direction, behavior: 'smooth' });
+            const amount = 300; 
+            container.scrollBy({ left: amount * direction, behavior: 'smooth' });
         }
 
         function saveBracket() {
             const name = prompt("Enter your name");
             if (!name) return;
+
             const btn = document.getElementById('save-bracket-btn');
             const originalText = btn.innerText;
             btn.innerText = 'Generating...';
+            
             document.body.classList.add('taking-screenshot');
+            
             const customHeader = document.createElement('div');
             customHeader.id = 'temp-custom-header';
             customHeader.innerHTML = `<h1>${name}'s NFL Bracket</h1>`;
             document.body.prepend(customHeader);
             
             setTimeout(() => {
-                html2canvas(document.body, { backgroundColor: '#111', scale: 2, useCORS: true, windowWidth: 1600,
-                    ignoreElements: (element) => element.classList.contains('highlight-btn') || element.classList.contains('mobile-nav') || element.id === 'save-bracket-btn'
+                html2canvas(document.body, {
+                    backgroundColor: '#111', 
+                    scale: 2, 
+                    useCORS: true,
+                    windowWidth: 1600,
+                    ignoreElements: (element) => {
+                        return element.classList.contains('highlight-btn') || 
+                               element.classList.contains('mobile-nav') ||
+                               element.id === 'save-bracket-btn';
+                    }
                 }).then(canvas => {
                     canvas.toBlob(blob => {
                         if (navigator.canShare && navigator.canShare({ files: [new File([blob], "bracket.png", {type: "image/png"})] })) {
                             const file = new File([blob], `${name.replace(/\s+/g, '_')}_nfl_bracket.png`, {type: "image/png"});
-                            navigator.share({ files: [file], title: 'My NFL Bracket', text: 'Check out my NFL Playoff Bracket!' });
-                        } else if (/Android|iPhone|iPad/i.test(navigator.userAgent)) {
-                            const modal = document.getElementById('save-modal');
-                            document.getElementById('save-modal-img').src = canvas.toDataURL();
-                            modal.style.display = 'flex';
+                            navigator.share({
+                                files: [file],
+                                title: 'My NFL Bracket',
+                                text: 'Check out my NFL Playoff Bracket!'
+                            }).catch((err) => console.log('Sharing failed', err));
                         } else {
-                            const link = document.createElement('a');
-                            link.download = `${name.replace(/\s+/g, '_')}_nfl_bracket.png`;
-                            link.href = canvas.toDataURL();
-                            link.click();
+                            if (/Android|iPhone|iPad/i.test(navigator.userAgent)) {
+                                const modal = document.getElementById('save-modal');
+                                const modalImg = document.getElementById('save-modal-img');
+                                modalImg.src = canvas.toDataURL();
+                                modal.style.display = 'flex';
+                            } else {
+                                const link = document.createElement('a');
+                                link.download = `${name.replace(/\s+/g, '_')}_nfl_bracket.png`;
+                                link.href = canvas.toDataURL();
+                                link.click();
+                            }
                         }
                     });
+                    
+                    document.body.classList.remove('taking-screenshot');
+                    customHeader.remove();
+                    btn.innerText = originalText;
+                }).catch(err => {
+                    console.error("Screenshot failed:", err);
                     document.body.classList.remove('taking-screenshot');
                     customHeader.remove();
                     btn.innerText = originalText;
                 });
             }, 100);
+        }
+
+        function setupDraggableItems() {
+            document.querySelectorAll('[draggable="true"]').forEach(item => {
+                item.removeEventListener('dragstart', handleDragStart);
+                item.removeEventListener('dragend', handleDragEnd);
+                item.addEventListener('dragstart', handleDragStart);
+                item.addEventListener('dragend', handleDragEnd);
+                
+                item.removeEventListener('touchstart', handleTouchStart);
+                item.removeEventListener('touchmove', handleTouchMove);
+                item.removeEventListener('touchend', handleTouchEnd);
+                item.addEventListener('touchstart', handleTouchStart, { passive: false });
+                item.addEventListener('touchmove', handleTouchMove, { passive: false });
+                item.addEventListener('touchend', handleTouchEnd);
+            });
         }
 
         function handleDragStart(e) {
@@ -686,9 +861,12 @@
         function handleDragEnd(e) {
             this.style.opacity = '1';
             document.querySelectorAll('.drop-target-active').forEach(el => el.classList.remove('drop-target-active'));
-            if (!wasDropped && draggedItem && draggedItem.hasAttribute('ondrop') && !draggedItem.classList.contains('empty-slot')) {
-                clearSlot(draggedItem);
-                updateBracketVisuals();
+
+            if (!wasDropped && draggedItem) {
+                if (draggedItem.hasAttribute('ondrop') && !draggedItem.classList.contains('empty-slot')) {
+                    clearSlot(draggedItem);
+                    updateBracketVisuals();
+                }
             }
             draggedItem = null;
         }
@@ -696,35 +874,51 @@
         function handleTouchStart(e) {
             const slot = e.target.closest('.team-slot');
             if (!slot || slot.getAttribute('draggable') !== 'true') return;
+
             draggedItem = slot;
+
             const rect = slot.getBoundingClientRect();
             const touch = e.touches[0];
+            
             touchOffsetX = touch.clientX - rect.left;
             touchOffsetY = touch.clientY - rect.top;
+
             dragClone = slot.cloneNode(true);
             dragClone.classList.add('drag-clone');
             dragClone.style.width = rect.width + 'px';
+            
             updateClonePosition(touch.clientX, touch.clientY);
+            
             document.body.appendChild(dragClone);
             slot.style.opacity = '0.5';
+            
             e.preventDefault();
         }
 
         function handleTouchMove(e) {
             if (!draggedItem || !dragClone) return;
             e.preventDefault();
+            
             const touch = e.touches[0];
             updateClonePosition(touch.clientX, touch.clientY);
+
             dragClone.style.display = 'none';
             const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
             dragClone.style.display = 'block';
+
             if (!elementBelow) return;
+
             const targetSlot = elementBelow.closest('.team-slot');
+            
             document.querySelectorAll('.drop-target-active').forEach(el => el.classList.remove('drop-target-active'));
+
             if (targetSlot && targetSlot !== draggedItem) {
                 let targetConf = targetSlot.getAttribute('data-target-conf');
                 let itemConf = draggedItem.getAttribute('data-conf');
-                if (targetConf === itemConf || targetConf === 'any') targetSlot.classList.add('drop-target-active');
+
+                if (targetConf === itemConf || targetConf === 'any') {
+                    targetSlot.classList.add('drop-target-active');
+                }
             }
         }
 
@@ -734,12 +928,21 @@
             if (dragClone) dragClone.remove();
             dragClone = null;
             draggedItem.style.opacity = '1';
+            document.querySelectorAll('.drop-target-active').forEach(el => el.classList.remove('drop-target-active'));
+
+            let targetSlot = null;
             const elementBelow = document.elementFromPoint(touch.clientX, touch.clientY);
-            const targetSlot = elementBelow ? elementBelow.closest('.team-slot') : null;
-            if (targetSlot) processDrop(targetSlot);
-            else if (draggedItem.hasAttribute('ondrop') && !draggedItem.classList.contains('empty-slot')) {
-                clearSlot(draggedItem);
-                updateBracketVisuals();
+            if (elementBelow) {
+                targetSlot = elementBelow.closest('.team-slot');
+            }
+
+            if (targetSlot) {
+                processDrop(targetSlot);
+            } else {
+                if (draggedItem.hasAttribute('ondrop') && !draggedItem.classList.contains('empty-slot')) {
+                    clearSlot(draggedItem);
+                    updateBracketVisuals();
+                }
             }
             draggedItem = null;
         }
@@ -751,72 +954,123 @@
             }
         }
 
-        function setupDraggableItems() {
-            document.querySelectorAll('[draggable="true"]').forEach(item => {
-                item.addEventListener('dragstart', handleDragStart);
-                item.addEventListener('dragend', handleDragEnd);
-                item.addEventListener('touchstart', handleTouchStart, { passive: false });
-                item.addEventListener('touchmove', handleTouchMove, { passive: false });
-                item.addEventListener('touchend', handleTouchEnd);
-            });
-        }
+        setupDraggableItems();
+
+        document.addEventListener('dblclick', function(e) {
+            const slot = e.target.closest('.team-slot');
+            if (slot && slot.hasAttribute('ondrop') && !slot.classList.contains('empty-slot')) {
+                clearSlot(slot);
+                updateBracketVisuals();
+            }
+        });
 
         function allowDrop(e) {
             e.preventDefault();
-            const targetSlot = e.target.closest('.team-slot');
-            if (targetSlot && draggedItem) {
-                const targetConf = targetSlot.getAttribute('data-target-conf');
-                const itemConf = draggedItem.getAttribute('data-conf');
-                if (targetConf === itemConf || targetConf === 'any') targetSlot.classList.add('drop-target-active');
+            if (!draggedItem) return;
+            
+            let targetSlot = e.target.closest('.team-slot');
+            if (!targetSlot) return;
+
+            let targetConf = targetSlot.getAttribute('data-target-conf');
+            let itemConf = draggedItem.getAttribute('data-conf');
+
+            if (targetConf === itemConf || targetConf === 'any') {
+                targetSlot.classList.add('drop-target-active');
             }
         }
 
         function drop(e) {
             e.preventDefault();
             wasDropped = true; 
-            processDrop(e.target.closest('.team-slot'));
+            const targetSlot = e.target.closest('.team-slot');
+            processDrop(targetSlot);
         }
 
         function processDrop(targetSlot) {
             if (!targetSlot || !draggedItem) return;
+            
             targetSlot.classList.remove('drop-target-active');
+
             const itemConf = draggedItem.getAttribute('data-conf');
             const targetConf = targetSlot.getAttribute('data-target-conf');
-            if (targetConf !== itemConf && targetConf !== 'any') return;
 
+            if (targetConf !== itemConf && targetConf !== 'any') {
+                 if (targetSlot.id !== 'sb-champion-slot') {
+                    return;
+                 }
+            }
+
+            const draggedColumn = draggedItem.closest('.column');
             const targetColumn = targetSlot.closest('.column');
-            
-            // SUPER BOWL CHAMPION LOCK
+
+            // SB CHAMPION LOCK (Change 3)
             if (targetSlot.id === 'sb-champion-slot') {
-                const slots = targetColumn.querySelectorAll('.matchup .team-slot');
-                if (Array.from(slots).filter(s => !s.classList.contains('empty-slot')).length < 2) {
+                const sbMatchup = targetColumn.querySelector('.matchup');
+                const slots = sbMatchup.querySelectorAll('.team-slot');
+                const filled = Array.from(slots).filter(s => !s.classList.contains('empty-slot'));
+                
+                if (filled.length < 2) {
                     alert("Pick both Super Bowl teams first!");
                     return;
                 }
             }
 
-            // CONFERENCE DECOUPLED PREVIOUS ROUND CHECK
+            // PREVENT LOSER PROGRESSION
+            if (targetSlot.id !== 'sb-champion-slot' && draggedColumn !== targetColumn) {
+                const sourceMatchup = draggedItem.closest('.matchup');
+                if (sourceMatchup) {
+                    const slots = Array.from(sourceMatchup.querySelectorAll('.team-slot'));
+                    const opponentSlot = slots.find(s => s !== draggedItem);
+                    
+                    if (opponentSlot && !opponentSlot.classList.contains('empty-slot')) {
+                        const opponentName = opponentSlot.getAttribute('data-team');
+                        
+                        if (opponentName) {
+                            const opponentInNextRound = Array.from(targetColumn.querySelectorAll('.team-slot')).find(
+                                s => s.getAttribute('data-team') === opponentName
+                            );
+                            
+                            if (opponentInNextRound && opponentInNextRound !== targetSlot) {
+                                 alert("That doesn't work! These teams played each other.");
+                                 return;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // DECOUPLED PREVIOUS ROUND CHECK (Change 2)
             const targetColId = targetColumn.id;
             let prevRoundCols = [];
+
             if (targetColId === 'afc-conf-col') prevRoundCols = ['afc-divisional-col'];
             else if (targetColId === 'nfc-conf-col') prevRoundCols = ['nfc-divisional-col'];
             else if (targetColId === 'sb-col' && targetSlot.id !== 'sb-champion-slot') {
-                // If dropping into the SB matchup, only check the relevant conference
-                prevRoundCols = (targetConf === 'AFC' || itemConf === 'AFC') ? ['afc-conf-col'] : ['nfc-conf-col'];
+                const confToCheck = (targetConf === 'any') ? itemConf : targetConf;
+                if (confToCheck === 'AFC') prevRoundCols = ['afc-conf-col'];
+                else if (confToCheck === 'NFC') prevRoundCols = ['nfc-conf-col'];
             }
 
             for (let id of prevRoundCols) {
-                if (document.getElementById(id).querySelectorAll('.empty-slot').length > 0) {
+                const col = document.getElementById(id);
+                if (col && col.querySelectorAll('.empty-slot').length > 0) {
                     alert("Fill out the previous round for this conference first!");
                     return; 
                 }
             }
 
-            // RESEEDING & DUPLICATE CHECKS
-            if (targetColumn.className.includes('col-divisional') && draggedItem.getAttribute('data-seed') === '1') return;
-            const role = targetSlot.getAttribute('data-role');
-            if ((role === 'seed1-opponent' || role === 'other-game') && !validateDivisionalDrop(targetSlot, draggedItem, targetColumn)) return;
+            if (draggedColumn === targetColumn && draggedColumn.className.includes('col-divisional')) {
+                const seed = draggedItem.getAttribute('data-seed');
+                if (seed === '1') {
+                     return; 
+                }
+            }
 
+            const role = targetSlot.getAttribute('data-role');
+            if ((role === 'seed1-opponent' || role === 'other-game') && !validateDivisionalDrop(targetSlot, draggedItem, targetColumn)) {
+                return;
+            }
+            
             const teamData = {
                 name: draggedItem.querySelector('.name').innerText,
                 seed: draggedItem.querySelector('.seed').innerText,
@@ -827,77 +1081,159 @@
                 seedNum: draggedItem.getAttribute('data-seed')
             };
 
-            const existing = Array.from(targetColumn.querySelectorAll('.team-slot')).find(s => s.getAttribute('data-team') === teamData.dataName);
+            const existingInstance = Array.from(targetColumn.querySelectorAll('.team-slot')).find(
+                slot => slot.getAttribute('data-team') === teamData.dataName
+            );
+            
             fillSlot(targetSlot, teamData);
-            if (targetSlot.id !== 'sb-champion-slot' && existing && existing !== targetSlot) clearSlot(existing);
+
+            if (targetSlot.id !== 'sb-champion-slot' && existingInstance && existingInstance !== targetSlot) {
+                clearSlot(existingInstance);
+            }
+
             updateBracketVisuals();
         }
 
         function validateDivisionalDrop(targetSlot, item, column) {
             const role = targetSlot.getAttribute('data-role');
             const newSeed = parseInt(item.getAttribute('data-seed'));
-            const placed = Array.from(column.querySelectorAll('.team-slot')).filter(s => {
-                const t = s.getAttribute('data-team');
-                return t && t !== 'Broncos' && t !== 'Seahawks' && t !== item.getAttribute('data-team');
-            }).map(s => ({ seed: parseInt(s.getAttribute('data-seed')), role: s.getAttribute('data-role'), name: s.querySelector('.name').innerText }));
+            const placedTeams = [];
+            column.querySelectorAll('.team-slot').forEach(slot => {
+                const sTeam = slot.getAttribute('data-team');
+                if (sTeam && sTeam !== 'Broncos' && sTeam !== 'Seahawks' && sTeam !== item.getAttribute('data-team')) {
+                    placedTeams.push({
+                        name: slot.querySelector('.name').innerText,
+                        seed: parseInt(slot.getAttribute('data-seed')),
+                        role: slot.getAttribute('data-role')
+                    });
+                }
+            });
 
             if (role === 'other-game') {
-                const op = placed.find(t => t.role === 'seed1-opponent');
-                if (op && newSeed > op.seed) { alert(`RESEEDING MISTAKE!\n\nThe lowest seed must play the #1 Seed.`); return false; }
-            } else if (role === 'seed1-opponent') {
-                const ot = placed.find(t => t.role === 'other-game');
-                if (ot && newSeed < ot.seed) { alert(`RESEEDING MISTAKE!\n\nThe lowest seed must play the #1 Seed.`); return false; }
+                const opponent1 = placedTeams.find(t => t.role === 'seed1-opponent');
+                if (opponent1 && newSeed > opponent1.seed) {
+                    alert(`RESEEDING MISTAKE!\nThe lowest seed must play the #1 Seed.`);
+                    return false;
+                }
+            }
+
+            if (role === 'seed1-opponent') {
+                const otherTeam = placedTeams.find(t => t.role === 'other-game');
+                if (otherTeam && newSeed < otherTeam.seed) {
+                    alert(`RESEEDING MISTAKE!\nThe lowest seed must play the #1 Seed.`);
+                    return false;
+                }
             }
             return true;
         }
-
+        
         function fillSlot(slot, data) {
-            slot.innerHTML = `<div class="logo-box" style="background:${data.color};">${data.logo}</div><div class="team-info"><span class="name">${data.name}</span><span class="seed">${data.seed}</span></div>`;
-            slot.className = 'team-slot';
+            slot.innerHTML = `
+                <div class="logo-box" style="background:${data.color};">${data.logo}</div>
+                <div class="team-info"><span class="name">${data.name}</span><span class="seed">${data.seed}</span></div>
+            `;
+            
+            slot.classList.remove('empty-slot');
             slot.setAttribute('draggable', 'true');
             slot.setAttribute('data-conf', data.conf);
             slot.setAttribute('data-color', data.color);
             slot.setAttribute('data-team', data.dataName);
             slot.setAttribute('data-seed', data.seedNum);
             
+            const matchup = slot.closest('.matchup');
+            if (matchup) {
+                const metaHeader = matchup.querySelector('.game-meta span:first-child');
+                if (metaHeader && !metaHeader.textContent.includes('FINAL') && !metaHeader.textContent.includes('Live') && !metaHeader.textContent.includes('Prediction')) {
+                    metaHeader.textContent = 'Prediction: ' + metaHeader.textContent;
+                    metaHeader.style.color = '#FFD700';
+                }
+            }
+
             if (slot.id === 'sb-champion-slot') {
                 slot.classList.add('ultimate-champion');
                 throwConfetti();
                 document.getElementById('save-bracket-btn').style.display = 'flex';
-            } else setupDraggableItems();
+                document.body.classList.add('bracket-complete');
+            } else {
+                setupDraggableItems();
+            }
         }
 
         function clearSlot(slot) {
-            if (slot.id === 'sb-champion-slot') document.getElementById('save-bracket-btn').style.display = 'none';
+            if (slot.id === 'sb-champion-slot') {
+                document.getElementById('save-bracket-btn').style.display = 'none';
+                document.body.classList.remove('bracket-complete');
+            }
+
+            const matchup = slot.closest('.matchup');
             slot.innerHTML = '';
             slot.className = 'team-slot empty-slot';
             slot.removeAttribute('draggable');
             slot.removeAttribute('data-team');
             slot.removeAttribute('data-seed');
             slot.removeAttribute('data-color');
+
+            if (matchup) {
+                const otherSlot = Array.from(matchup.querySelectorAll('.team-slot')).find(s => s !== slot);
+                if (otherSlot && otherSlot.classList.contains('empty-slot')) {
+                    const metaHeader = matchup.querySelector('.game-meta span:first-child');
+                    if (metaHeader && metaHeader.textContent.includes('Prediction:')) {
+                        metaHeader.textContent = metaHeader.textContent.replace('Prediction: ', '');
+                        metaHeader.style.color = '';
+                    }
+                }
+            }
         }
 
         function updateBracketVisuals() {
-            const all = document.querySelectorAll('.team-slot[data-team]');
-            all.forEach(s => { if (!s.classList.contains('real-loser') && !s.classList.contains('manual-winner')) { s.classList.remove('winner', 'eliminated'); s.style.borderLeftColor = ''; s.style.background = ''; }});
-            all.forEach(slot => {
+            const allSlots = document.querySelectorAll('.team-slot[data-team]');
+            
+            allSlots.forEach(slot => {
+                if (!slot.classList.contains('real-loser') && !slot.classList.contains('manual-winner')) {
+                     slot.classList.remove('winner', 'eliminated');
+                     slot.style.borderLeftColor = '';
+                     slot.style.background = '';
+                }
+            });
+
+            allSlots.forEach(slot => {
                 const team = slot.getAttribute('data-team');
                 const col = slot.closest('.column');
-                let next = '';
-                if(col.className === 'column') next = 'col-divisional';
-                else if(col.className.includes('col-divisional')) next = 'col-conference';
-                else if(col.className.includes('col-conference')) next = 'sb-column';
+                if(!team || !col) return;
                 
-                let isWin = next ? document.querySelectorAll('.' + next + ' .team-slot[data-team="' + team + '"]').length > 0 : false;
+                let nextRoundClass = '';
+                if(col.className === 'column') nextRoundClass = 'col-divisional';
+                else if(col.className.includes('col-divisional')) nextRoundClass = 'col-conference';
+                else if(col.className.includes('col-conference')) nextRoundClass = 'sb-column';
+                
+                let isNextRound = false;
+                if (nextRoundClass) {
+                    const nextSlots = document.querySelectorAll('.' + nextRoundClass + ' .team-slot[data-team="' + team + '"]');
+                    if (nextSlots.length > 0) isNextRound = true;
+                }
+                
                 if (col.classList.contains('sb-column') && slot.id !== 'sb-champion-slot') {
-                    if (document.getElementById('sb-champion-slot').getAttribute('data-team') === team) isWin = true;
+                    const champSlot = document.getElementById('sb-champion-slot');
+                    if (champSlot && champSlot.getAttribute('data-team') === team) {
+                        isNextRound = true;
+                    }
                 }
 
-                if (isWin || slot.classList.contains('manual-winner')) {
+                if (isNextRound || slot.classList.contains('manual-winner')) {
                     slot.classList.add('winner');
-                    const color = slot.getAttribute('data-color');
-                    if (color) { slot.style.borderLeftColor = color; slot.style.background = `linear-gradient(90deg, #252525, ${color}33)`; }
-                    slot.closest('.matchup').querySelectorAll('.team-slot').forEach(opp => { if (opp !== slot) opp.classList.add('eliminated'); });
+                    
+                    const teamColor = slot.getAttribute('data-color');
+                    if (teamColor) {
+                        slot.style.borderLeftColor = teamColor;
+                        slot.style.background = `linear-gradient(90deg, #252525, ${teamColor}33)`;
+                    }
+
+                    const matchup = slot.closest('.matchup');
+                    if (matchup) {
+                        matchup.querySelectorAll('.team-slot').forEach(opp => {
+                            if (opp !== slot) opp.classList.add('eliminated');
+                        });
+                    }
                 }
             });
         }
@@ -905,56 +1241,83 @@
         function throwConfetti() {
             const box = document.getElementById('confetti-box');
             const colors = ['#FFD700', '#ff0000', '#0000ff', '#ffffff'];
-            for (let i = 0; i < 100; i++) {
-                const c = document.createElement('div');
-                c.className = 'confetti-piece';
-                c.style.left = Math.random() * 100 + 'vw';
-                c.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                c.style.animation = `fall ${Math.random() * 3 + 2}s linear ${Math.random() * 2}s forwards`;
-                box.appendChild(c);
+            for (let i = 0; i < 150; i++) {
+                const confetti = document.createElement('div');
+                confetti.classList.add('confetti-piece');
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                const duration = Math.random() * 3 + 2 + 's';
+                const delay = Math.random() * 2 + 's';
+                confetti.style.animation = `fall ${duration} linear ${delay} forwards`;
+                box.appendChild(confetti);
             }
         }
 
         async function initLiveScoring() {
-            const API = 'https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard';
+            const API_URL = 'https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard';
             async function fetchAndRender() {
                 try {
-                    const res = await fetch(API);
-                    const data = await res.json();
-                    data.events.forEach(e => {
-                        const comp = e.competitions[0];
-                        const state = e.status.type.state;
-                        comp.competitors.forEach(c => {
-                            const name = c.team.name;
-                            const score = c.score;
-                            document.querySelectorAll(`.team-slot[data-team="${name}"]`).forEach(slot => {
+                    const response = await fetch(API_URL);
+                    const data = await response.json();
+                    
+                    data.events.forEach(event => {
+                        const competition = event.competitions[0];
+                        const statusDetail = event.status.type.detail;
+                        const state = event.status.type.state;
+                        
+                        competition.competitors.forEach(comp => {
+                            const teamName = comp.team.name;
+                            const currentScore = comp.score;
+                            const apiOpponent = competition.competitors.find(c => c.id !== comp.id)?.team.name;
+
+                            document.querySelectorAll(`.team-slot[data-team="${teamName}"]`).forEach(slot => {
                                 const matchup = slot.closest('.matchup');
-                                const apiOpp = comp.competitors.find(x => x.id !== c.id).team.name;
-                                const brOpp = Array.from(matchup.querySelectorAll('.team-slot')).find(s => s !== slot)?.getAttribute('data-team');
-                                if (brOpp !== apiOpp) return;
-                                if (state !== 'pre') {
-                                    let sEl = slot.querySelector('.score');
-                                    if (!sEl) { sEl = document.createElement('span'); sEl.className = 'score'; slot.appendChild(sEl); }
-                                    sEl.textContent = score;
-                                    const meta = matchup.querySelector('.game-meta span:first-child');
-                                    meta.textContent = e.status.type.detail.toUpperCase();
-                                    if (state === 'in') meta.classList.add('live-text');
+                                if (!matchup) return;
+
+                                const opponentSlot = Array.from(matchup.querySelectorAll('.team-slot')).find(s => s !== slot);
+                                if (!opponentSlot || opponentSlot.getAttribute('data-team') !== apiOpponent) return;
+
+                                // Official Scores Update
+                                if (state === 'in' || state === 'post') {
+                                    let scoreEl = slot.querySelector('.score');
+                                    if (!scoreEl) {
+                                        scoreEl = document.createElement('span');
+                                        scoreEl.className = 'score';
+                                        slot.appendChild(scoreEl);
+                                    }
+                                    scoreEl.textContent = currentScore;
+                                }
+
+                                const metaSpan = matchup.querySelector('.game-meta span:first-child');
+                                if (metaSpan && (state === 'in' || state === 'post')) {
+                                    metaSpan.textContent = statusDetail.toUpperCase();
+                                    metaSpan.style.color = '';
+                                    if (state === 'in') metaSpan.classList.add('live-text');
+                                    else metaSpan.classList.remove('live-text');
                                 }
                             });
                         });
                     });
-                } catch (err) {}
+                } catch (error) {}
             }
-            fetchAndRender(); setInterval(fetchAndRender, 60000);
+            fetchAndRender();
+            setInterval(fetchAndRender, 60000);
         }
 
         initLiveScoring();
         updateBracketVisuals();
-        setupDraggableItems();
-        
-        const sheet = document.createElement("style");
-        sheet.innerText = `@keyframes fall { 0% { top: -20px; opacity: 1; transform: rotate(0deg); } 100% { top: 100vh; opacity: 0; transform: rotate(720deg); } }`;
-        document.head.appendChild(sheet);
+
+        const styleSheet = document.createElement("style");
+        styleSheet.type = "text/css";
+        styleSheet.innerText = `
+            @keyframes fall {
+                0% { top: -20px; opacity: 1; transform: rotate(0deg); }
+                100% { top: 100vh; opacity: 0; transform: rotate(720deg); }
+            }
+        `;
+        document.head.appendChild(styleSheet);
     </script>
+
 </body>
 </html>
