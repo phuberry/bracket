@@ -592,9 +592,8 @@
                 
                 <!-- Bills vs Jags (FINAL) -->
                 <div class="matchup" data-highlight-url="https://www.youtube.com/watch?v=OZrEboMLou4">
-                    <!-- REMOVED: Channel Name -->
                     <div class="game-meta"><span>FINAL</span><span></span></div>
-                    <div class="team-slot winner manual-winner" draggable="true" data-conf="AFC" data-team="Bills" data-seed="6" data-color="#00338D" data-score="27" id="afc-wc1-w">
+                    <div class="team-slot winner manual-winner" data-conf="AFC" data-team="Bills" data-seed="6" data-color="#00338D" data-score="27" id="afc-wc1-w">
                         <div class="logo-box" style="background:#00338D;">BUF</div>
                         <div class="team-info"><span class="name">Bills</span><span class="seed">#6</span></div>
                         <span class="score">27</span>
@@ -620,40 +619,49 @@
                     </div>
                 </div>
 
-                <!-- Chargers vs Pats (Upcoming) -->
-                <div class="matchup" data-highlight-url="">
-                    <div class="game-meta"><span>SUN 5:15 PM PT</span><span>NBC</span></div>
-                    <div class="team-slot" draggable="true" data-conf="AFC" data-team="Chargers" data-seed="7" data-color="#0080C6" id="afc-wc3-a">
+                <!-- Chargers vs Pats (FINAL) -->
+                <div class="matchup" data-highlight-url="https://www.youtube.com/watch?v=r4w8LaKWuGM">
+                    <div class="game-meta"><span>FINAL</span><span></span></div>
+                    <div class="team-slot eliminated real-loser" data-conf="AFC" data-team="Chargers" data-seed="7" data-color="#0080C6" id="afc-wc3-a">
                         <div class="logo-box" style="background:#0080C6;">LAC</div>
                         <div class="team-info"><span class="name">Chargers</span><span class="seed">#7</span></div>
                     </div>
-                    <div class="team-slot" draggable="true" data-conf="AFC" data-team="Patriots" data-seed="2" data-color="#002244" id="afc-wc3-b">
+                    <div class="team-slot winner manual-winner" data-conf="AFC" data-team="Patriots" data-seed="2" data-color="#002244" id="afc-wc3-b">
                         <div class="logo-box" style="background:#002244;">NE</div>
                         <div class="team-info"><span class="name">Patriots</span><span class="seed">#2</span></div>
                     </div>
+                    <a class="highlight-btn" href="https://www.youtube.com/watch?v=r4w8LaKWuGM" target="_blank">Watch Highlights</a>
                 </div>
             </div>
 
             <div class="column col-divisional" id="afc-divisional-col">
                 <div class="round-header">AFC Divisional</div>
-                <div class="matchup" data-highlight-url="">
+                <div class="matchup">
                     <div class="game-meta"><span>Jan 17/18</span><span>CBS</span></div>
                     <div class="team-slot" draggable="true" data-conf="AFC" data-team="Broncos" data-seed="1" data-color="#FB4F14" id="afc-div1-home">
                         <div class="logo-box" style="background:#FB4F14;">DEN</div>
                         <div class="team-info"><span class="name">Broncos</span><span class="seed">#1</span></div>
                     </div>
-                    <div class="team-slot empty-slot" data-target-conf="AFC" data-role="seed1-opponent" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                    <!-- RE-SEEDED: Lowest seed (#6 Bills) plays #1 Broncos -->
+                    <div class="team-slot" draggable="true" data-conf="AFC" data-team="Bills" data-seed="6" data-color="#00338D" id="afc-div1-visitor" data-role="seed1-opponent">
+                        <div class="logo-box" style="background:#00338D;">BUF</div>
+                        <div class="team-info"><span class="name">Bills</span><span class="seed">#6</span></div>
+                    </div>
                 </div>
-                <div class="matchup" data-highlight-url="">
+                <div class="matchup">
                     <div class="game-meta"><span>Jan 17/18</span><span>TBD</span></div>
-                    <div class="team-slot empty-slot" data-target-conf="AFC" data-role="other-game" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-                    <div class="team-slot empty-slot" data-target-conf="AFC" data-role="other-game" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                    <!-- #2 Patriots host the winner of 4/5 -->
+                    <div class="team-slot" draggable="true" data-conf="AFC" data-team="Patriots" data-seed="2" data-color="#002244" id="afc-div2-home">
+                        <div class="logo-box" style="background:#002244;">NE</div>
+                        <div class="team-info"><span class="name">Patriots</span><span class="seed">#2</span></div>
+                    </div>
+                    <div class="team-slot empty-slot" id="afc-div2-visitor" data-target-conf="AFC" data-role="other-game" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
                 </div>
             </div>
 
             <div class="column col-conference" id="afc-conf-col">
                 <div class="round-header">AFC Championship</div>
-                <div class="matchup" data-highlight-url="">
+                <div class="matchup">
                     <div class="game-meta"><span>Jan 25 - 12:00 PM PT</span><span>CBS</span></div>
                     <div class="team-slot empty-slot" data-target-conf="AFC" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
                     <div class="team-slot empty-slot" data-target-conf="AFC" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
@@ -701,7 +709,7 @@
                     <!-- RE-SEEDED: #6 49ers plays #1 Seahawks -->
                     <div class="team-slot" draggable="true" data-conf="NFC" data-team="49ers" data-seed="6" data-color="#AA0000" id="nfc-div1-visitor" data-role="seed1-opponent" ondrop="drop(event)" ondragover="allowDrop(event)">
                         <div class="logo-box" style="background:#AA0000;">SF</div>
-                        <div class="team-info"><span class="name">49ers</span><span class="seed">#6</span></div>
+                        <div class="team-info"><span class="name">49ers</span><span class="seed Fabric">#6</span></div>
                     </div>
                 </div>
                 <div class="matchup" data-highlight-url="">
@@ -725,7 +733,7 @@
                     <div class="game-meta"><span>FINAL</span><span></span></div>
                     <div class="team-slot winner manual-winner" data-conf="NFC" data-team="49ers" data-seed="6" data-color="#AA0000" id="nfc-wc1-a" data-score="24">
                         <div class="logo-box" style="background:#AA0000;">SF</div>
-                        <div class="team-info"><span class="name">49ers</span><span class="seed">#6</span></div>
+                        <div class="team-info"><span class="name">49ers</span><span class="seed Fabric">#6</span></div>
                         <span class="score">24</span>
                     </div>
                     <div class="team-slot eliminated real-loser" data-conf="NFC" data-team="Eagles" data-seed="3" data-color="#004C54" id="nfc-wc1-b" data-score="21">
@@ -757,7 +765,7 @@
                     <div class="game-meta"><span>FINAL</span><span></span></div>
                     <div class="team-slot eliminated real-loser" id="nfc-wc3-l">
                         <div class="logo-box" style="background:#203731;">GB</div>
-                        <div class="team-info"><span class="name">Packers</span><span class="seed Fabric">#7</span></div>
+                        <div class="team-info"><span class="name">Packers</span><span class="seed">#7</span></div>
                         <span class="score">27</span>
                     </div>
                     <div class="team-slot winner manual-winner" data-conf="NFC" data-team="Bears" data-seed="2" data-color="#C83803" data-score="31" id="nfc-wc3-w">
@@ -1200,9 +1208,9 @@
         }
 
         function clearSlot(slot) {
-            // Protection for hardcoded divisional participants (49ers and Rams)
-            // so they aren't deleted when dragged out to advance
-            if (slot.id === 'nfc-div1-visitor' || slot.id === 'nfc-div2-visitor') {
+            // Protection for hardcoded divisional participants so they aren't deleted when dragged out to advance
+            const protectedIds = ['nfc-div1-visitor', 'nfc-div2-visitor', 'afc-div1-visitor', 'afc-div2-home'];
+            if (protectedIds.includes(slot.id)) {
                 return;
             }
 
