@@ -709,7 +709,8 @@
                         <div class="team-info"><span class="name">Eagles</span><span class="seed">#3</span></div>
                         <span class="score">21</span>
                     </div>
-                    <a class="highlight-btn disabled" href="#" target="_blank">Awaiting Highlights</a>
+                    <!-- FIX: Highlights added and button enabled -->
+                    <a class="highlight-btn" href="https://www.youtube.com/watch?v=YPS3tHwvwR8" target="_blank">Watch Highlights</a>
                 </div>
                 
                 <div class="matchup" data-highlight-url="https://www.youtube.com/watch?v=Rh9xD2eoJcY">
@@ -773,50 +774,55 @@
             container.scrollBy({ left: amount * direction, behavior: 'smooth' });
         }
 
+        // FIX: Removed prompt popup and improved filename logic
         function saveBracket() {
-            const name = prompt("Enter your name");
-            if (!name) return;
-
             const btn = document.getElementById('save-bracket-btn');
             const originalText = btn.innerText;
             btn.innerText = 'Generating...';
             
+            const timestamp = new Date().toISOString().slice(0,10).replace(/-/g, '');
+            const filename = `NFL_Bracket_2025_${timestamp}.png`;
+
             document.body.classList.add('taking-screenshot');
             
             const customHeader = document.createElement('div');
             customHeader.id = 'temp-custom-header';
-            customHeader.innerHTML = `<h1>${name}'s NFL Bracket</h1>`;
+            customHeader.innerHTML = `<h1>2025 NFL Playoff Bracket</h1>`;
             document.body.prepend(customHeader);
             
             setTimeout(() => {
                 html2canvas(document.body, {
                     backgroundColor: '#111', 
-                    scale: 2, 
+                    scale: window.devicePixelRatio || 2, 
                     useCORS: true,
                     windowWidth: 1600,
                     ignoreElements: (element) => {
                         return element.classList.contains('highlight-btn') || 
                                element.classList.contains('mobile-nav') ||
-                               element.id === 'save-bracket-btn';
+                               element.id === 'save-bracket-btn' ||
+                               element.id === 'save-modal';
                     }
                 }).then(canvas => {
                     canvas.toBlob(blob => {
-                        if (navigator.canShare && navigator.canShare({ files: [new File([blob], "bracket.png", {type: "image/png"})] })) {
-                            const file = new File([blob], `${name.replace(/\s+/g, '_')}_nfl_bracket.png`, {type: "image/png"});
+                        // Check for native sharing first (best for mobile)
+                        if (navigator.canShare && navigator.canShare({ files: [new File([blob], filename, {type: "image/png"})] })) {
+                            const file = new File([blob], filename, {type: "image/png"});
                             navigator.share({
                                 files: [file],
                                 title: 'My NFL Bracket',
                                 text: 'Check out my NFL Playoff Bracket!'
-                            }).catch((err) => console.log('Sharing failed', err));
+                            }).catch((err) => console.log('Sharing cancelled', err));
                         } else {
+                            // FALLBACK: Show modal to save manually
                             if (/Android|iPhone|iPad/i.test(navigator.userAgent)) {
                                 const modal = document.getElementById('save-modal');
                                 const modalImg = document.getElementById('save-modal-img');
                                 modalImg.src = canvas.toDataURL();
                                 modal.style.display = 'flex';
                             } else {
+                                // PC Download
                                 const link = document.createElement('a');
-                                link.download = `${name.replace(/\s+/g, '_')}_nfl_bracket.png`;
+                                link.download = filename;
                                 link.href = canvas.toDataURL();
                                 link.click();
                             }
@@ -829,7 +835,7 @@
                 }).catch(err => {
                     console.error("Screenshot failed:", err);
                     document.body.classList.remove('taking-screenshot');
-                    customHeader.remove();
+                    if(customHeader) customHeader.remove();
                     btn.innerText = originalText;
                 });
             }, 100);
