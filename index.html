@@ -205,22 +205,27 @@
 
         /* PREDICTION SCORE INPUT */
         .prediction-input {
-            width: 35px;
-            background: rgba(0,0,0,0.3);
+            width: 40px;
+            background: rgba(0,0,0,0.8);
             border: 1px solid var(--gold-shine);
             color: var(--gold-shine);
             font-weight: bold;
             text-align: center;
             border-radius: 4px;
-            padding: 2px;
-            font-size: 0.9em;
+            padding: 4px;
+            font-size: 1em;
             margin-left: 5px;
-            /* Mobile touch friendly */
-            height: 24px;
+            /* MOBILE FIX: Position above the draggable layer via Z-Index and visual positioning */
+            position: absolute;
+            right: 5px;
+            top: -10px; /* Visual "Above" */
+            z-index: 1000; /* High Z-Index to ensure tappable */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.8);
         }
         .prediction-input:focus {
             outline: none;
-            background: rgba(255, 215, 0, 0.1);
+            background: rgba(50, 50, 50, 1);
+            border-color: #fff;
         }
         /* Hide spin buttons */
         .prediction-input::-webkit-outer-spin-button,
@@ -321,6 +326,40 @@
         @keyframes popIn {
             from { bottom: -50px; opacity: 0; }
             to { bottom: 90px; opacity: 1; }
+        }
+        
+        /* Modal for saving image on mobile */
+        #save-modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 20000;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        #save-modal img {
+            max-width: 100%;
+            max-height: 70vh;
+            border: 2px solid #fff;
+            box-shadow: 0 0 20px rgba(255,255,255,0.2);
+        }
+        #save-modal p {
+            color: #fff;
+            text-align: center;
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
+        #save-modal button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1.1em;
+            background: #333;
+            color: #fff;
+            border: 1px solid #777;
+            border-radius: 5px;
         }
 
         /* Styles for screenshot mode */
@@ -555,6 +594,13 @@
     <button id="save-bracket-btn" class="save-btn" onclick="saveBracket()">
         Save Bracket
     </button>
+    
+    <!-- Save Modal -->
+    <div id="save-modal">
+        <img id="save-modal-img" src="" alt="Bracket">
+        <p>Long press the image to save it to your Photos.</p>
+        <button onclick="document.getElementById('save-modal').style.display='none'">Close</button>
+    </div>
 
     <div class="bracket-wrapper" id="bracket-container">
         <!-- Wrapper Div to ensure width -->
@@ -815,10 +861,31 @@
                                element.id === 'save-bracket-btn';
                     }
                 }).then(canvas => {
-                    const link = document.createElement('a');
-                    link.download = `${name.replace(/\s+/g, '_')}_nfl_bracket.png`;
-                    link.href = canvas.toDataURL();
-                    link.click();
+                    // Mobile Share API Support
+                    canvas.toBlob(blob => {
+                        if (navigator.canShare && navigator.canShare({ files: [new File([blob], "bracket.png", {type: "image/png"})] })) {
+                            const file = new File([blob], `${name.replace(/\s+/g, '_')}_nfl_bracket.png`, {type: "image/png"});
+                            navigator.share({
+                                files: [file],
+                                title: 'My NFL Bracket',
+                                text: 'Check out my NFL Playoff Bracket!'
+                            }).catch((err) => console.log('Sharing failed', err));
+                        } else {
+                            // FALLBACK 1: Show Modal on Mobile
+                            if (/Android|iPhone|iPad/i.test(navigator.userAgent)) {
+                                const modal = document.getElementById('save-modal');
+                                const modalImg = document.getElementById('save-modal-img');
+                                modalImg.src = canvas.toDataURL();
+                                modal.style.display = 'flex';
+                            } else {
+                                // FALLBACK 2: Desktop Download
+                                const link = document.createElement('a');
+                                link.download = `${name.replace(/\s+/g, '_')}_nfl_bracket.png`;
+                                link.href = canvas.toDataURL();
+                                link.click();
+                            }
+                        }
+                    });
                     
                     // Cleanup
                     document.body.classList.remove('taking-screenshot');
@@ -871,10 +938,19 @@
         }
 
         function handleTouchStart(e) {
+            // FIX for mobile input: If touching the input, let the browser handle focus/input
+            // STOP propagation so we don't start dragging
+            if (e.target.tagName === 'INPUT' || e.target.classList.contains('prediction-input')) {
+                e.stopPropagation();
+                return;
+            }
+
             const slot = e.target.closest('.team-slot');
             if (!slot || slot.getAttribute('draggable') !== 'true') return;
 
-            e.preventDefault();
+            // Only prevent default if we are legitimately starting a drag
+            // e.preventDefault(); // Removed global preventDefault to be safer, added passive: false below
+            
             draggedItem = slot;
 
             const rect = slot.getBoundingClientRect();
@@ -891,6 +967,9 @@
             
             document.body.appendChild(dragClone);
             slot.style.opacity = '0.5';
+            
+            // Prevent scrolling while dragging
+            e.preventDefault();
         }
 
         function handleTouchMove(e) {
@@ -1242,9 +1321,30 @@
 
             const slots = matchup.querySelectorAll('.team-slot');
             const filledSlots = Array.from(slots).filter(s => !s.classList.contains('empty-slot'));
+            const isSuperBowl = matchup.closest('.sb-column') !== null;
 
-            // Check if BOTH slots are filled with valid teams
+            // CONDITION: Show inputs if...
+            // 1. It is the Super Bowl AND both teams are present (so you can predict before champion pick)
+            // 2. OR, standard round: Both teams present AND a winner has been picked (via updateBracketVisuals/classes)
+            
+            // Let's check for winner. 
+            // Note: managePredictionInputs is called during fillSlot and updateBracketVisuals
+            let hasWinner = false;
+            filledSlots.forEach(s => {
+                if (s.classList.contains('winner')) hasWinner = true;
+            });
+
+            // LOGIC:
+            let showInputs = false;
             if (filledSlots.length === 2) {
+                if (isSuperBowl) {
+                    showInputs = true;
+                } else if (hasWinner) {
+                    showInputs = true;
+                }
+            }
+
+            if (showInputs) {
                 // Add inputs if they don't exist
                 filledSlots.forEach(slot => {
                     if (!slot.querySelector('.prediction-input') && !slot.querySelector('.score')) {
@@ -1252,6 +1352,14 @@
                         input.type = 'tel'; // triggers number pad on mobile
                         input.className = 'prediction-input';
                         input.placeholder = '-';
+                        
+                        // Prevent drag start on desktop/mobile when clicking input
+                        input.setAttribute('draggable', 'false'); 
+                        // These events are crucial for allowing interaction without dragging
+                        input.addEventListener('click', (e) => e.stopPropagation()); 
+                        input.addEventListener('mousedown', (e) => e.stopPropagation());
+                        input.addEventListener('touchstart', (e) => e.stopPropagation());
+                        
                         slot.appendChild(input);
                     }
                 });
@@ -1308,9 +1416,14 @@
 
                     const matchup = slot.closest('.matchup');
                     if (matchup) {
+                        // Mark opponent as eliminated
                         matchup.querySelectorAll('.team-slot').forEach(opp => {
                             if (opp !== slot) opp.classList.add('eliminated');
                         });
+                        
+                        // NEW: Since we found a winner, update inputs for this matchup
+                        // (Wait for DOM update)
+                        setTimeout(() => managePredictionInputs(matchup), 0);
                     }
                 }
             });
