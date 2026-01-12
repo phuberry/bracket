@@ -611,7 +611,7 @@
 
             <!-- ================= CENTER STAGE ================= -->
             <div class="column sb-column" id="sb-col">
-                <div class="round-header">SUPER BOWL LX</div>
+                <div class="round-header">Super Bowl LX</div>
                 
                 <div class="sb-logo-container">
                     <img src="https://upload.wikimedia.org/wikipedia/en/thumb/b/b0/Super_Bowl_LX_Logo.svg/330px-Super_Bowl_LX_Logo.svg.png" alt="SB LX" class="sb-img">
@@ -624,7 +624,7 @@
                     <div class="team-slot empty-slot" data-target-conf="any" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
                 </div>
 
-                <div class="round-header" style="margin-top: 40px; color: var(--gold-shine);">SUPER BOWL CHAMPION</div>
+                <div class="round-header" style="margin-top: 40px; color: var(--gold-shine);">Super Bowl Champion</div>
                 <div id="sb-champion-slot" class="team-slot empty-slot ultimate-slot" data-target-conf="any" ondrop="drop(event)" ondragover="allowDrop(event)" style="width: 280px;"></div>
             </div>
 
@@ -659,17 +659,18 @@
             <div class="column" id="nfc-wc-col">
                 <div class="round-header">NFC Wild Card</div>
                 <div class="matchup" data-highlight-url="">
-                    <div class="game-meta"><span class="live-text">IN PROGRESS</span><span>FOX</span></div>
-                    <div class="team-slot" draggable="true" data-conf="NFC" data-team="49ers" data-seed="6" data-color="#AA0000" id="nfc-wc1-a" data-score="?">
+                    <div class="game-meta"><span>FINAL</span><span>FOX</span></div>
+                    <div class="team-slot winner" draggable="true" data-conf="NFC" data-team="49ers" data-seed="6" data-color="#AA0000" id="nfc-wc1-a" data-score="24">
                         <div class="logo-box" style="background:#AA0000;">SF</div>
                         <div class="team-info"><span class="name">49ers</span><span class="seed">#6</span></div>
-                        <span class="score">?</span>
+                        <span class="score">24</span>
                     </div>
-                    <div class="team-slot" draggable="true" data-conf="NFC" data-team="Eagles" data-seed="3" data-color="#004C54" id="nfc-wc1-b" data-score="?">
+                    <div class="team-slot eliminated real-loser" draggable="true" data-conf="NFC" data-team="Eagles" data-seed="3" data-color="#004C54" id="nfc-wc1-b" data-score="21">
                         <div class="logo-box" style="background:#004C54;">PHI</div>
                         <div class="team-info"><span class="name">Eagles</span><span class="seed">#3</span></div>
-                        <span class="score">?</span>
+                        <span class="score">21</span>
                     </div>
+                    <a class="highlight-btn disabled" href="#" target="_blank">Awaiting Highlights</a>
                 </div>
                 
                 <!-- Rams vs Panthers (FINAL) -->
@@ -959,10 +960,8 @@
             const itemConf = draggedItem.getAttribute('data-conf');
             const targetConf = targetSlot.getAttribute('data-target-conf');
 
-            // 1. Basic Conference Check (Updated: No Alert)
             if (targetConf !== itemConf && targetConf !== 'any') {
                  if (targetSlot.id !== 'sb-champion-slot') {
-                    // Silently fail or shake animation (omitted for brevity)
                     return;
                  }
             }
@@ -976,38 +975,36 @@
                 const slots = sbMatchup.querySelectorAll('.team-slot');
                 const filled = Array.from(slots).filter(s => !s.classList.contains('empty-slot'));
                 
-                // Allow drop only if the dragged item is already IN the SB matchup (re-seating) OR if the matchup is full
-                // Actually, logic is: You can't pick a champ if the game isn't set.
                 if (filled.length < 2) {
-                    // One exception: If we are dragging FROM the SB matchup to the Champ slot, 
-                    // we might be in a state where we are filling it. 
-                    // But generally, the user should fill VS first.
-                    alert("Fill out the Super Bowl matchup first!");
+                    alert("Pick both Super Bowl teams first!");
                     return;
                 }
             }
 
-            // NEW: PREVENT LOSER PROGRESSION (Unless dropping into Champion slot which acts as next round)
-            // UPDATED: Only check this if advancing to a NEW column. 
-            // If dragging within the same column (reordering), skip this check.
+            // NEW: PREVENT LOSER PROGRESSION
+            // Only check if moving to a new column (advancing rounds)
+            // Prevents advancing "Jaguars" if "Bills" (their opponent) is already in the target round.
             if (targetSlot.id !== 'sb-champion-slot' && draggedColumn !== targetColumn) {
                 const sourceMatchup = draggedItem.closest('.matchup');
                 if (sourceMatchup) {
                     // Find the opponent in the source matchup
-                    const opponentSlot = Array.from(sourceMatchup.querySelectorAll('.team-slot')).find(s => s !== draggedItem);
+                    const slots = Array.from(sourceMatchup.querySelectorAll('.team-slot'));
+                    const opponentSlot = slots.find(s => s !== draggedItem);
                     
                     if (opponentSlot && !opponentSlot.classList.contains('empty-slot')) {
                         const opponentName = opponentSlot.getAttribute('data-team');
                         
-                        // Check if this opponent is already present in the TARGET column
-                        // (We exclude the targetSlot itself to allow replacing a placeholder)
-                        const opponentInNextRound = Array.from(targetColumn.querySelectorAll('.team-slot')).find(
-                            s => s.getAttribute('data-team') === opponentName && s !== targetSlot
-                        );
-                        
-                        if (opponentInNextRound) {
-                             alert("That doesn't work!");
-                             return;
+                        if (opponentName) {
+                            // Check if this specific opponent is present in the target column
+                            const opponentInNextRound = Array.from(targetColumn.querySelectorAll('.team-slot')).find(
+                                s => s.getAttribute('data-team') === opponentName
+                            );
+                            
+                            // If the opponent is found, block the move
+                            if (opponentInNextRound) {
+                                 alert("That doesn't work! These teams played each other.");
+                                 return;
+                            }
                         }
                     }
                 }
@@ -1017,18 +1014,15 @@
             const targetColId = targetColumn.id;
             let prevRoundCols = [];
 
-            // Define dependencies
             if (targetColId === 'afc-conf-col') prevRoundCols = ['afc-divisional-col'];
             else if (targetColId === 'nfc-conf-col') prevRoundCols = ['nfc-divisional-col'];
             else if (targetColId === 'sb-col') prevRoundCols = ['afc-conf-col', 'nfc-conf-col'];
 
-            // Check if any previous column still has empty slots
             for (let id of prevRoundCols) {
                 const col = document.getElementById(id);
-                // Check if the column has any empty slots that are meant to be filled
                 if (col && col.querySelectorAll('.empty-slot').length > 0) {
                     alert("Fill out the previous round first!");
-                    return; // Block drop
+                    return; 
                 }
             }
 
@@ -1044,7 +1038,7 @@
             const role = targetSlot.getAttribute('data-role');
             if (role === 'seed1-opponent' || role === 'other-game') {
                 if (validateDivisionalDrop(targetSlot, draggedItem, targetColumn) === false) {
-                    return; // Block drop
+                    return; 
                 }
             }
             
@@ -1091,7 +1085,7 @@
                 const opponent1 = placedTeams.find(t => t.role === 'seed1-opponent');
                 if (opponent1) {
                     if (newSeed > opponent1.seed) {
-                        alert(`RESEEDING ERROR\n\nThe ${newTeamName} (#${newSeed}) are a lower seed than the ${opponent1.name} (#${opponent1.seed}).\n\nThe lowest seed MUST play the #1 Seed.`);
+                        alert(`RESEEDING MISTAKE!\n\nThe ${newTeamName} (#${newSeed}) are a lower seed than the ${opponent1.name} (#${opponent1.seed}).\n\nThe lowest seed must play the #1 Seed.`);
                         return false;
                     }
                 }
@@ -1101,7 +1095,7 @@
                 const otherTeam = placedTeams.find(t => t.role === 'other-game');
                 if (otherTeam) {
                     if (newSeed < otherTeam.seed) {
-                        alert(`RESEEDING ERROR\n\nThe ${otherTeam.name} (#${otherTeam.seed}) are a lower seed than the ${newTeamName} (#${newSeed}).\n\nThe lowest seed MUST play the #1 Seed.`);
+                        alert(`RESEEDING MISTAKE!\n\nThe ${otherTeam.name} (#${otherTeam.seed}) are a lower seed than the ${newTeamName} (#${newSeed}).\n\nThe lowest seed must play the #1 Seed.`);
                         return false;
                     }
                 }
