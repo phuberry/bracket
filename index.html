@@ -221,8 +221,9 @@
         }
 
         .winner { 
-            border-left: 4px solid var(--gold-shine) !important; 
-            background: linear-gradient(90deg, #252525, #2f2f20) !important; 
+            /* MODIFIED: Removed !important to allow JS to set specific team color */
+            border-left: 4px solid var(--gold-shine); 
+            background: linear-gradient(90deg, #252525, #2f2f20); 
             opacity: 1 !important;
             filter: grayscale(0%) !important;
         }
@@ -969,8 +970,10 @@
             const itemConf = draggedItem.getAttribute('data-conf');
             const targetConf = targetSlot.getAttribute('data-target-conf');
 
+            // 1. Basic Conference Check (Updated: No Alert)
             if (targetConf !== itemConf && targetConf !== 'any') {
                  if (targetSlot.id !== 'sb-champion-slot') {
+                    // Silently fail
                     return;
                  }
             }
@@ -992,11 +995,9 @@
 
             // NEW: PREVENT LOSER PROGRESSION
             // Only check if moving to a new column (advancing rounds)
-            // Prevents advancing "Jaguars" if "Bills" (their opponent) is already in the target round.
             if (targetSlot.id !== 'sb-champion-slot' && draggedColumn !== targetColumn) {
                 const sourceMatchup = draggedItem.closest('.matchup');
                 if (sourceMatchup) {
-                    // Find the opponent in the source matchup
                     const slots = Array.from(sourceMatchup.querySelectorAll('.team-slot'));
                     const opponentSlot = slots.find(s => s !== draggedItem);
                     
@@ -1004,12 +1005,10 @@
                         const opponentName = opponentSlot.getAttribute('data-team');
                         
                         if (opponentName) {
-                            // Check if this specific opponent is present in the target column
                             const opponentInNextRound = Array.from(targetColumn.querySelectorAll('.team-slot')).find(
                                 s => s.getAttribute('data-team') === opponentName
                             );
                             
-                            // If the opponent is found, block the move
                             if (opponentInNextRound) {
                                  alert("That doesn't work! These teams played each other.");
                                  return;
@@ -1043,7 +1042,7 @@
                 }
             }
 
-            // 3. SMART RESEEDING CHECK (Divisional Round Only)
+            // 3. SMART RESEEDING CHECK
             const role = targetSlot.getAttribute('data-role');
             if (role === 'seed1-opponent' || role === 'other-game') {
                 if (validateDivisionalDrop(targetSlot, draggedItem, targetColumn) === false) {
@@ -1051,25 +1050,41 @@
                 }
             }
             
-            // 4. DUPLICATE CHECK & CLEANUP
+            // --- DATA EXTRACTION (Fixes disappearing bug) ---
+            // Extract data BEFORE clearing anything
+            const teamData = {
+                name: draggedItem.querySelector('.name').innerText,
+                seed: draggedItem.querySelector('.seed').innerText,
+                color: draggedItem.getAttribute('data-color'),
+                logo: draggedItem.querySelector('.logo-box').innerText,
+                dataName: draggedItem.getAttribute('data-team'),
+                conf: draggedItem.getAttribute('data-conf'),
+                seedNum: draggedItem.getAttribute('data-seed')
+            };
+
+            // 4. DUPLICATE CHECK
             const existingInstance = Array.from(targetColumn.querySelectorAll('.team-slot')).find(
-                slot => slot.getAttribute('data-team') === draggedItem.getAttribute('data-team')
+                slot => slot.getAttribute('data-team') === teamData.dataName
             );
             
-            // MODIFIED: If dropping into SB Champion, do NOT remove from SB Matchup (Treat as separate rounds)
             let shouldClear = true;
             if (targetSlot.id === 'sb-champion-slot') {
                 shouldClear = false; 
             }
             
+            // 5. EXECUTE MOVE (Order matters: Fill New -> Clear Old)
+            
+            // A. Fill the new slot with extracted data
+            fillSlot(targetSlot, teamData);
+
+            // B. Clear the old instance (if it exists and isn't the target slot)
+            // Note: In a reorder within same column, existingInstance IS draggedItem.
+            // Since we already filled targetSlot, we safely clear existingInstance now.
             if (shouldClear && existingInstance && existingInstance !== targetSlot) {
                 clearSlot(existingInstance);
             }
 
-            // 5. EXECUTE DROP
-            fillSlot(targetSlot, draggedItem);
-            
-            // 6. UPDATE HIGHLIGHTS (Previous Round)
+            // 6. UPDATE HIGHLIGHTS
             updateBracketVisuals();
         }
 
@@ -1081,6 +1096,7 @@
             const placedTeams = [];
             column.querySelectorAll('.team-slot').forEach(slot => {
                 const sTeam = slot.getAttribute('data-team');
+                // Ensure we don't count the item we are currently moving if it's already there
                 if (sTeam && sTeam !== 'Broncos' && sTeam !== 'Seahawks' && sTeam !== item.getAttribute('data-team')) {
                     placedTeams.push({
                         name: slot.querySelector('.name').innerText,
@@ -1112,25 +1128,19 @@
             return true;
         }
         
-        function fillSlot(slot, item) {
-            const teamName = item.querySelector('.name').innerText;
-            const teamSeed = item.querySelector('.seed').innerText;
-            const teamColor = item.getAttribute('data-color');
-            const logoText = item.querySelector('.logo-box').innerText;
-            const teamDataName = item.getAttribute('data-team');
-            const conf = item.getAttribute('data-conf');
-
+        // UPDATED: fillSlot now takes a data object, not a DOM element
+        function fillSlot(slot, data) {
             slot.innerHTML = `
-                <div class="logo-box" style="background:${teamColor};">${logoText}</div>
-                <div class="team-info"><span class="name">${teamName}</span><span class="seed">${teamSeed}</span></div>
+                <div class="logo-box" style="background:${data.color};">${data.logo}</div>
+                <div class="team-info"><span class="name">${data.name}</span><span class="seed">${data.seed}</span></div>
             `;
             
             slot.classList.remove('empty-slot');
             slot.setAttribute('draggable', 'true');
-            slot.setAttribute('data-conf', conf);
-            slot.setAttribute('data-color', teamColor);
-            slot.setAttribute('data-team', teamDataName);
-            slot.setAttribute('data-seed', item.getAttribute('data-seed'));
+            slot.setAttribute('data-conf', data.conf);
+            slot.setAttribute('data-color', data.color);
+            slot.setAttribute('data-team', data.dataName);
+            slot.setAttribute('data-seed', data.seedNum);
             
             // NEW LOGIC: Update Header for Prediction
             const matchup = slot.closest('.matchup');
@@ -1139,7 +1149,7 @@
                 if (metaHeader) {
                     const currentText = metaHeader.textContent;
                     // Don't overwrite if it's Live or Final
-                    if (!currentText.includes('Final') && !currentText.includes('Live') && !currentText.includes('Prediction')) {
+                    if (!currentText.includes('FINAL') && !currentText.includes('Live') && !currentText.includes('Prediction')) {
                         metaHeader.textContent = 'Prediction: ' + currentText;
                         metaHeader.style.color = '#FFD700'; // Gold color for predictions
                     }
@@ -1198,13 +1208,14 @@
             
             // check if game is official (Live or Final)
             const metaHeader = matchup.querySelector('.game-meta span:first-child');
-            if (metaHeader && (metaHeader.textContent.includes('Final') || metaHeader.classList.contains('live-text'))) {
+            if (metaHeader && (metaHeader.textContent.includes('FINAL') || metaHeader.classList.contains('live-text'))) {
                 return; // Don't add inputs to finished/live games
             }
 
             const slots = matchup.querySelectorAll('.team-slot');
             const filledSlots = Array.from(slots).filter(s => !s.classList.contains('empty-slot'));
 
+            // Check if BOTH slots are filled with valid teams
             if (filledSlots.length === 2) {
                 // Add inputs if they don't exist
                 filledSlots.forEach(slot => {
@@ -1232,6 +1243,9 @@
                 const id = slot.id || '';
                 if (!slot.classList.contains('real-loser')) {
                      slot.classList.remove('winner', 'eliminated');
+                     // NEW: Reset dynamic colors when clearing status
+                     slot.style.borderLeftColor = '';
+                     slot.style.background = '';
                 }
             });
 
@@ -1249,6 +1263,15 @@
                     const nextSlots = document.querySelectorAll('.' + nextRoundClass + ' .team-slot[data-team="' + team + '"]');
                     if (nextSlots.length > 0) {
                         slot.classList.add('winner');
+                        
+                        // NEW: Apply Team Color Highlight
+                        const teamColor = slot.getAttribute('data-color');
+                        if (teamColor) {
+                            slot.style.borderLeftColor = teamColor;
+                            // Add a subtle gradient of the team color
+                            slot.style.background = `linear-gradient(90deg, #252525, ${teamColor}33)`;
+                        }
+
                         const matchup = slot.closest('.matchup');
                         if (matchup) {
                             matchup.querySelectorAll('.team-slot').forEach(opp => {
@@ -1347,7 +1370,8 @@
                                 const metaSpan = matchup.querySelector('.game-meta span:first-child');
                                 // Only overwrite hardcoded times if the game is actually Live or Final
                                 if (metaSpan && (isLive || isFinal)) {
-                                    metaSpan.textContent = statusDetail;
+                                    // MODIFIED: Force UPPERCASE for consistency (e.g. "FINAL")
+                                    metaSpan.textContent = statusDetail.toUpperCase();
                                     metaSpan.style.color = ''; // Reset prediction color if game is real
                                     
                                     if (isLive) {
@@ -1401,6 +1425,12 @@
 
         // Start the live scoring system
         initLiveScoring();
+        
+        // Initial visual update to color hardcoded winners
+        updateBracketVisuals();
+        
+        // NEW: Initial check to add prediction inputs to pre-filled games (like Divisional round)
+        document.querySelectorAll('.matchup').forEach(m => managePredictionInputs(m));
 
         const styleSheet = document.createElement("style");
         styleSheet.type = "text/css";
