@@ -189,6 +189,32 @@
         .seed { font-size: 0.7em; color: #999; }
         .score { font-weight: bold; font-size: 1.1em; }
 
+        /* PREDICTION SCORE INPUT */
+        .prediction-input {
+            width: 35px;
+            background: rgba(0,0,0,0.3);
+            border: 1px solid var(--gold-shine);
+            color: var(--gold-shine);
+            font-weight: bold;
+            text-align: center;
+            border-radius: 4px;
+            padding: 2px;
+            font-size: 0.9em;
+            margin-left: 5px;
+            /* Mobile touch friendly */
+            height: 24px;
+        }
+        .prediction-input:focus {
+            outline: none;
+            background: rgba(255, 215, 0, 0.1);
+        }
+        /* Hide spin buttons */
+        .prediction-input::-webkit-outer-spin-button,
+        .prediction-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
         .winner { 
             border-left: 4px solid var(--gold-shine) !important; 
             background: linear-gradient(90deg, #252525, #2f2f20) !important; 
@@ -424,6 +450,14 @@
             .name { font-size: 0.75em; } 
             .seed { font-size: 0.65em; }
             .score { font-size: 0.8em; }
+            
+            /* Prediction input mobile sizing */
+            .prediction-input {
+                width: 30px;
+                height: 22px;
+                font-size: 0.8em;
+                margin-left: 2px;
+            }
             
             .game-meta { 
                 font-size: 0.6em; 
@@ -1004,6 +1038,22 @@
             slot.setAttribute('data-team', teamDataName);
             slot.setAttribute('data-seed', item.getAttribute('data-seed'));
             
+            // NEW LOGIC: Update Header for Prediction
+            const matchup = slot.closest('.matchup');
+            if (matchup) {
+                const metaHeader = matchup.querySelector('.game-meta span:first-child');
+                if (metaHeader) {
+                    const currentText = metaHeader.textContent;
+                    // Don't overwrite if it's Live or Final
+                    if (!currentText.includes('Final') && !currentText.includes('Live') && !currentText.includes('Prediction')) {
+                        metaHeader.textContent = 'Prediction: ' + currentText;
+                        metaHeader.style.color = '#FFD700'; // Gold color for predictions
+                    }
+                }
+                // Check if we should add prediction inputs
+                managePredictionInputs(matchup);
+            }
+
             if (slot.id === 'sb-champion-slot') {
                 slot.classList.add('ultimate-champion');
                 throwConfetti();
@@ -1020,12 +1070,61 @@
                 document.getElementById('save-bracket-btn').style.display = 'none';
             }
 
+            // CLEANUP PREDICTION TITLE if matchup is emptied
+            const matchup = slot.closest('.matchup');
+            
             slot.innerHTML = '';
             slot.className = 'team-slot empty-slot';
             slot.removeAttribute('draggable');
             slot.removeAttribute('data-team');
             slot.removeAttribute('data-seed');
             slot.removeAttribute('data-color');
+
+            if (matchup) {
+                // Check if other slot is empty before resetting
+                const otherSlot = Array.from(matchup.querySelectorAll('.team-slot')).find(s => s !== slot);
+                if (otherSlot && otherSlot.classList.contains('empty-slot')) {
+                    const metaHeader = matchup.querySelector('.game-meta span:first-child');
+                    if (metaHeader && metaHeader.textContent.includes('Prediction:')) {
+                        metaHeader.textContent = metaHeader.textContent.replace('Prediction: ', '');
+                        metaHeader.style.color = ''; // Reset color
+                    }
+                }
+                // Check if we should remove prediction inputs
+                managePredictionInputs(matchup);
+            }
+        }
+
+        function managePredictionInputs(matchup) {
+            if (!matchup) return;
+            
+            // check if game is official (Live or Final)
+            const metaHeader = matchup.querySelector('.game-meta span:first-child');
+            if (metaHeader && (metaHeader.textContent.includes('Final') || metaHeader.classList.contains('live-text'))) {
+                return; // Don't add inputs to finished/live games
+            }
+
+            const slots = matchup.querySelectorAll('.team-slot');
+            const filledSlots = Array.from(slots).filter(s => !s.classList.contains('empty-slot'));
+
+            if (filledSlots.length === 2) {
+                // Add inputs if they don't exist
+                filledSlots.forEach(slot => {
+                    if (!slot.querySelector('.prediction-input') && !slot.querySelector('.score')) {
+                        const input = document.createElement('input');
+                        input.type = 'tel'; // triggers number pad on mobile
+                        input.className = 'prediction-input';
+                        input.placeholder = '-';
+                        slot.appendChild(input);
+                    }
+                });
+            } else {
+                // Remove inputs if they exist (revert to just team info)
+                slots.forEach(slot => {
+                    const input = slot.querySelector('.prediction-input');
+                    if (input) input.remove();
+                });
+            }
         }
 
         function updateBracketVisuals() {
@@ -1102,64 +1201,88 @@
                             const teamName = comp.team.name; // e.g. "Bills", "49ers"
                             const currentScore = comp.score;
                             
+                            // Find the opponent in the API data to validate the matchup
+                            const apiOpponent = competition.competitors.find(c => c.id !== comp.id)?.team.name;
+
                             // Find all instances of this team in the bracket
                             const teamSlots = document.querySelectorAll(`.team-slot[data-team="${teamName}"]`);
                             
                             teamSlots.forEach(slot => {
-                                // 1. Update Score
-                                let scoreEl = slot.querySelector('.score');
-                                if (!scoreEl) {
-                                    // If score element doesn't exist, create it nicely
-                                    scoreEl = document.createElement('span');
-                                    scoreEl.className = 'score';
-                                    slot.appendChild(scoreEl);
+                                // VALIDATION: Only update if the bracket matchup matches the API matchup
+                                const matchup = slot.closest('.matchup');
+                                if (!matchup) return;
+
+                                // Find the opponent slot in the DOM
+                                const siblingSlots = Array.from(matchup.querySelectorAll('.team-slot'));
+                                const opponentSlot = siblingSlots.find(s => s !== slot);
+                                const bracketOpponent = opponentSlot ? opponentSlot.getAttribute('data-team') : null;
+
+                                // If the bracket slot doesn't have a valid opponent (e.g. empty/TBD), 
+                                // or if the opponent doesn't match the API event, DO NOT update.
+                                // This prevents scores carrying over to future rounds or headers updating for future games.
+                                if (!bracketOpponent || bracketOpponent !== apiOpponent) {
+                                    return;
                                 }
-                                // Only update if data exists (avoids overwriting '?' with '0' before game starts if typically preferred)
-                                if (currentScore !== undefined) {
-                                    scoreEl.textContent = currentScore;
-                                    slot.setAttribute('data-score', currentScore);
+
+                                // 1. Update Score
+                                // Only add score span if prediction input is NOT there (or replace it if game went live)
+                                let scoreEl = slot.querySelector('.score');
+                                const predictionInput = slot.querySelector('.prediction-input');
+                                
+                                if (isLive || isFinal) {
+                                    // Remove prediction input if game is now real
+                                    if (predictionInput) predictionInput.remove();
+                                    
+                                    if (!scoreEl) {
+                                        scoreEl = document.createElement('span');
+                                        scoreEl.className = 'score';
+                                        slot.appendChild(scoreEl);
+                                    }
+                                    if (currentScore !== undefined) {
+                                        scoreEl.textContent = currentScore;
+                                        slot.setAttribute('data-score', currentScore);
+                                    }
                                 }
 
                                 // 2. Update Game Clock / Status (only for the specific matchup wrapper)
-                                const matchup = slot.closest('.matchup');
-                                if (matchup) {
-                                    const metaSpan = matchup.querySelector('.game-meta span:first-child');
-                                    // Only overwrite hardcoded times if the game is actually Live or Final
-                                    if (metaSpan && (isLive || isFinal)) {
-                                        metaSpan.textContent = statusDetail;
-                                        
-                                        if (isLive) {
-                                            metaSpan.classList.add('live-text');
-                                        } else {
-                                            metaSpan.classList.remove('live-text');
-                                        }
+                                // We already validated that this matchup corresponds to the API event
+                                const metaSpan = matchup.querySelector('.game-meta span:first-child');
+                                // Only overwrite hardcoded times if the game is actually Live or Final
+                                if (metaSpan && (isLive || isFinal)) {
+                                    metaSpan.textContent = statusDetail;
+                                    metaSpan.style.color = ''; // Reset prediction color if game is real
+                                    
+                                    if (isLive) {
+                                        metaSpan.classList.add('live-text');
+                                    } else {
+                                        metaSpan.classList.remove('live-text');
+                                    }
+                                }
+
+                                // 3. Update Highlights Button
+                                // Logic: If Final, show "Watch" if link exists, or "Awaiting" if not.
+                                if (isFinal) {
+                                    let btn = matchup.querySelector('.highlight-btn');
+                                    const highlightUrl = matchup.getAttribute('data-highlight-url');
+
+                                    if (!btn) {
+                                        // Create button if it doesn't exist
+                                        btn = document.createElement('a');
+                                        btn.className = 'highlight-btn';
+                                        btn.target = '_blank';
+                                        matchup.appendChild(btn);
                                     }
 
-                                    // 3. Update Highlights Button
-                                    // Logic: If Final, show "Watch" if link exists, or "Awaiting" if not.
-                                    if (isFinal) {
-                                        let btn = matchup.querySelector('.highlight-btn');
-                                        const highlightUrl = matchup.getAttribute('data-highlight-url');
-
-                                        if (!btn) {
-                                            // Create button if it doesn't exist
-                                            btn = document.createElement('a');
-                                            btn.className = 'highlight-btn';
-                                            btn.target = '_blank';
-                                            matchup.appendChild(btn);
-                                        }
-
-                                        if (highlightUrl && highlightUrl.trim() !== "") {
-                                            // Link exists
-                                            btn.href = highlightUrl;
-                                            btn.textContent = "Watch Highlights";
-                                            btn.classList.remove('disabled');
-                                        } else {
-                                            // Link missing
-                                            btn.removeAttribute('href');
-                                            btn.textContent = "Awaiting Highlights";
-                                            btn.classList.add('disabled');
-                                        }
+                                    if (highlightUrl && highlightUrl.trim() !== "") {
+                                        // Link exists
+                                        btn.href = highlightUrl;
+                                        btn.textContent = "Watch Highlights";
+                                        btn.classList.remove('disabled');
+                                    } else {
+                                        // Link missing
+                                        btn.removeAttribute('href');
+                                        btn.textContent = "Awaiting Highlights";
+                                        btn.classList.add('disabled');
                                     }
                                 }
                             });
