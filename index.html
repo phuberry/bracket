@@ -108,8 +108,22 @@
             min-width: 240px;
             scroll-snap-align: center;
             scroll-snap-stop: always;
+            /* ALIGNMENT FIX: RELATIVE POSITIONING FOR DESKTOP */
+            position: relative;
+            padding-top: 40px; /* Space for the absolute header */
         }
 
+        /* ALIGNMENT FIX: Pin the round names to the top */
+        .column > .round-header:first-child {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            margin-top: 10px; /* Minor adjustment from very top */
+            z-index: 10;
+        }
+
+        /* Ensure columns still have gaps for visuals, though space-around handles most */
         .col-divisional { gap: 150px; }
         .col-conference { gap: 300px; }
         .sb-column { justify-content: center; align-items: center; }
@@ -451,6 +465,15 @@
                 min-width: 45vw; /* Show ~2 columns */
                 /* CENTER SNAP for SB alignment */
                 scroll-snap-align: center; 
+                /* RESET DESKTOP ALIGNMENT FIX */
+                position: static;
+            }
+            
+            /* RESET HEADER ALIGNMENT FOR MOBILE */
+            .column > .round-header:first-child {
+                position: static;
+                width: auto;
+                margin-top: 0;
             }
             
             .col-divisional, .col-conference {
@@ -543,7 +566,8 @@
                 <!-- Bills vs Jags (FINAL) -->
                 <div class="matchup" data-highlight-url="https://www.youtube.com/watch?v=OZrEboMLou4">
                     <div class="game-meta"><span>FINAL</span><span>CBS</span></div>
-                    <div class="team-slot winner" draggable="true" data-conf="AFC" data-team="Bills" data-seed="6" data-color="#00338D" data-score="27" id="afc-wc1-w">
+                    <!-- ADDED manual-winner class -->
+                    <div class="team-slot winner manual-winner" draggable="true" data-conf="AFC" data-team="Bills" data-seed="6" data-color="#00338D" data-score="27" id="afc-wc1-w">
                         <div class="logo-box" style="background:#00338D;">BUF</div>
                         <div class="team-info"><span class="name">Bills</span><span class="seed">#6</span></div>
                         <span class="score">27</span>
@@ -670,7 +694,8 @@
                 <div class="round-header">NFC Wild Card</div>
                 <div class="matchup" data-highlight-url="https://www.youtube.com/watch?v=YPS3tHwvwR8">
                     <div class="game-meta"><span>FINAL</span><span>FOX</span></div>
-                    <div class="team-slot winner" draggable="true" data-conf="NFC" data-team="49ers" data-seed="6" data-color="#AA0000" id="nfc-wc1-a" data-score="24">
+                    <!-- ADDED manual-winner class -->
+                    <div class="team-slot winner manual-winner" draggable="true" data-conf="NFC" data-team="49ers" data-seed="6" data-color="#AA0000" id="nfc-wc1-a" data-score="24">
                         <div class="logo-box" style="background:#AA0000;">SF</div>
                         <div class="team-info"><span class="name">49ers</span><span class="seed">#6</span></div>
                         <span class="score">24</span>
@@ -686,7 +711,8 @@
                 <!-- Rams vs Panthers (FINAL) -->
                 <div class="matchup" data-highlight-url="https://www.youtube.com/watch?v=Rh9xD2eoJcY">
                     <div class="game-meta"><span>FINAL</span></div>
-                    <div class="team-slot winner" draggable="true" data-conf="NFC" data-team="Rams" data-seed="5" data-color="#003594" data-score="34" id="nfc-wc2-w">
+                    <!-- ADDED manual-winner class -->
+                    <div class="team-slot winner manual-winner" draggable="true" data-conf="NFC" data-team="Rams" data-seed="5" data-color="#003594" data-score="34" id="nfc-wc2-w">
                         <div class="logo-box" style="background:#003594;">LAR</div>
                         <div class="team-info"><span class="name">Rams</span><span class="seed">#5</span></div>
                         <span class="score">34</span>
@@ -707,7 +733,8 @@
                         <div class="team-info"><span class="name">Packers</span><span class="seed">#7</span></div>
                         <span class="score">27</span>
                     </div>
-                    <div class="team-slot winner" draggable="true" data-conf="NFC" data-team="Bears" data-seed="2" data-color="#C83803" data-score="31" id="nfc-wc3-w">
+                    <!-- ADDED manual-winner class -->
+                    <div class="team-slot winner manual-winner" draggable="true" data-conf="NFC" data-team="Bears" data-seed="2" data-color="#C83803" data-score="31" id="nfc-wc3-w">
                         <div class="logo-box" style="background:#C83803;">CHI</div>
                         <div class="team-info"><span class="name">Bears</span><span class="seed">#2</span></div>
                         <span class="score">31</span>
@@ -1009,7 +1036,8 @@
                                 s => s.getAttribute('data-team') === opponentName
                             );
                             
-                            if (opponentInNextRound) {
+                            // MODIFIED CHECK: Allow replacement if dropping directly onto the opponent
+                            if (opponentInNextRound && opponentInNextRound !== targetSlot) {
                                  alert("That doesn't work! These teams played each other.");
                                  return;
                             }
@@ -1241,7 +1269,8 @@
             
             allSlots.forEach(slot => {
                 const id = slot.id || '';
-                if (!slot.classList.contains('real-loser')) {
+                // MODIFIED: Ignore locked winners when resetting classes
+                if (!slot.classList.contains('real-loser') && !slot.classList.contains('manual-winner')) {
                      slot.classList.remove('winner', 'eliminated');
                      // NEW: Reset dynamic colors when clearing status
                      slot.style.borderLeftColor = '';
@@ -1259,25 +1288,29 @@
                 else if(col.className.includes('col-divisional')) nextRoundClass = 'col-conference';
                 else if(col.className.includes('col-conference')) nextRoundClass = 'sb-column';
                 
+                let isNextRound = false;
                 if (nextRoundClass) {
                     const nextSlots = document.querySelectorAll('.' + nextRoundClass + ' .team-slot[data-team="' + team + '"]');
-                    if (nextSlots.length > 0) {
-                        slot.classList.add('winner');
-                        
-                        // NEW: Apply Team Color Highlight
-                        const teamColor = slot.getAttribute('data-color');
-                        if (teamColor) {
-                            slot.style.borderLeftColor = teamColor;
-                            // Add a subtle gradient of the team color
-                            slot.style.background = `linear-gradient(90deg, #252525, ${teamColor}33)`;
-                        }
+                    if (nextSlots.length > 0) isNextRound = true;
+                }
 
-                        const matchup = slot.closest('.matchup');
-                        if (matchup) {
-                            matchup.querySelectorAll('.team-slot').forEach(opp => {
-                                if (opp !== slot) opp.classList.add('eliminated');
-                            });
-                        }
+                // MODIFIED: Apply winner styles if explicitly locked as manual winner OR found in next round
+                if (isNextRound || slot.classList.contains('manual-winner')) {
+                    slot.classList.add('winner');
+                    
+                    // NEW: Apply Team Color Highlight
+                    const teamColor = slot.getAttribute('data-color');
+                    if (teamColor) {
+                        slot.style.borderLeftColor = teamColor;
+                        // Add a subtle gradient of the team color
+                        slot.style.background = `linear-gradient(90deg, #252525, ${teamColor}33)`;
+                    }
+
+                    const matchup = slot.closest('.matchup');
+                    if (matchup) {
+                        matchup.querySelectorAll('.team-slot').forEach(opp => {
+                            if (opp !== slot) opp.classList.add('eliminated');
+                        });
                     }
                 }
             });
