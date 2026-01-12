@@ -254,6 +254,15 @@
         .confetti-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; overflow: hidden; }
         .confetti-piece { position: absolute; width: 10px; height: 20px; background: #ffd700; top: -20px; opacity: 0; }
         
+        .firework-particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
         .drag-clone {
             position: fixed;
             pointer-events: none;
@@ -1142,7 +1151,13 @@
 
             if (slot.id === 'sb-champion-slot') {
                 slot.classList.add('ultimate-champion');
+                // CLEAR PREVIOUS CELEBRATION ELEMENTS
+                const box = document.getElementById('confetti-box');
+                box.innerHTML = '';
+                
                 throwConfetti();
+                launchFireworks();
+                
                 document.getElementById('save-bracket-btn').style.display = 'flex';
                 document.body.classList.add('bracket-complete');
             } else {
@@ -1248,8 +1263,49 @@
                 confetti.classList.add('confetti-piece');
                 confetti.style.left = Math.random() * 100 + 'vw';
                 confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
+                const duration = Math.random() * 3 + 2 + 's';
+                const delay = Math.random() * 2 + 's';
                 confetti.style.animation = `fall ${duration} linear ${delay} forwards`;
                 box.appendChild(confetti);
+            }
+        }
+
+        function launchFireworks() {
+            const box = document.getElementById('confetti-box');
+            for (let i = 0; i < 8; i++) {
+                setTimeout(() => {
+                    const x = Math.random() * 80 + 10; // Avoid extreme edges
+                    const y = Math.random() * 40 + 10; // Top half of screen
+                    createFirework(x, y);
+                }, i * 500);
+            }
+        }
+
+        function createFirework(x, y) {
+            const colors = ['#ff0000', '#ffd700', '#ff00ff', '#00ff00', '#00ffff', '#ffffff'];
+            const color = colors[Math.floor(Math.random() * colors.length)];
+            const container = document.getElementById('confetti-box');
+            
+            for (let i = 0; i < 36; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'firework-particle';
+                particle.style.backgroundColor = color;
+                particle.style.left = x + 'vw';
+                particle.style.top = y + 'vh';
+                
+                const angle = (i * 10) * (Math.PI / 180);
+                const velocity = Math.random() * 120 + 80;
+                const tx = Math.cos(angle) * velocity;
+                const ty = Math.sin(angle) * velocity;
+                
+                particle.style.setProperty('--tx', `${tx}px`);
+                particle.style.setProperty('--ty', `${ty}px`);
+                
+                particle.style.animation = `explode 0.9s ease-out forwards`;
+                container.appendChild(particle);
+                
+                setTimeout(() => particle.remove(), 1000);
             }
         }
 
@@ -1320,6 +1376,10 @@
             @keyframes fall {
                 0% { top: -20px; opacity: 1; transform: rotate(0deg); }
                 100% { top: 100vh; opacity: 0; transform: rotate(720deg); }
+            }
+            @keyframes explode {
+                0% { transform: translate(0, 0) scale(1); opacity: 1; }
+                100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
             }
         `;
         document.head.appendChild(styleSheet);
