@@ -153,6 +153,16 @@
         }
         .highlight-btn:hover { background: #555; color: white; border-color: #777; }
 
+        /* DISABLED STATE FOR AWAITING HIGHLIGHTS */
+        .highlight-btn.disabled {
+            background: #222;
+            color: #555;
+            border-color: #333;
+            cursor: default;
+            pointer-events: none;
+            font-style: italic;
+        }
+
         .team-slot {
             display: flex; align-items: center; padding: 6px; margin: 4px 0; background: var(--bg-slot); border-radius: 4px; border: 2px solid transparent; cursor: grab; transition: all 0.2s;
             border-left: 4px solid #444;
@@ -422,7 +432,7 @@
                 <div class="round-header">AFC Wild Card</div>
                 
                 <!-- Bills vs Jags (FINAL) -->
-                <div class="matchup">
+                <div class="matchup" data-highlight-url="https://www.youtube.com/watch?v=OZrEboMLou4">
                     <div class="game-meta"><span>FINAL</span><span>CBS</span></div>
                     <div class="team-slot winner" draggable="true" data-conf="AFC" data-team="Bills" data-seed="6" data-color="#00338D" data-score="27" id="afc-wc1-w">
                         <div class="logo-box" style="background:#00338D;">BUF</div>
@@ -434,11 +444,12 @@
                         <div class="team-info"><span class="name">Jaguars</span><span class="seed">#3</span></div>
                         <span class="score">24</span>
                     </div>
+                    <!-- Highlight Button Added Dynamically or Hardcoded -->
                     <a class="highlight-btn" href="https://www.youtube.com/watch?v=OZrEboMLou4" target="_blank">Watch Highlights</a>
                 </div>
 
                 <!-- Texans vs Steelers (Upcoming) -->
-                <div class="matchup">
+                <div class="matchup" data-highlight-url="">
                     <div class="game-meta"><span>MON 5:15 PM PT</span><span>ABC</span></div>
                     <div class="team-slot" draggable="true" data-conf="AFC" data-team="Texans" data-seed="5" data-color="#03202f" id="afc-wc2-a">
                         <div class="logo-box" style="background:#03202f;">HOU</div>
@@ -451,7 +462,7 @@
                 </div>
 
                 <!-- Chargers vs Pats (Upcoming) -->
-                <div class="matchup">
+                <div class="matchup" data-highlight-url="">
                     <div class="game-meta"><span>SUN 5:15 PM PT</span><span>NBC</span></div>
                     <div class="team-slot" draggable="true" data-conf="AFC" data-team="Chargers" data-seed="7" data-color="#0080C6" id="afc-wc3-a">
                         <div class="logo-box" style="background:#0080C6;">LAC</div>
@@ -466,7 +477,7 @@
 
             <div class="column col-divisional" id="afc-divisional-col">
                 <div class="round-header">AFC Divisional</div>
-                <div class="matchup">
+                <div class="matchup" data-highlight-url="">
                     <div class="game-meta"><span>Jan 17/18</span><span>CBS</span></div>
                     <div class="team-slot" draggable="true" data-conf="AFC" data-team="Broncos" data-seed="1" data-color="#FB4F14" id="afc-div1-home">
                         <div class="logo-box" style="background:#FB4F14;">DEN</div>
@@ -474,7 +485,7 @@
                     </div>
                     <div class="team-slot empty-slot" data-target-conf="AFC" data-role="seed1-opponent" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
                 </div>
-                <div class="matchup">
+                <div class="matchup" data-highlight-url="">
                     <div class="game-meta"><span>Jan 17/18</span><span>TBD</span></div>
                     <div class="team-slot empty-slot" data-target-conf="AFC" data-role="other-game" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
                     <div class="team-slot empty-slot" data-target-conf="AFC" data-role="other-game" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
@@ -483,7 +494,7 @@
 
             <div class="column col-conference" id="afc-conf-col">
                 <div class="round-header">AFC Championship</div>
-                <div class="matchup">
+                <div class="matchup" data-highlight-url="">
                     <div class="game-meta"><span>Jan 25 - 12:00 PM PT</span><span>CBS</span></div>
                     <div class="team-slot empty-slot" data-target-conf="AFC" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
                     <div class="team-slot empty-slot" data-target-conf="AFC" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
@@ -498,7 +509,7 @@
                     <img src="https://upload.wikimedia.org/wikipedia/en/thumb/b/b0/Super_Bowl_LX_Logo.svg/330px-Super_Bowl_LX_Logo.svg.png" alt="SB LX" class="sb-img">
                 </div>
                 
-                <div class="matchup" style="width: 280px; text-align: center;">
+                <div class="matchup" style="width: 280px; text-align: center;" data-highlight-url="">
                     <div class="game-meta" style="justify-content: center;"><span>FEB 8 - 3:30 PM PT</span></div>
                     <div class="team-slot empty-slot" data-target-conf="any" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
                     <div style="font-size:0.8em; color:#666; margin: 5px;">VS</div>
@@ -513,7 +524,7 @@
 
             <div class="column col-conference" id="nfc-conf-col">
                 <div class="round-header">NFC Championship</div>
-                <div class="matchup">
+                <div class="matchup" data-highlight-url="">
                     <div class="game-meta"><span>Jan 25 - 3:30 PM PT</span><span>FOX</span></div>
                     <div class="team-slot empty-slot" data-target-conf="NFC" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
                     <div class="team-slot empty-slot" data-target-conf="NFC" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
@@ -522,7 +533,7 @@
 
             <div class="column col-divisional" id="nfc-divisional-col">
                 <div class="round-header">NFC Divisional</div>
-                <div class="matchup">
+                <div class="matchup" data-highlight-url="">
                     <div class="game-meta"><span>Jan 17/18</span><span>FOX</span></div>
                     <div class="team-slot" draggable="true" data-conf="NFC" data-team="Seahawks" data-seed="1" data-color="#002244" id="nfc-div1-home">
                         <div class="logo-box" style="background:#002244;">SEA</div>
@@ -530,7 +541,7 @@
                     </div>
                     <div class="team-slot empty-slot" data-target-conf="NFC" data-role="seed1-opponent" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
                 </div>
-                <div class="matchup">
+                <div class="matchup" data-highlight-url="">
                     <div class="game-meta"><span>Jan 17/18</span><span>TBD</span></div>
                     <div class="team-slot empty-slot" data-target-conf="NFC" data-role="other-game" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
                     <div class="team-slot empty-slot" data-target-conf="NFC" data-role="other-game" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
@@ -539,7 +550,7 @@
 
             <div class="column" id="nfc-wc-col">
                 <div class="round-header">NFC Wild Card</div>
-                <div class="matchup">
+                <div class="matchup" data-highlight-url="">
                     <div class="game-meta"><span class="live-text">IN PROGRESS</span><span>FOX</span></div>
                     <div class="team-slot" draggable="true" data-conf="NFC" data-team="49ers" data-seed="6" data-color="#AA0000" id="nfc-wc1-a" data-score="?">
                         <div class="logo-box" style="background:#AA0000;">SF</div>
@@ -554,7 +565,7 @@
                 </div>
                 
                 <!-- Rams vs Panthers (FINAL) -->
-                <div class="matchup">
+                <div class="matchup" data-highlight-url="https://www.youtube.com/watch?v=Rh9xD2eoJcY">
                     <div class="game-meta"><span>FINAL</span></div>
                     <div class="team-slot winner" draggable="true" data-conf="NFC" data-team="Rams" data-seed="5" data-color="#003594" data-score="34" id="nfc-wc2-w">
                         <div class="logo-box" style="background:#003594;">LAR</div>
@@ -570,7 +581,7 @@
                 </div>
                 
                 <!-- Bears vs Packers (FINAL) -->
-                <div class="matchup">
+                <div class="matchup" data-highlight-url="https://www.youtube.com/watch?v=tnX85oZOV40">
                     <div class="game-meta"><span>FINAL</span></div>
                     <div class="team-slot eliminated real-loser" id="nfc-wc3-l">
                         <div class="logo-box" style="background:#203731;">GB</div>
@@ -974,6 +985,108 @@
                 box.appendChild(confetti);
             }
         }
+
+        /* -----------------------------------------------------------
+           NEW: LIVE SCORING INTEGRATION (ESPN API)
+           ----------------------------------------------------------- */
+        async function initLiveScoring() {
+            // Using HTTPS to avoid mixed content warnings
+            const API_URL = 'https://site.api.espn.com/apis/site/v2/sports/football/nfl/scoreboard';
+            
+            async function fetchAndRender() {
+                try {
+                    const response = await fetch(API_URL);
+                    if (!response.ok) throw new Error('Network response was not ok');
+                    const data = await response.json();
+                    
+                    data.events.forEach(event => {
+                        const competition = event.competitions[0];
+                        const statusDetail = event.status.type.detail; // e.g. "Final", "Q4 2:00"
+                        const isLive = event.status.type.state === 'in';
+                        const isFinal = event.status.type.state === 'post';
+                        
+                        competition.competitors.forEach(comp => {
+                            const teamName = comp.team.name; // e.g. "Bills", "49ers"
+                            const currentScore = comp.score;
+                            
+                            // Find all instances of this team in the bracket
+                            const teamSlots = document.querySelectorAll(`.team-slot[data-team="${teamName}"]`);
+                            
+                            teamSlots.forEach(slot => {
+                                // 1. Update Score
+                                let scoreEl = slot.querySelector('.score');
+                                if (!scoreEl) {
+                                    // If score element doesn't exist, create it nicely
+                                    scoreEl = document.createElement('span');
+                                    scoreEl.className = 'score';
+                                    slot.appendChild(scoreEl);
+                                }
+                                // Only update if data exists (avoids overwriting '?' with '0' before game starts if typically preferred)
+                                if (currentScore !== undefined) {
+                                    scoreEl.textContent = currentScore;
+                                    slot.setAttribute('data-score', currentScore);
+                                }
+
+                                // 2. Update Game Clock / Status (only for the specific matchup wrapper)
+                                const matchup = slot.closest('.matchup');
+                                if (matchup) {
+                                    const metaSpan = matchup.querySelector('.game-meta span:first-child');
+                                    // Only overwrite hardcoded times if the game is actually Live or Final
+                                    if (metaSpan && (isLive || isFinal)) {
+                                        metaSpan.textContent = statusDetail;
+                                        
+                                        if (isLive) {
+                                            metaSpan.classList.add('live-text');
+                                        } else {
+                                            metaSpan.classList.remove('live-text');
+                                        }
+                                    }
+
+                                    // 3. Update Highlights Button
+                                    // Logic: If Final, show "Watch" if link exists, or "Awaiting" if not.
+                                    if (isFinal) {
+                                        let btn = matchup.querySelector('.highlight-btn');
+                                        const highlightUrl = matchup.getAttribute('data-highlight-url');
+
+                                        if (!btn) {
+                                            // Create button if it doesn't exist
+                                            btn = document.createElement('a');
+                                            btn.className = 'highlight-btn';
+                                            btn.target = '_blank';
+                                            matchup.appendChild(btn);
+                                        }
+
+                                        if (highlightUrl && highlightUrl.trim() !== "") {
+                                            // Link exists
+                                            btn.href = highlightUrl;
+                                            btn.textContent = "Watch Highlights";
+                                            btn.classList.remove('disabled');
+                                        } else {
+                                            // Link missing
+                                            btn.removeAttribute('href');
+                                            btn.textContent = "Awaiting Highlights";
+                                            btn.classList.add('disabled');
+                                        }
+                                    }
+                                }
+                            });
+                        });
+                    });
+                    // console.log("Scores updated from ESPN API");
+                } catch (error) {
+                    console.warn("Could not fetch live scores:", error);
+                }
+            }
+
+            // Initial fetch
+            fetchAndRender();
+            
+            // Poll every 60 seconds
+            setInterval(fetchAndRender, 60000);
+        }
+
+        // Start the live scoring system
+        initLiveScoring();
 
         const styleSheet = document.createElement("style");
         styleSheet.type = "text/css";
