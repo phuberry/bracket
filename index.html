@@ -1145,15 +1145,6 @@
             slot.setAttribute('data-color', data.color);
             slot.setAttribute('data-team', data.dataName);
             slot.setAttribute('data-seed', data.seedNum);
-            
-            const matchup = slot.closest('.matchup');
-            if (matchup) {
-                const metaHeader = matchup.querySelector('.game-meta span:first-child');
-                if (metaHeader && !metaHeader.textContent.includes('FINAL') && !metaHeader.textContent.includes('Live') && !metaHeader.textContent.includes('Prediction')) {
-                    metaHeader.textContent = 'Prediction: ' + metaHeader.textContent;
-                    metaHeader.style.color = '#FFD700';
-                }
-            }
 
             if (slot.id === 'sb-champion-slot') {
                 slot.classList.add('ultimate-champion');
@@ -1171,24 +1162,12 @@
                 document.body.classList.remove('bracket-complete');
             }
 
-            const matchup = slot.closest('.matchup');
             slot.innerHTML = '';
             slot.className = 'team-slot empty-slot';
             slot.removeAttribute('draggable');
             slot.removeAttribute('data-team');
             slot.removeAttribute('data-seed');
             slot.removeAttribute('data-color');
-
-            if (matchup) {
-                const otherSlot = Array.from(matchup.querySelectorAll('.team-slot')).find(s => s !== slot);
-                if (otherSlot && otherSlot.classList.contains('empty-slot')) {
-                    const metaHeader = matchup.querySelector('.game-meta span:first-child');
-                    if (metaHeader && metaHeader.textContent.includes('Prediction:')) {
-                        metaHeader.textContent = metaHeader.textContent.replace('Prediction: ', '');
-                        metaHeader.style.color = '';
-                    }
-                }
-            }
         }
 
         function updateBracketVisuals() {
@@ -1239,6 +1218,32 @@
                         matchup.querySelectorAll('.team-slot').forEach(opp => {
                             if (opp !== slot) opp.classList.add('eliminated');
                         });
+                    }
+                }
+            });
+
+            // FIX: Centralized prediction header labeling logic
+            document.querySelectorAll('.matchup').forEach(m => {
+                const metaHeader = m.querySelector('.game-meta span:first-child');
+                if (!metaHeader) return;
+                
+                const hasWinner = Array.from(m.querySelectorAll('.team-slot')).some(s => s.classList.contains('winner'));
+                const currentText = metaHeader.textContent;
+                // Only process if the game is not already real/official
+                const isOfficial = currentText.includes('FINAL') || currentText.includes('LIVE') || metaHeader.classList.contains('live-text');
+
+                if (isOfficial) return;
+
+                if (hasWinner) {
+                    if (!currentText.includes('Prediction:')) {
+                        metaHeader.textContent = 'Prediction: ' + currentText;
+                        metaHeader.style.color = '#FFD700';
+                    }
+                } else {
+                    // Strip the Prediction prefix if the winner was removed
+                    if (currentText.includes('Prediction:')) {
+                        metaHeader.textContent = currentText.replace('Prediction: ', '');
+                        metaHeader.style.color = '';
                     }
                 }
             });
