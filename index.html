@@ -807,6 +807,16 @@
             const timestamp = new Date().toISOString().slice(0,10).replace(/-/g, '');
             const filename = `NFL_Bracket_2025_${timestamp}.png`;
 
+            // NEW: Immediately attempt to open a placeholder tab to bypass mobile popup blockers
+            let newTab = null;
+            const isMobile = /Android|iPhone|iPad/i.test(navigator.userAgent);
+            if (isMobile) {
+                newTab = window.open('about:blank', '_blank');
+                if (newTab) {
+                    newTab.document.write('<html><head><title>NFL Bracket Loading...</title></head><body style="background:#111; color:white; display:flex; align-items:center; justify-content:center; height:100vh; font-family:sans-serif;"><h2>Generating high-res bracket... please wait.</h2></body></html>');
+                }
+            }
+
             document.body.classList.add('taking-screenshot');
             
             const customHeader = document.createElement('div');
@@ -827,34 +837,43 @@
                                element.id === 'save-modal';
                     }
                 }).then(canvas => {
-                    canvas.toBlob(blob => {
-                        if (navigator.canShare && navigator.canShare({ files: [new File([blob], filename, {type: "image/png"})] })) {
-                            const file = new File([blob], filename, {type: "image/png"});
-                            navigator.share({
-                                files: [file],
-                                title: 'My NFL Bracket',
-                                text: 'Check out my NFL Playoff Bracket!'
-                            }).catch((err) => console.log('Sharing cancelled', err));
-                        } else {
-                            if (/Android|iPhone|iPad/i.test(navigator.userAgent)) {
-                                const modal = document.getElementById('save-modal');
-                                const modalImg = document.getElementById('save-modal-img');
-                                modalImg.src = canvas.toDataURL();
-                                modal.style.display = 'flex';
+                    const imgData = canvas.toDataURL('image/png');
+                    
+                    if (isMobile && newTab) {
+                        // Success: Inject the actual image into the already-open tab
+                        newTab.location.href = imgData;
+                    } else {
+                        // Standard fallback logic
+                        canvas.toBlob(blob => {
+                            if (navigator.canShare && navigator.canShare({ files: [new File([blob], filename, {type: "image/png"})] })) {
+                                const file = new File([blob], filename, {type: "image/png"});
+                                navigator.share({
+                                    files: [file],
+                                    title: 'My NFL Bracket',
+                                    text: 'Check out my NFL Playoff Bracket!'
+                                }).catch((err) => console.log('Sharing cancelled', err));
                             } else {
-                                const link = document.createElement('a');
-                                link.download = filename;
-                                link.href = canvas.toDataURL();
-                                link.click();
+                                if (isMobile) {
+                                    const modal = document.getElementById('save-modal');
+                                    const modalImg = document.getElementById('save-modal-img');
+                                    modalImg.src = imgData;
+                                    modal.style.display = 'flex';
+                                } else {
+                                    const link = document.createElement('a');
+                                    link.download = filename;
+                                    link.href = imgData;
+                                    link.click();
+                                }
                             }
-                        }
-                    });
+                        });
+                    }
                     
                     document.body.classList.remove('taking-screenshot');
                     customHeader.remove();
                     btn.innerText = originalText;
                 }).catch(err => {
                     console.error("Screenshot failed:", err);
+                    if (newTab) newTab.close();
                     document.body.classList.remove('taking-screenshot');
                     if(customHeader) customHeader.remove();
                     btn.innerText = originalText;
