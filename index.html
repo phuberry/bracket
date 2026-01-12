@@ -988,7 +988,9 @@
             }
 
             // NEW: PREVENT LOSER PROGRESSION (Unless dropping into Champion slot which acts as next round)
-            if (targetSlot.id !== 'sb-champion-slot') {
+            // UPDATED: Only check this if advancing to a NEW column. 
+            // If dragging within the same column (reordering), skip this check.
+            if (targetSlot.id !== 'sb-champion-slot' && draggedColumn !== targetColumn) {
                 const sourceMatchup = draggedItem.closest('.matchup');
                 if (sourceMatchup) {
                     // Find the opponent in the source matchup
@@ -1004,7 +1006,7 @@
                         );
                         
                         if (opponentInNextRound) {
-                             alert("Illegal Move: You cannot advance both teams from the same matchup!");
+                             alert("That doesn't work!");
                              return;
                         }
                     }
@@ -1023,6 +1025,7 @@
             // Check if any previous column still has empty slots
             for (let id of prevRoundCols) {
                 const col = document.getElementById(id);
+                // Check if the column has any empty slots that are meant to be filled
                 if (col && col.querySelectorAll('.empty-slot').length > 0) {
                     alert("Fill out the previous round first!");
                     return; // Block drop
