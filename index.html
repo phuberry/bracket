@@ -14,6 +14,11 @@
             --bg-card: rgba(30,30,30,0.95);
             --bg-slot: #252525;
             --dim-alpha: 0.3;
+            
+            /* Round Colors */
+            --color-wc: #A0C4FF;
+            --color-div: #B9FBC0;
+            --color-conf: #FFB7B2;
         }
 
         /* NEW LAYOUT: Fixed header, scrollable body */
@@ -131,6 +136,12 @@
         .round-header {
             text-transform: uppercase; color: #888; font-size: 0.8em; font-weight: bold; margin-bottom: 10px; text-align: center;
         }
+
+        /* SPECIFIC ROUND COLORS */
+        #afc-wc-col .round-header, #nfc-wc-col .round-header { color: var(--color-wc); }
+        #afc-divisional-col .round-header, #nfc-divisional-col .round-header { color: var(--color-div); }
+        #afc-conf-col .round-header, #nfc-conf-col .round-header { color: var(--color-conf); }
+        #sb-col .round-header { color: var(--gold-shine); }
 
         .matchup {
             background: var(--bg-card); border: 1px solid #444; border-radius: 8px; padding: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); position: relative;
@@ -687,7 +698,8 @@
                         <div class="logo-box" style="background:#002244;">SEA</div>
                         <div class="team-info"><span class="name">Seahawks</span><span class="seed">#1</span></div>
                     </div>
-                    <div class="team-slot" draggable="true" data-conf="NFC" data-team="49ers" data-seed="6" data-color="#AA0000" id="nfc-div1-visitor">
+                    <!-- RE-SEEDED: #6 49ers plays #1 Seahawks -->
+                    <div class="team-slot" draggable="true" data-conf="NFC" data-team="49ers" data-seed="6" data-color="#AA0000" id="nfc-div1-visitor" data-role="seed1-opponent" ondrop="drop(event)" ondragover="allowDrop(event)">
                         <div class="logo-box" style="background:#AA0000;">SF</div>
                         <div class="team-info"><span class="name">49ers</span><span class="seed">#6</span></div>
                     </div>
@@ -698,7 +710,8 @@
                         <div class="logo-box" style="background:#C83803;">CHI</div>
                         <div class="team-info"><span class="name">Bears</span><span class="seed">#2</span></div>
                     </div>
-                    <div class="team-slot" draggable="true" data-conf="NFC" data-team="Rams" data-seed="5" data-color="#003594" id="nfc-div2-visitor">
+                    <!-- RE-SEEDED: #5 Rams plays #2 Bears -->
+                    <div class="team-slot" draggable="true" data-conf="NFC" data-team="Rams" data-seed="5" data-color="#003594" id="nfc-div2-visitor" data-role="other-game" ondrop="drop(event)" ondragover="allowDrop(event)">
                         <div class="logo-box" style="background:#003594;">LAR</div>
                         <div class="team-info"><span class="name">Rams</span><span class="seed">#5</span></div>
                     </div>
@@ -708,14 +721,14 @@
             <div class="column" id="nfc-wc-col">
                 <div class="round-header">NFC Wild Card</div>
                 <div class="matchup" data-highlight-url="https://www.youtube.com/watch?v=YPS3tHwvwR8">
-                    <!-- REMOVED: Channel Name -->
+                    <!-- REMOVED: Channel Name & draggable -->
                     <div class="game-meta"><span>FINAL</span><span></span></div>
-                    <div class="team-slot winner manual-winner" draggable="true" data-conf="NFC" data-team="49ers" data-seed="6" data-color="#AA0000" id="nfc-wc1-a" data-score="24">
+                    <div class="team-slot winner manual-winner" data-conf="NFC" data-team="49ers" data-seed="6" data-color="#AA0000" id="nfc-wc1-a" data-score="24">
                         <div class="logo-box" style="background:#AA0000;">SF</div>
                         <div class="team-info"><span class="name">49ers</span><span class="seed">#6</span></div>
                         <span class="score">24</span>
                     </div>
-                    <div class="team-slot eliminated real-loser" draggable="true" data-conf="NFC" data-team="Eagles" data-seed="3" data-color="#004C54" id="nfc-wc1-b" data-score="21">
+                    <div class="team-slot eliminated real-loser" data-conf="NFC" data-team="Eagles" data-seed="3" data-color="#004C54" id="nfc-wc1-b" data-score="21">
                         <div class="logo-box" style="background:#004C54;">PHI</div>
                         <div class="team-info"><span class="name">Eagles</span><span class="seed">#3</span></div>
                         <span class="score">21</span>
@@ -724,8 +737,9 @@
                 </div>
                 
                 <div class="matchup" data-highlight-url="https://www.youtube.com/watch?v=Rh9xD2eoJcY">
-                    <div class="game-meta"><span>FINAL</span></div>
-                    <div class="team-slot winner manual-winner" draggable="true" data-conf="NFC" data-team="Rams" data-seed="5" data-color="#003594" data-score="34" id="nfc-wc2-w">
+                    <!-- REMOVED: Channel Name & draggable -->
+                    <div class="game-meta"><span>FINAL</span><span></span></div>
+                    <div class="team-slot winner manual-winner" data-conf="NFC" data-team="Rams" data-seed="5" data-color="#003594" data-score="34" id="nfc-wc2-w">
                         <div class="logo-box" style="background:#003594;">LAR</div>
                         <div class="team-info"><span class="name">Rams</span><span class="seed">#5</span></div>
                         <span class="score">34</span>
@@ -739,13 +753,14 @@
                 </div>
                 
                 <div class="matchup" data-highlight-url="https://www.youtube.com/watch?v=tnX85oZOV40">
-                    <div class="game-meta"><span>FINAL</span></div>
+                    <!-- REMOVED: Channel Name & draggable -->
+                    <div class="game-meta"><span>FINAL</span><span></span></div>
                     <div class="team-slot eliminated real-loser" id="nfc-wc3-l">
                         <div class="logo-box" style="background:#203731;">GB</div>
                         <div class="team-info"><span class="name">Packers</span><span class="seed">#7</span></div>
                         <span class="score">27</span>
                     </div>
-                    <div class="team-slot winner manual-winner" draggable="true" data-conf="NFC" data-team="Bears" data-seed="2" data-color="#C83803" data-score="31" id="nfc-wc3-w">
+                    <div class="team-slot winner manual-winner" data-conf="NFC" data-team="Bears" data-seed="2" data-color="#C83803" data-score="31" id="nfc-wc3-w">
                         <div class="logo-box" style="background:#C83803;">CHI</div>
                         <div class="team-info"><span class="name">Bears</span><span class="seed">#2</span></div>
                         <span class="score">31</span>
