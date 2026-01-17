@@ -604,7 +604,7 @@
                         <div class="team-info"><span class="name">Jaguars</span><span class="seed">#3</span></div>
                         <span class="score">24</span>
                     </div>
-                    <a class="highlight-btn" href="https://www.youtube.com/watch?v=OZrEboMLou4" target=\"_blank\">Watch Highlights</a>
+                    <a class="highlight-btn" href="https://www.youtube.com/watch?v=OZrEboMLou4" target="_blank">Watch Highlights</a>
                 </div>
 
                 <!-- Texans vs Steelers (FINAL) -->
@@ -632,7 +632,7 @@
                         <div class="logo-box" style="background:#002244;">NE</div>
                         <div class="team-info"><span class="name">Patriots</span><span class="seed">#2</span></div>
                     </div>
-                    <a class="highlight-btn" href="https://www.youtube.com/watch?v=r4w8LaKWuGM" target=\"_blank\">Watch Highlights</a>
+                    <a class="highlight-btn" href="https://www.youtube.com/watch?v=r4w8LaKWuGM" target="_blank">Watch Highlights</a>
                 </div>
             </div>
 
@@ -1014,6 +1014,46 @@
         }
 
         setupDraggableItems();
+
+        // NEW: Check and update highlight buttons on load
+        function initializeHighlightButtons() {
+            document.querySelectorAll('.matchup').forEach(matchup => {
+                const metaText = matchup.querySelector('.game-meta')?.textContent || '';
+                // Simple heuristic: if meta contains FINAL, ensure button logic is correct
+                if (metaText.includes('FINAL')) {
+                    updateHighlightButton(matchup, true);
+                }
+            });
+        }
+
+        function updateHighlightButton(matchup, isFinal) {
+            let btn = matchup.querySelector('.highlight-btn');
+            
+            if (isFinal) {
+                if (!btn) {
+                    btn = document.createElement('a');
+                    btn.className = 'highlight-btn';
+                    btn.target = '_blank';
+                    matchup.appendChild(btn);
+                }
+                
+                const url = matchup.getAttribute('data-highlight-url');
+                if (url && url.trim().length > 0) {
+                    btn.href = url;
+                    btn.textContent = "Watch Highlights";
+                    btn.classList.remove('disabled');
+                    btn.style.pointerEvents = "auto";
+                } else {
+                    btn.removeAttribute('href');
+                    btn.textContent = "Awaiting Highlights";
+                    btn.classList.add('disabled');
+                    btn.style.pointerEvents = "none";
+                }
+            } else {
+                // If not final, remove button if it exists (e.g. game went back to live/pre?)
+                if (btn) btn.remove();
+            }
+        }
 
         document.addEventListener('dblclick', function(e) {
             const slot = e.target.closest('.team-slot');
@@ -1452,6 +1492,8 @@
                                         metaSpan.classList.remove('live-text');
                                         // NEW: Remove channel name if game is FINAL
                                         if (metaChannel) metaChannel.textContent = '';
+                                        // UPDATE BUTTON
+                                        updateHighlightButton(matchup, true);
                                     }
                                 }
                             });
@@ -1464,6 +1506,8 @@
         }
 
         initLiveScoring();
+        // CALL ON LOAD
+        initializeHighlightButtons();
         updateBracketVisuals();
 
         const styleSheet = document.createElement("style");
