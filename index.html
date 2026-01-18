@@ -594,7 +594,7 @@
                 <div class="matchup" data-highlight-url="https://www.youtube.com/watch?v=OZrEboMLou4">
                     <!-- REMOVED: Channel Name -->
                     <div class="game-meta"><span>FINAL</span><span></span></div>
-                    <div class="team-slot winner manual-winner" draggable="true" data-conf="AFC" data-team="Bills" data-seed="6" data-color="#00338D" data-score="27" id="afc-wc1-w">
+                    <div class="team-slot winner manual-winner" data-conf="AFC" data-team="Bills" data-seed="6" data-color="#00338D" data-score="27" id="afc-wc1-w">
                         <div class="logo-box" style="background:#00338D;">BUF</div>
                         <div class="team-info"><span class="name">Bills</span><span class="seed">#6</span></div>
                         <span class="score">27</span>
@@ -610,13 +610,15 @@
                 <!-- Texans vs Steelers (FINAL) -->
                 <div class="matchup" data-highlight-url="https://www.youtube.com/watch?v=o_VVz5GR1ko">
                     <div class="game-meta"><span>FINAL</span><span></span></div>
-                    <div class="team-slot winner manual-winner" data-conf="AFC" data-team="Texans" data-seed="5" data-color="#03202f" id="afc-wc2-a">
+                    <div class="team-slot winner manual-winner" data-conf="AFC" data-team="Texans" data-seed="5" data-color="#03202f" data-score="30" id="afc-wc2-a">
                         <div class="logo-box" style="background:#03202f;">HOU</div>
                         <div class="team-info"><span class="name">Texans</span><span class="seed">#5</span></div>
+                        <span class="score">30</span>
                     </div>
-                    <div class="team-slot eliminated real-loser" data-conf="AFC" data-team="Steelers" data-seed="4" data-color="#FFB612; color:black" id="afc-wc2-b">
+                    <div class="team-slot eliminated real-loser" data-conf="AFC" data-team="Steelers" data-seed="4" data-color="#FFB612; color:black" data-score="6" id="afc-wc2-b">
                         <div class="logo-box" style="background:#FFB612; color:black;">PIT</div>
                         <div class="team-info"><span class="name">Steelers</span><span class="seed">#4</span></div>
+                        <span class="score">6</span>
                     </div>
                     <a class="highlight-btn" href="https://www.youtube.com/watch?v=o_VVz5GR1ko" target="_blank">Watch Highlights</a>
                 </div>
@@ -624,13 +626,15 @@
                 <!-- Chargers vs Pats (FINAL) -->
                 <div class="matchup" data-highlight-url="https://www.youtube.com/watch?v=r4w8LaKWuGM">
                     <div class="game-meta"><span>FINAL</span><span></span></div>
-                    <div class="team-slot eliminated real-loser" data-conf="AFC" data-team="Chargers" data-seed="7" data-color="#0080C6" id="afc-wc3-a">
+                    <div class="team-slot eliminated real-loser" data-conf="AFC" data-team="Chargers" data-seed="7" data-color="#0080C6" data-score="3" id="afc-wc3-a">
                         <div class="logo-box" style="background:#0080C6;">LAC</div>
                         <div class="team-info"><span class="name">Chargers</span><span class="seed">#7</span></div>
+                        <span class="score">3</span>
                     </div>
-                    <div class="team-slot winner manual-winner" data-conf="AFC" data-team="Patriots" data-seed="2" data-color="#002244" id="afc-wc3-b">
+                    <div class="team-slot winner manual-winner" data-conf="AFC" data-team="Patriots" data-seed="2" data-color="#002244" data-score="16" id="afc-wc3-b">
                         <div class="logo-box" style="background:#002244;">NE</div>
                         <div class="team-info"><span class="name">Patriots</span><span class="seed">#2</span></div>
+                        <span class="score">16</span>
                     </div>
                     <a class="highlight-btn" href="https://www.youtube.com/watch?v=r4w8LaKWuGM" target="_blank">Watch Highlights</a>
                 </div>
@@ -638,26 +642,29 @@
 
             <div class="column col-divisional" id="afc-divisional-col">
                 <div class="round-header">AFC Divisional</div>
-                <div class="matchup">
-                    <div class="game-meta"><span>SAT 1:30 PM PT</span><span>CBS</span></div>
-                    <div class="team-slot" draggable="true" data-conf="AFC" data-team="Broncos" data-seed="1" data-color="#FB4F14" id="afc-div1-home">
+                <div class="matchup" data-highlight-url="https://youtu.be/VqXRI7Mag3E?si=kiepFe6dBvMS3PJC">
+                    <div class="game-meta"><span>FINAL</span><span></span></div>
+                    <!-- Winner Broncos #1 -->
+                    <div class="team-slot winner manual-winner" data-conf="AFC" data-team="Broncos" data-seed="1" data-color="#FB4F14" data-score="33" id="afc-div1-home">
                         <div class="logo-box" style="background:#FB4F14;">DEN</div>
                         <div class="team-info"><span class="name">Broncos</span><span class="seed">#1</span></div>
+                        <span class="score">33</span>
                     </div>
-                    <!-- RE-SEEDED: Lowest seed (#6 Bills) plays #1 Broncos -->
-                    <div class="team-slot" draggable="true" data-conf="AFC" data-team="Bills" data-seed="6" data-color="#00338D" id="afc-div1-visitor" data-role="seed1-opponent" ondrop="drop(event)" ondragover="allowDrop(event)">
+                    <!-- Loser Bills #6 -->
+                    <div class="team-slot eliminated real-loser" data-conf="AFC" data-team="Bills" data-seed="6" data-color="#00338D" data-score="30" id="afc-div1-visitor">
                         <div class="logo-box" style="background:#00338D;">BUF</div>
                         <div class="team-info"><span class="name">Bills</span><span class="seed">#6</span></div>
+                        <span class="score">30</span>
                     </div>
+                    <a class="highlight-btn" href="https://youtu.be/VqXRI7Mag3E?si=kiepFe6dBvMS3PJC" target="_blank">Watch Highlights</a>
                 </div>
                 <div class="matchup">
                     <div class="game-meta"><span>SUN 12:00 PM PT</span><span>CBS</span></div>
-                    <!-- #2 Patriots host the winner of 4/5 -->
-                    <div class="team-slot" draggable="true" data-conf="AFC" data-team="Patriots" data-seed="2" data-color="#002244" id="afc-div2-home" data-role="other-game" ondrop="drop(event)" ondragover="allowDrop(event)">
+                    <div class="team-slot" draggable="true" data-conf="AFC" data-team="Patriots" data-seed="2" data-color="#002244" id="afc-div2-home">
                         <div class="logo-box" style="background:#002244;">NE</div>
                         <div class="team-info"><span class="name">Patriots</span><span class="seed">#2</span></div>
                     </div>
-                    <div class="team-slot" draggable="true" data-conf="AFC" data-team="Texans" data-seed="5" data-color="#03202f" id="afc-div2-visitor" data-role="other-game" ondrop="drop(event)" ondragover="allowDrop(event)">
+                    <div class="team-slot" draggable="true" data-conf="AFC" data-team="Texans" data-seed="5" data-color="#03202f" id="afc-div2-visitor">
                         <div class="logo-box" style="background:#03202f;">HOU</div>
                         <div class="team-info"><span class="name">Texans</span><span class="seed">#5</span></div>
                     </div>
@@ -666,9 +673,13 @@
 
             <div class="column col-conference" id="afc-conf-col">
                 <div class="round-header">AFC Championship</div>
-                <div class="matchup">
+                <div class="matchup" data-highlight-url="">
                     <div class="game-meta"><span>Jan 25 - 12:00 PM PT</span><span>CBS</span></div>
-                    <div class="team-slot empty-slot" data-target-conf="AFC" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                    <!-- Broncos advanced here -->
+                    <div class="team-slot" draggable="true" data-conf="AFC" data-team="Broncos" data-seed="1" data-color="#FB4F14" id="afc-conf-home">
+                        <div class="logo-box" style="background:#FB4F14;">DEN</div>
+                        <div class="team-info"><span class="name">Broncos</span><span class="seed">#1</span></div>
+                    </div>
                     <div class="team-slot empty-slot" data-target-conf="AFC" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
                 </div>
             </div>
@@ -698,24 +709,32 @@
                 <div class="round-header">NFC Championship</div>
                 <div class="matchup" data-highlight-url="">
                     <div class="game-meta"><span>Jan 25 - 3:30 PM PT</span><span>FOX</span></div>
-                    <div class="team-slot empty-slot" data-target-conf="NFC" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                    <!-- Seahawks advanced here -->
+                    <div class="team-slot" draggable="true" data-conf="NFC" data-team="Seahawks" data-seed="1" data-color="#002244" id="nfc-conf-home">
+                        <div class="logo-box" style="background:#002244;">SEA</div>
+                        <div class="team-info"><span class="name">Seahawks</span><span class="seed">#1</span></div>
+                    </div>
                     <div class="team-slot empty-slot" data-target-conf="NFC" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
                 </div>
             </div>
 
             <div class="column col-divisional" id="nfc-divisional-col">
                 <div class="round-header">NFC Divisional</div>
-                <div class="matchup" data-highlight-url="">
-                    <div class="game-meta"><span>SAT 5:15 PM PT</span><span>FOX</span></div>
-                    <div class="team-slot" draggable="true" data-conf="NFC" data-team="Seahawks" data-seed="1" data-color="#002244" id="nfc-div1-home">
+                <div class="matchup" data-highlight-url="https://youtu.be/QXxCbN48UE8?si=KHlEEfygU6w7YFGi">
+                    <div class="game-meta"><span>FINAL</span><span></span></div>
+                    <!-- Winner Seahawks #1 -->
+                    <div class="team-slot winner manual-winner" data-conf="NFC" data-team="Seahawks" data-seed="1" data-color="#002244" data-score="41" id="nfc-div1-home">
                         <div class="logo-box" style="background:#002244;">SEA</div>
                         <div class="team-info"><span class="name">Seahawks</span><span class="seed">#1</span></div>
+                        <span class="score">41</span>
                     </div>
-                    <!-- RE-SEEDED: #6 49ers plays #1 Seahawks -->
-                    <div class="team-slot" draggable="true" data-conf="NFC" data-team="49ers" data-seed="6" data-color="#AA0000" id="nfc-div1-visitor" data-role="seed1-opponent" ondrop="drop(event)" ondragover="allowDrop(event)">
+                    <!-- Loser 49ers #6 -->
+                    <div class="team-slot eliminated real-loser" data-conf="NFC" data-team="49ers" data-seed="6" data-color="#AA0000" data-score="6" id="nfc-div1-visitor">
                         <div class="logo-box" style="background:#AA0000;">SF</div>
-                        <div class="team-info"><span class="name">49ers</span><span class="seed Fabric">#6</span></div>
+                        <div class="team-info"><span class="name">49ers</span><span class="seed">#6</span></div>
+                        <span class="score">6</span>
                     </div>
+                    <a class="highlight-btn" href="https://youtu.be/QXxCbN48UE8?si=KHlEEfygU6w7YFGi" target="_blank">Watch Highlights</a>
                 </div>
                 <div class="matchup" data-highlight-url="">
                     <div class="game-meta"><span>SUN 3:30 PM PT</span><span>FOX</span></div>
@@ -724,7 +743,7 @@
                         <div class="team-info"><span class="name">Bears</span><span class="seed">#2</span></div>
                     </div>
                     <!-- RE-SEEDED: #5 Rams plays #2 Bears -->
-                    <div class="team-slot" draggable="true" data-conf="NFC" data-team="Rams" data-seed="5" data-color="#003594" id="nfc-div2-visitor" data-role="other-game" ondrop="drop(event)" ondragover="allowDrop(event)">
+                    <div class="team-slot" draggable="true" data-conf="NFC" data-team="Rams" data-seed="5" data-color="#003594" id="nfc-div2-visitor">
                         <div class="logo-box" style="background:#003594;">LAR</div>
                         <div class="team-info"><span class="name">Rams</span><span class="seed">#5</span></div>
                     </div>
@@ -738,7 +757,7 @@
                     <div class="game-meta"><span>FINAL</span><span></span></div>
                     <div class="team-slot winner manual-winner" data-conf="NFC" data-team="49ers" data-seed="6" data-color="#AA0000" id="nfc-wc1-a" data-score="24">
                         <div class="logo-box" style="background:#AA0000;">SF</div>
-                        <div class="team-info"><span class="name">49ers</span><span class="seed Fabric">#6</span></div>
+                        <div class="team-info"><span class="name">49ers</span><span class="seed">#6</span></div>
                         <span class="score">24</span>
                     </div>
                     <div class="team-slot eliminated real-loser" data-conf="NFC" data-team="Eagles" data-seed="3" data-color="#004C54" id="nfc-wc1-b" data-score="21">
@@ -1527,3 +1546,5 @@
 
 </body>
 </html>
+
+
