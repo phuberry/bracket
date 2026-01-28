@@ -594,7 +594,7 @@
                 <div class="matchup" data-highlight-url="https://www.youtube.com/watch?v=OZrEboMLou4">
                     <!-- REMOVED: Channel Name -->
                     <div class="game-meta"><span>FINAL</span><span></span></div>
-                    <div class="team-slot winner manual-winner" data-conf="AFC" data-team="Bills" data-seed="6" data-color="#00338D" data-score="27" id="afc-wc1-w">
+                    <div class="team-slot winner manual-winner" draggable="true" data-conf="AFC" data-team="Bills" data-seed="6" data-color="#00338D" data-score="27" id="afc-wc1-w">
                         <div class="logo-box" style="background:#00338D;">BUF</div>
                         <div class="team-info"><span class="name">Bills</span><span class="seed">#6</span></div>
                         <span class="score">27</span>
@@ -642,7 +642,7 @@
 
             <div class="column col-divisional" id="afc-divisional-col">
                 <div class="round-header">AFC Divisional</div>
-                <div class="matchup" data-highlight-url="https://youtu.be/VqXRI7Mag3E?si=kiepFe6dBvMS3PJC">
+                <div class="matchup" data-highlight-url="https://www.youtube.com/watch?v=VqXRI7Mag3E">
                     <div class="game-meta"><span>FINAL</span><span></span></div>
                     <!-- Winner Broncos #1 -->
                     <div class="team-slot winner manual-winner" data-conf="AFC" data-team="Broncos" data-seed="1" data-color="#FB4F14" data-score="33" id="afc-div1-home">
@@ -656,7 +656,7 @@
                         <div class="team-info"><span class="name">Bills</span><span class="seed">#6</span></div>
                         <span class="score">30</span>
                     </div>
-                    <a class="highlight-btn" href="https://youtu.be/VqXRI7Mag3E?si=kiepFe6dBvMS3PJC" target="_blank">Watch Highlights</a>
+                    <a class="highlight-btn" href="https://www.youtube.com/watch?v=VqXRI7Mag3E" target="_blank">Watch Highlights</a>
                 </div>
                 <div class="matchup" data-highlight-url="https://www.youtube.com/watch?v=FI8w2O3k59I">
                     <div class="game-meta"><span>FINAL</span><span></span></div>
@@ -677,18 +677,21 @@
 
             <div class="column col-conference" id="afc-conf-col">
                 <div class="round-header">AFC Championship</div>
-                <div class="matchup" data-highlight-url="">
-                    <div class="game-meta"><span>Jan 25 - 12:00 PM PT</span><span>CBS</span></div>
-                    <!-- Broncos advanced here -->
-                    <div class="team-slot" draggable="true" data-conf="AFC" data-team="Broncos" data-seed="1" data-color="#FB4F14" id="afc-conf-home">
+                <div class="matchup" data-highlight-url="https://www.youtube.com/watch?v=WGnn4OIzU8w">
+                    <div class="game-meta"><span>FINAL</span><span></span></div>
+                    <!-- Broncos lost -->
+                    <div class="team-slot eliminated real-loser" data-conf="AFC" data-team="Broncos" data-seed="1" data-color="#FB4F14" id="afc-conf-home" data-score="21">
                         <div class="logo-box" style="background:#FB4F14;">DEN</div>
                         <div class="team-info"><span class="name">Broncos</span><span class="seed">#1</span></div>
+                        <span class="score">21</span>
                     </div>
-                    <!-- Patriots advanced here -->
-                    <div class="team-slot" draggable="true" data-conf="AFC" data-team="Patriots" data-seed="2" data-color="#002244" id="afc-conf-visitor">
+                    <!-- Patriots won -->
+                    <div class="team-slot winner manual-winner" data-conf="AFC" data-team="Patriots" data-seed="2" data-color="#002244" id="afc-conf-visitor" data-score="24">
                         <div class="logo-box" style="background:#002244;">NE</div>
                         <div class="team-info"><span class="name">Patriots</span><span class="seed">#2</span></div>
+                        <span class="score">24</span>
                     </div>
+                    <a class="highlight-btn" href="https://www.youtube.com/watch?v=WGnn4OIzU8w" target="_blank">Watch Highlights</a>
                 </div>
             </div>
 
@@ -702,9 +705,15 @@
                 
                 <div class="matchup" style="width: 280px; text-align: center;" data-highlight-url="">
                     <div class="game-meta" style="justify-content: center;"><span>FEB 8 - 3:30 PM PT</span></div>
-                    <div class="team-slot empty-slot" data-target-conf="any" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                    <div class="team-slot" draggable="true" data-conf="AFC" data-team="Patriots" data-seed="2" data-color="#002244" id="sb-team-afc">
+                         <div class="logo-box" style="background:#002244;">NE</div>
+                        <div class="team-info"><span class="name">Patriots</span><span class="seed">#2</span></div>
+                    </div>
                     <div style="font-size:0.8em; color:#666; margin: 5px;">VS</div>
-                    <div class="team-slot empty-slot" data-target-conf="any" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                    <div class="team-slot" draggable="true" data-conf="NFC" data-team="Seahawks" data-seed="1" data-color="#002244" id="sb-team-nfc">
+                        <div class="logo-box" style="background:#002244;">SEA</div>
+                        <div class="team-info"><span class="name">Seahawks</span><span class="seed">#1</span></div>
+                    </div>
                 </div>
 
                 <div class="round-header" style="margin-top: 40px; color: var(--gold-shine);">Super Bowl Champion</div>
@@ -715,18 +724,21 @@
 
             <div class="column col-conference" id="nfc-conf-col">
                 <div class="round-header">NFC Championship</div>
-                <div class="matchup" data-highlight-url="">
-                    <div class="game-meta"><span>Jan 25 - 3:30 PM PT</span><span>FOX</span></div>
-                    <!-- Seahawks advanced here -->
-                    <div class="team-slot" draggable="true" data-conf="NFC" data-team="Seahawks" data-seed="1" data-color="#002244" id="nfc-conf-home">
+                <div class="matchup" data-highlight-url="https://www.youtube.com/watch?v=CgCJ2nBAEaU">
+                    <div class="game-meta"><span>FINAL</span><span></span></div>
+                    <!-- Seahawks won -->
+                    <div class="team-slot winner manual-winner" data-conf="NFC" data-team="Seahawks" data-seed="1" data-color="#002244" id="nfc-conf-home" data-score="27">
                         <div class="logo-box" style="background:#002244;">SEA</div>
                         <div class="team-info"><span class="name">Seahawks</span><span class="seed">#1</span></div>
+                        <span class="score">27</span>
                     </div>
-                    <!-- Rams advanced here -->
-                    <div class="team-slot" draggable="true" data-conf="NFC" data-team="Rams" data-seed="5" data-color="#003594" id="nfc-conf-visitor">
+                    <!-- Rams lost -->
+                    <div class="team-slot eliminated real-loser" data-conf="NFC" data-team="Rams" data-seed="5" data-color="#003594" id="nfc-conf-visitor" data-score="20">
                         <div class="logo-box" style="background:#003594;">LAR</div>
                         <div class="team-info"><span class="name">Rams</span><span class="seed">#5</span></div>
+                        <span class="score">20</span>
                     </div>
+                     <a class="highlight-btn" href="https://www.youtube.com/watch?v=CgCJ2nBAEaU" target="_blank">Watch Highlights</a>
                 </div>
             </div>
 
@@ -1330,9 +1342,16 @@
             const protectedTeams = ['Bills', 'Patriots', '49ers', 'Rams', 'Broncos', 'Seahawks', 'Bears', 'Texans'];
             const teamName = slot.getAttribute('data-team');
             const isDivisional = slot.closest('.col-divisional') !== null;
+            // NEW: Add protection for the Super Bowl contender slots
+            const isSuperBowlContender = slot.id === 'sb-team-afc' || slot.id === 'sb-team-nfc';
 
             // Protection for hardcoded divisional participants so they aren't deleted when dragged out to advance
             if (!force && isDivisional && protectedTeams.includes(teamName)) {
+                return;
+            }
+
+            // Protection for Super Bowl contenders
+            if (!force && isSuperBowlContender) {
                 return;
             }
 
